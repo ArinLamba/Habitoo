@@ -2,6 +2,20 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* * {
+  outline: 1px solid red;
+} */
+ 
+@plugin "tailwind-scrollbar";
+
+/* With options (e.g., enable non-standard features like custom widths/radii) */
+@plugin "tailwind-scrollbar" {
+  nocompatible: true;
+  preferredStrategy: "pseudoelements"; /* Optional: defaults to 'standard' */
+}
+
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
