@@ -1,7 +1,7 @@
 export type Habit = {
   id: string;
   name: string;
-  createdAt: string;
+  createdAt: Date | null;
 };
 
 export type Completion = {

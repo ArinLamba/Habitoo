@@ -3,6 +3,7 @@ import { Completion } from "@/lib/types";
 
 type State = {
   completions: Completion[];
+  addCompletion: (completion: Completion) => void;
   setCompletions: (data: Completion[]) => void;
   toggleCompletion: (habitId: string, date: string) => void;
 };
@@ -11,6 +12,11 @@ export const useCompletionsStore = create<State>((set) => ({
   completions: [],
 
   setCompletions: (data) => set({ completions: data }),
+
+  addCompletion: (completion) =>
+    set((state) => ({
+      completions: [completion, ...state.completions],
+    })),
 
   toggleCompletion: (habitId, date) =>
     set((state) => {

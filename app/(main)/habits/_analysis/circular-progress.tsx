@@ -24,7 +24,7 @@ export const CircularProgress = ({
   const selectedDateStr = formatDate(currentDate);
 
   const activeHabits = habits.filter(habit => {
-    if (!habit.createdAt) return false;
+    if (!habit || !habit.createdAt) return false;
 
     const created = normalize(new Date(habit.createdAt));
     const current = normalize(currentDate);

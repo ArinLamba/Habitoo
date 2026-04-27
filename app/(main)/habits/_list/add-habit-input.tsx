@@ -7,21 +7,39 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { upsertNewHabit } from "@/actions/add-habit";
 
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useHabitStore } from "@/store/use-habit-store";
 
 export const AddHabitInput = () => {
   const [value, setValue] = useState("");
-  const router = useRouter();
+
+  const addHabit = useHabitStore((s) => s.addHabit);
+  const replaceHabit = useHabitStore((s) => s.replaceHabit);
 
   const add = async () => {
     if (!value.trim()) return;
-    
-    await upsertNewHabit(value);
+
+    const tempId = crypto.randomUUID();
+
+    // 🔥 optimistic UI
+    addHabit({
+      id: tempId,
+      name: value,
+      createdAt: new Date().toISOString(),
+    });
+
     setValue("");
     toast.success("Habit Added Successfully");
-    
-    // router.refresh();
+
+    try {
+      const realHabit = await upsertNewHabit(value);
+      replaceHabit(tempId, realHabit);
+      // optional: replace temp with real id (advanced, can skip for now)
+    } catch {
+      toast.error("Failed to add habit");
+      // rollback
+      useHabitStore.getState().deleteHabit(tempId);
+    }
   };
 
   return (
@@ -36,7 +54,6 @@ export const AddHabitInput = () => {
       />
 
       <Button
-        
         variant="save"
         onClick={add}
         disabled={!value.trim()}

@@ -1,24 +1,22 @@
 "use client";
-import { Completion, Habit } from "@/lib/types";
+
 
 import { HabitItem } from "./habit-item";
 import { AddHabitInput } from "./add-habit-input";
 import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import { useDateStore } from "@/store/use-date-store";
 import { Button } from "@/components/ui/button";
+import { useHabitStore } from "@/store/use-habit-store";
+import { useCompletionsStore } from "@/store/use-completions-store";
 
 
-type Props = {
-  habits: Habit[];
-  completions: Completion[];
-};
 
-export const HabitList = ({ 
-  habits, 
-  completions ,
-}: Props) => {
+export const HabitList = () => {
 
   const { currentDate, setCurrentDate } = useDateStore();
+  const habits = useHabitStore((s) => s.habits);
+  const completions = useCompletionsStore((s) => s.completions);
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth(); // 0-based
   
@@ -40,14 +38,14 @@ export const HabitList = ({
         </Button >
       </div>
       
-      {habits.map((habit) => (
-        <HabitItem 
-          key={habit.id} 
-          id={habit.id}
-          name={habit.name}
-          createdAt={habit.createdAt!}
-          completions={completions}
-        />
+      {habits
+        .filter((h) => h && h.id) // 👈 prevents crash
+        .map((habit) => (
+          <HabitItem
+            key={habit.id}
+            habit={habit}
+            completions={completions}
+          />
       ))}
 
       <AddHabitInput />

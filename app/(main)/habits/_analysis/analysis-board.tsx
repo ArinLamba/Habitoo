@@ -1,18 +1,16 @@
-import { Completion, Habit } from "@/lib/types";
+
 import { CircularProgress } from "./circular-progress";
 import Link from "next/link";
 import { getStreaks } from "@/lib/helper";
 import { formatDate } from "@/lib/helper";
+import { useHabitStore } from "@/store/use-habit-store";
+import { useCompletionsStore } from "@/store/use-completions-store";
 
-type Props = {
-  habits: Habit[];
-  completions: Completion[];
-};
 
-export const AnalysisBoard = ({ 
-  habits,
-  completions,
- }: Props) => {
+export const AnalysisBoard = () => {
+
+  const habits = useHabitStore(s => s.habits);
+  const completions = useCompletionsStore(s => s.completions);
 
   const { currentStreak, bestStreak } = getStreaks(completions);
   const normalize = (d: Date) => {
@@ -36,7 +34,7 @@ export const AnalysisBoard = ({
   let totalDays = 0;
 
   habits.forEach(habit => {
-    if (!habit.createdAt) return;
+    if (!habit || !habit.createdAt) return;
 
     const created = normalize(new Date(habit.createdAt));
 

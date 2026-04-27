@@ -1,18 +1,13 @@
 
+import { useHabitStore } from "@/store/use-habit-store";
 import { Header } from "./header";
 import { TickBox } from "./tick-box";
-import { Habit } from "@/lib/types";
 
 
-type Props = {
-  habits: Habit[];
-};
 
-export const HabitMarking = ({ 
-  habits, 
-  
- }: Props) => {
+export const HabitMarking = () => {
 
+  const habits = useHabitStore((s) => s.habits);
 
   return (
     

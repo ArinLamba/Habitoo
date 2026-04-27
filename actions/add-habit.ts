@@ -4,6 +4,7 @@ import db from "@/db";
 import { habits } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 
+
 export const upsertNewHabit = async (name: string) => {
   const { userId } = await auth();
 
@@ -11,7 +12,10 @@ export const upsertNewHabit = async (name: string) => {
 
   console.log("🔥 DB HIT: addHabit", new Date().toISOString());
 
-  await db.insert(habits).values(
-    { userId, name },
-  )
+  const [newHabit] = await db
+    .insert(habits)
+    .values({ userId, name })
+    .returning();
+
+  return newHabit;
 };

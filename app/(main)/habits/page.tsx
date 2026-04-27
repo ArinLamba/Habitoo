@@ -34,10 +34,8 @@ export default async function HabitsPage () {
       </FeedWrapper>
 
       <StickyWrapper>
-        <div className="hidden lg:block">
-          <StickyWrapperClient habits={habits}/>
-        </div>
-        <MobileHabitDrawer habits={habits} />
+        <StickyWrapperClient />
+        <MobileHabitDrawer />
       </StickyWrapper>
       
     </div>

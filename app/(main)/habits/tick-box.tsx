@@ -54,7 +54,6 @@ export const TickBox = ({
 
     try {
       await markHabit(id, date);
-      router.refresh();
     } catch {
       toggleCompletion(id, date); // rollback
     }

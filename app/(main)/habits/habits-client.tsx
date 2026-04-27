@@ -11,6 +11,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useEffect } from "react";
+import { useHabitStore } from "@/store/use-habit-store";
 
 type Props = {
   habits: Habit[];
@@ -19,32 +20,29 @@ type Props = {
 
 export const HabitsClient = ({ habits, completions }: Props) => {
 
+  const setHabits = useHabitStore((s) => s.setHabits);
   const setCompletions = useCompletionsStore((s) => s.setCompletions);
   
   useEffect(() => {
+    setHabits(habits);
     setCompletions(completions);
-  }, [completions]);
+  }, [completions, habits]);
+
 
   return (
     <div className="space-y-6">
 
-      <AnalysisBoard
-        habits={habits}
-        completions={completions}
-      />
+      <AnalysisBoard />
 
       <ResizablePanelGroup orientation="horizontal" className=" shadow-md flex gap-2 dark:bg-zinc-900 bg-white border-black/10 dark:border-white/10 p-3 rounded-md borer dark:border ">
         {/* LEFT */}
         <ResizablePanel defaultSize={40}>
-          <HabitList habits={habits} completions={completions} />
+          <HabitList  />
         </ResizablePanel>
         <ResizableHandle withHandle/>
         {/* RIGHT */}
         <ResizablePanel defaultSize={60}>
-          <HabitMarking
-            habits={habits}
-            completions={completions}
-          />
+          <HabitMarking />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
