@@ -11,7 +11,11 @@ export const markHabit = async (id: string, date: string) => {
 
   const existing = await db.query.habitCompletions.findFirst({
     where: (hc, { and, eq }) =>
-      and(eq(hc.habitId, id), eq(hc.date, date)),
+      and(
+        eq(hc.habitId, id),
+        eq(hc.date, date),
+        eq(hc.userId, userId),
+      ),
   });
 
   if (existing) {
