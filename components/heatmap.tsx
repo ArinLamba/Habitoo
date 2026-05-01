@@ -5,16 +5,29 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { generateHeatmapGrid, getHeatmapData } from "@/lib/helper";
+import { generateHeatmapGrid } from "@/lib/helper";
 
 import { useDateStore } from "@/store/use-date-store";
-import { useCompletionsStore } from "@/store/use-completions-store";
 
-export const Heatmap = () => {
+import { useStats } from "@/hooks/use-stats";
+
+import { Completion, Habit } from "@/lib/types";
+
+type Props = {
+  habits: Habit[];
+  completions: Completion[];
+};
+
+export const Heatmap = ({
+  habits,
+  completions,
+}: Props) => {
+
   const { setCurrentDate } = useDateStore();
-  const completions = useCompletionsStore((s) => s.completions);
 
-  const data = getHeatmapData(completions);
+  const stats = useStats(habits, completions);
+
+  const data = stats.dayCount;
   const weeks = generateHeatmapGrid(90);
 
   return (

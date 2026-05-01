@@ -22,7 +22,7 @@ export const SidebarItem = ({
   return (
     <Button
       variant={active ? "sidebarOutline" : "sidebar"}
-      className="justify-start h-[52px] dark:bg-fuchsia-300"
+      className="justify-start h-[52px]"
       asChild
     >
       <Link href={href}>

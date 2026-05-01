@@ -1,19 +1,28 @@
+
+import { formatDate } from "@/lib/date";
 import { Completion } from "@/lib/types";
 
 export const WeeklyTrend = ({ completions }: {
   completions: Completion[];
 }) => {
 
+  const doneMap = new Map();
+
+  completions.forEach(c => {
+    if (!c.completed) return;
+    doneMap.set(c.date, (doneMap.get(c.date) || 0) + 1);
+  });
+
   const last7 = [...Array(7)].map((_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
-    const key = d.toISOString().split("T")[0];
 
-    const count = completions.filter(
-      c => c.date === key && c.completed
-    ).length;
+    const key = formatDate(d);
 
-    return { day: d.toLocaleDateString("default", { weekday: "short" }), count };
+    return {
+      day: d.toLocaleDateString("default", { weekday: "short" }),
+      count: doneMap.get(key) || 0,
+    };
   });
 
   return (

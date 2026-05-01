@@ -1,5 +1,5 @@
 import { useViewStore } from "@/store/use-view-store";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 export const HabitHeader = () => {
 

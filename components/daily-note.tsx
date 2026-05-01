@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 import { useDateStore } from "@/store/use-date-store";
-import { formatDate } from "@/lib/helper";
+import { formatDate } from "@/lib/date";
 import { getNoteByDate } from "@/db/queries";
 import { upsertNote } from "@/actions/add-note";
 

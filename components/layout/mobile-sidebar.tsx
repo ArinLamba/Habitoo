@@ -5,7 +5,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Sidebar } from "@/components/sidebar"
+import { Sidebar } from "@/components/layout/sidebar"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 export const MobileSidebar = () => {

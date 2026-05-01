@@ -7,72 +7,68 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
-import { editHabit } from "@/actions/edit-habit";
-import { deleteHabit } from "@/actions/delete-habit";
 import { DeleteButton } from "./delete-button";
 
-import { Completion, Habit } from "@/lib/types";
-import { getHabitStreaks } from "@/lib/helper";
+import {  Habit } from "@/lib/types";
+
+
 import { useHabitStore } from "@/store/use-habit-store";
 import { useViewStore } from "@/store/use-view-store";
 import { useDrawerModal } from "@/store/use-drawer-modal";
+
 import { useIsMobile } from "@/hooks/use-is-mobile";
+import { useDeleteHabit } from "@/hooks/mutations/use-delete-habit";
+import { useEditHabit } from "@/hooks/mutations/use-edit-habit";
+
 
 type Props = {
   habit: Habit;
-  completions: Completion[];
+  currentStreak: number;
 };
 
 export const HabitItem = ({
   habit,
-  completions,
+  currentStreak
 }: Props) => {
   const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(habit.name);
+
+  const { mutate: deleteMutate } = useDeleteHabit();
+  const { mutate: editMutate } = useEditHabit();
 
   // 🔥 Get live habit from Zustand (source of truth)
-
-
-  const updateHabit      = useHabitStore((s) => s.updateHabit);
-  const removeHabit      = useHabitStore((s) => s.deleteHabit);
-  const setSelectedHabit = useHabitStore((s) => s.setSelectedHabit);
+  const setSelectedHabitId = useHabitStore((s) => s.setSelectedHabitId);
 
   const { open } = useDrawerModal();
   const setView  = useViewStore((s) => s.setView);
   const isMobile = useIsMobile();
 
-  // 🔥 Sync input with store (important for optimistic UI)
-  // useEffect(() => {
-  //   if (habit) setValue(habit.name);
-  // }, [habit]);
+  // TODO: fix streaks to precompute or move it from here
+  // const { currentStreak } = getHabitStreaks(habit.id, completions);
+ 
 
-  const { currentStreak } = getHabitStreaks(habit.id, completions);
-
-  const handleDelete = async () => {
-    removeHabit(habit.id); // 🔥 instant UI
-
-    try {
-      await deleteHabit(habit.id);
-      toast.success("Habit Deleted");
-    } catch {
-      toast.error("Failed to delete habit");
-    }
+  const handleDelete = () => {
+    deleteMutate(habit.id, {
+      onSuccess: () => toast.success("Habit Deleted"),
+      onError: () => toast.error("Failed to delete habit"),
+    });
   };
 
-  const save = async () => {
+  const save = () => {
     if (!value.trim()) return;
 
-    updateHabit(habit.id, value); // 🔥 instant UI
+    editMutate(
+      { id: habit.id, name: value },
+      {
+        onSuccess: () => toast.success("Edit Successful"),
+        onError: () => toast.error("Failed to update habit"),
+      }
+    );
+
     setEditing(false);
-    toast.success("Edit Successful");
+  }
 
-    try {
-      await editHabit(habit.id, value);
-    } catch {
-      toast.error("Failed to update habit");
-    }
-  };
-
+  
   return (
     <>
       <div className="flex items-center min-w-0 justify-between">
@@ -101,7 +97,7 @@ export const HabitItem = ({
               title={habit?.name}
               onClick={() => {
                 if (!habit) return;
-                setSelectedHabit(habit);
+                setSelectedHabitId(habit.id);
                 setView("habit");
                 if (isMobile) open();
               }}

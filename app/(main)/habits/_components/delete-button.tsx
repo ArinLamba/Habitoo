@@ -16,7 +16,7 @@ import {
 
 
 type Props = {
-  handleDelete: () => Promise<void>;
+  handleDelete: () => void;
 };
 
 export const DeleteButton = ({ handleDelete }: Props) => {

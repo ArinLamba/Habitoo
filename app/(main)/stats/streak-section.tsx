@@ -1,11 +1,13 @@
-import { getStreaks } from "@/lib/helper";
-import { Completion } from "@/lib/types";
 
-export const StreakSection = ({ completions }: {
-  completions: Completion[];
-}) => {
+type Props = {
+  currentStreak: number;
+  bestStreak: number;
+}
+export const StreakSection = ({ 
+  currentStreak,
+  bestStreak
+ }: Props ) => {
 
-  const { currentStreak, bestStreak } = getStreaks(completions);
 
   return (
     <div className="p-4 rounded-lg border bg-white shadow-md dark:bg-zinc-900">

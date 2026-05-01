@@ -1,30 +1,32 @@
 "use client";
 
-import { formatDate, getDaysInMonth } from "@/lib/helper";
-import { Habit } from "@/lib/types";
-import { useCompletionsStore } from "@/store/use-completions-store";
+import { getDaysInMonth } from "@/lib/helper";
+import { formatDate } from "@/lib/date";
+
+import { Completion, Habit } from "@/lib/types";
+
 import { useDateStore } from "@/store/use-date-store";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { Button } from "./ui/button";
+
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Props = {
   habit: Habit;
+  completions: Completion[];
 };
 
 export const HabitCalendar = ({
   habit,
-
+  completions,
 }: Props) => {
 
-  const completions = useCompletionsStore((s) => s.completions);
   // filter only this habit
   const { currentDate, setCurrentDate } = useDateStore();
   
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth(); // 0-based
-
+  
 
   const days = getDaysInMonth(currentDate);
 
@@ -59,14 +61,22 @@ export const HabitCalendar = ({
     const set = new Set(doneDates);
 
     const streakDates: string[] = [];
-    const d = new Date(); // start from today
+
+    const today = new Date();
+    const todayStr = formatDate(today);
+
+    const start = new Date(today);
+
+    if (!set.has(todayStr)) {
+      start.setDate(start.getDate() - 1);
+    }
 
     while (true) {
-      const key = formatDate(d);
+      const key = formatDate(start);
 
       if (set.has(key)) {
         streakDates.push(key);
-        d.setDate(d.getDate() - 1);
+        start.setDate(start.getDate() - 1);
       } else {
         break;
       }

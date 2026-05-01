@@ -1,13 +1,14 @@
-import { MobileHeader } from "@/components/mobile-header";
-
+import { MobileHeader } from "@/components/layout/mobile-header";
 
 type Props = {
   children: React.ReactNode;
 };
 
 const MainLayout = ({ children }: Props) => {
+
   return (
     <>
+      
       <MobileHeader />
       {/* <Sidebar className="hidden lg:flex"/> */}
       <main className=" h-full pt-[48px] mt-5">

@@ -1,16 +1,26 @@
 "use client";
+import { getHabitStreaks } from "@/lib/streaks";
+import { formatDate } from "@/lib/date";
 
-import { useCompletionsStore } from "@/store/use-completions-store";
+import { useHabits } from "@/hooks/queries/use-habits";
+import { useCompletions } from "@/hooks/queries/use-completions";
+
 import { useHabitStore } from "@/store/use-habit-store";
-import { formatDate, getHabitStreaks } from "@/lib/helper";
 
 export const useHabitStats = () => {
-  const completions = useCompletionsStore((s) => s.completions);
-  const selectedHabit = useHabitStore((s) => s.selectedHabit);
+  const selectedHabitId = useHabitStore((s) => s.selectedHabitId);
+  const { data: habits = [] } = useHabits();
+
+
+  const { data: completions = [] } = useCompletions();
+
+  const selectedHabit = habits.find(h => h.id === selectedHabitId);
 
   if (!selectedHabit) return null;
 
-  const createdDate = new Date(selectedHabit.createdAt);
+  // rest stays SAME
+
+  const createdDate = new Date(selectedHabit.createdAt!);
   if (isNaN(createdDate.getTime())) return null;
 
   createdDate.setHours(0, 0, 0, 0);
@@ -26,6 +36,7 @@ export const useHabitStats = () => {
     selectedHabit.id,
     completions
   );
+  
 
   // 📊 consistency
   const totalDays =

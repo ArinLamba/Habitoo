@@ -3,8 +3,9 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import QueryProviders from "@/components/providers/query-provider";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -29,17 +30,19 @@ export default function RootLayout({
     >
         <body className="bg-gray-100 dark:bg-zinc-950">
           <ClerkProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-                <Toaster position="top-center"/>
-                {children}
-              </TooltipProvider>
-            </ThemeProvider>
+            <QueryProviders>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                  <Toaster position="top-center"/>
+                  {children}
+                </TooltipProvider>
+              </ThemeProvider>
+            </QueryProviders>
           </ClerkProvider>
         </body>
       </html>

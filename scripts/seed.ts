@@ -1,49 +1,48 @@
-import "dotenv/config";
-import db from "@/db/index";
-import * as schema from "@/db/schema";
+// import "dotenv/config";
+// import db from "@/db/index";
+// import * as schema from "@/db/schema";
 
-const daysAgo = (n: number) => {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d;
-};
+// const daysAgo = (n: number) => {
+//   const d = new Date();
+//   d.setDate(d.getDate() - n);
+//   return d;
+// };
 
-async function main() {
-  const userId = "user_3CWyo4DZn76S2V0EFVRi3wTAqT7"; // 👈 replace with your Clerk userId later
-  // const userId = "user_asldkfj"; // 👈 replace with your Clerk userId later
+// async function main() {
+
   
-  await db.delete(schema.habitCompletions);
-  await db.delete(schema.habits);
+//   await db.delete(schema.habitCompletions);
+//   await db.delete(schema.habits);
 
-  // 1. Create habits
-  const createdHabits = await db.insert(schema.habits).values([
-    { userId, name: "Read", createdAt: daysAgo(3) },
-    { userId, name: "Gym", createdAt: daysAgo(2) },
-    { userId, name: "Code" },
-  ]).returning();
+//   // 1. Create habits
+//   const createdHabits = await db.insert(schema.habits).values([
+//     { userId, name: "Read", createdAt: daysAgo(3) },
+//     { userId, name: "Gym", createdAt: daysAgo(2) },
+//     { userId, name: "Code" },
+//   ]).returning();
 
-  const today = new Date().toISOString().split("T")[0];
+//   const today = new Date().toISOString().split("T")[0];
 
-  // 2. Add completions (simulate some done, some not)
-  await db.insert(schema.habitCompletions).values([
-    {
-      habitId: createdHabits[0].id,
-      date: today,
-      completed: true,
-    },
-    {
-      habitId: createdHabits[1].id,
-      date: today,
-      completed: false,
-    },
-    {
-      habitId: createdHabits[2].id,
-      date: today,
-      completed: true,
-    },
-  ]);
+//   // 2. Add completions (simulate some done, some not)
+//   await db.insert(schema.habitCompletions).values([
+//     {
+//       habitId: createdHabits[0].id,
+//       date: today,
+//       completed: true,
+//     },
+//     {
+//       habitId: createdHabits[1].id,
+//       date: today,
+//       completed: false,
+//     },
+//     {
+//       habitId: createdHabits[2].id,
+//       date: today,
+//       completed: true,
+//     },
+//   ]);
 
-  console.log("✅ Seed data inserted");
-}
+//   console.log("✅ Seed data inserted");
+// }
 
-main();
+// main();

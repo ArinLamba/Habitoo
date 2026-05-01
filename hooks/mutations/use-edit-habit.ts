@@ -1,22 +1,22 @@
-// /hooks/mutations/use-delete-habit.ts
+// /hooks/mutations/use-edit-habit.ts
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteHabit } from "@/actions/delete-habit";
-import { Habit } from "@/lib/types";
+import { editHabit } from "@/actions/edit-habit";
 
-export const useDeleteHabit = () => {
+export const useEditHabit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: deleteHabit,
+    mutationFn: ({ id, name }: { id: string; name: string }) =>
+      editHabit(id, name),
 
-    onMutate: async (habitId: string) => {
+    onMutate: async ({ id, name }) => {
       await queryClient.cancelQueries({ queryKey: ["habits"] });
 
       const prev = queryClient.getQueryData(["habits"]);
 
-      queryClient.setQueryData(["habits"], (old: Habit[] = []) =>
-        old.filter((h) => h.id !== habitId)
+      queryClient.setQueryData(["habits"], (old: any[] = []) =>
+        old.map((h) => (h.id === id ? { ...h, name } : h))
       );
 
       return { prev };

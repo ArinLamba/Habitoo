@@ -1,7 +1,7 @@
 "use client";
 
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import { StickyWrapperClient } from "./sticky-wrapper-client";
+import { StickyWrapperClient } from "./layout/sticky-wrapper-client";
 
 import { useDrawerModal } from "@/store/use-drawer-modal";
 

@@ -23,6 +23,7 @@ export const habitCompletions = pgTable("habit_completions", {
     habitId: uuid("habit_id")
       .references(() => habits.id, {onDelete: "cascade"})
       .notNull(),
+    userId: text("user_id").notNull(),
     date: date("date").notNull(),
     completed: boolean("completed").default(true),
     completedAt: timestamp("completed_at").defaultNow().notNull(),

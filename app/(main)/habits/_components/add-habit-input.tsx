@@ -5,41 +5,30 @@ import { Plus } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { upsertNewHabit } from "@/actions/add-habit";
 
 import { toast } from "sonner";
-import { useHabitStore } from "@/store/use-habit-store";
+import { useCreateHabit } from "@/hooks/mutations/use-create-habit";
+
 
 export const AddHabitInput = () => {
+
   const [value, setValue] = useState("");
+  const { mutate, isPending } = useCreateHabit();
 
-  const addHabit = useHabitStore((s) => s.addHabit);
-  const replaceHabit = useHabitStore((s) => s.replaceHabit);
 
-  const add = async () => {
+  const add = () => {
     if (!value.trim()) return;
 
-    const tempId = crypto.randomUUID();
-
-    // 🔥 optimistic UI
-    addHabit({
-      id: tempId,
-      name: value,
-      createdAt: new Date().toISOString(),
+    mutate(value, {
+      onSuccess: () => {
+        toast.success("Habit Added Successfully");
+      },
+      onError: () => {
+        toast.error("Failed to add habit");
+      },
     });
 
     setValue("");
-    toast.success("Habit Added Successfully");
-
-    try {
-      const realHabit = await upsertNewHabit(value);
-      replaceHabit(tempId, realHabit);
-      // optional: replace temp with real id (advanced, can skip for now)
-    } catch {
-      toast.error("Failed to add habit");
-      // rollback
-      useHabitStore.getState().deleteHabit(tempId);
-    }
   };
 
   return (
@@ -56,7 +45,7 @@ export const AddHabitInput = () => {
       <Button
         variant="save"
         onClick={add}
-        disabled={!value.trim()}
+        disabled={!value.trim() || isPending}
         className="absolute right-0 top-1/2 -translate-y-1/2"
       >
         <Plus className="h-4 w-4 text-green-600 dark:text-green-300"/>

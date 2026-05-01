@@ -9,3 +9,10 @@ export type Completion = {
   date: string; // "YYYY-MM-DD"
   completed: boolean | null;
 };
+
+export type HabitStats = {
+  habitId: string;
+  name: string;
+  currentStreak: number;
+  bestStreak: number;
+};

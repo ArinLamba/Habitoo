@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { formatDate } from "@/lib/helper";
+import { formatDate } from "@/lib/date";
 import { Completion, Habit } from "@/lib/types";
 
 import { useDateStore } from "@/store/use-date-store";
-import { useCompletionsStore } from "@/store/use-completions-store";
+
 
 type Props = {
   habits: Habit[];
@@ -14,37 +14,50 @@ type Props = {
 
 export const CircularProgress = ({ 
   habits, 
+  completions
 }: Props) => {
 
   const [animatedPercent, setAnimatedPercent] = useState(0);
+  
+  const currentDate = useDateStore((s) => s.currentDate);
+  
+  const day = currentDate.getDate();
+  const year = currentDate.getFullYear();
 
-  const currentDate  = useDateStore((s) => s.currentDate);
-  const completions = useCompletionsStore((s) => s.completions);
+
   
   const selectedDateStr = formatDate(currentDate);
 
-  const activeHabits = habits.filter(habit => {
-    if (!habit || !habit.createdAt) return false;
+  const activeHabits = useMemo(() => {
+    return habits.filter((habit) => {
+      if (!habit || !habit.createdAt) return false;
 
-    const created = normalize(new Date(habit.createdAt));
-    const current = normalize(currentDate);
+      const created = normalize(new Date(habit.createdAt));
+      const current = normalize(currentDate);
 
-    return created <= current;
-  });
+      return created <= current;
+    });
+  }, [habits, currentDate]);
 
-  const activeIds = new Set(activeHabits.map(h => h.id));
+  const activeIds = useMemo(() => {
+    return new Set(activeHabits.map(h => h.id));
+  }, [activeHabits]);
 
-  const completed = completions.filter(c =>
-    c.completed &&
-    c.date === selectedDateStr &&
-    activeIds.has(c.habitId)
-  ).length;
+  const completed = useMemo(() => {
+    return completions.filter(c =>
+      c.completed &&
+      c.date === selectedDateStr &&
+      activeIds.has(c.habitId)
+    ).length;
+  }, [completions, selectedDateStr, activeIds]);
 
   const total = activeHabits.length;
 
-  const percentage = total
-  ? Math.round((completed / total) * 100)
-  : 0;
+  const percentage = useMemo(() => {
+    return total
+      ? Math.round((completed / total) * 100)
+      : 0;
+  }, [completed, total]);
 
   const radius = 78;
   const stroke = 8;
@@ -54,9 +67,7 @@ export const CircularProgress = ({
 
   const strokeDashoffset = circumference - (animatedPercent / 100) * circumference;
 
-  const day = currentDate.getDate();
-  const month = currentDate.toLocaleString("default", { month: "short",}); 
-  const year = currentDate.getFullYear();
+  const monthName = currentDate.toLocaleString("default", { month: "short" });
 
   const color = getColor(percentage);
 
@@ -71,7 +82,7 @@ export const CircularProgress = ({
 
   return (
     <div className="flex flex-col px-6  ">
-      <p className="text-sm text-muted-foreground  pl-2">Progress {day} {month} {year}</p>
+      <p className="text-sm text-muted-foreground  pl-2">Progress {day} {monthName} {year}</p>
 
       <div className="flex items-center gap-6 ">
         

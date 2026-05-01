@@ -1,18 +1,17 @@
 "use client";
 
-import { Habit, Completion } from "@/lib/types";
-import { getAllHabitStreaks } from "@/lib/helper";
+type HabitStat = {
+  habitId: string;
+  name: string;
+  currentStreak: number;
+  bestStreak: number;
+};
 
 export const HabitStreakList = ({
-  habits,
-  completions,
+  habitStats,
 }: {
-  habits: Habit[];
-  completions: Completion[];
+  habitStats: HabitStat[];
 }) => {
-
-  const data = getAllHabitStreaks(habits, completions);
-
   return (
     <div className="p-4 rounded-lg border shadow-md bg-white dark:bg-zinc-900">
       <p className="text-sm text-muted-foreground mb-4">
@@ -20,7 +19,7 @@ export const HabitStreakList = ({
       </p>
 
       <div className="flex flex-col gap-3">
-        {data.map(h => (
+        {habitStats.map((h) => (
           <div
             key={h.habitId}
             className="flex justify-between items-center"

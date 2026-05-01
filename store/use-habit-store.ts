@@ -1,77 +1,36 @@
-import { Habit } from "@/lib/types";
 import { create } from "zustand";
 
 type HabitStore = {
-  habits: Habit[];
-  selectedHabit: Habit | null;
+  selectedHabitId: string | null;
 
-  setHabits: (habits: Habit[]) => void;
-  setSelectedHabit: (habit: Habit | null) => void;
+  setSelectedHabitId: (id: string | null) => void;
 
-  addHabit: (habit: Habit) => void;
-  updateHabit: (id: string, name: string) => void;
-  deleteHabit: (id: string) => void;
-  replaceHabit: (tempId: string, realHabit: Habit) => void;
-
-  nextHabit: () => void;
-  prevHabit: () => void;
+  nextHabit: (habitIds: string[]) => void;
+  prevHabit: (habitIds: string[]) => void;
 };
 
 export const useHabitStore = create<HabitStore>((set, get) => ({
-  habits: [],
-  selectedHabit: null,
+  selectedHabitId: null,
 
-  setHabits: (habits) => set({ habits }),
+  setSelectedHabitId: (id) => set({ selectedHabitId: id }),
 
-  setSelectedHabit: (habit) => set({ selectedHabit: habit }),
+  nextHabit: (habitIds) => {
+    const { selectedHabitId } = get();
+    if (!selectedHabitId || habitIds.length === 0) return;
 
-  addHabit: (habit) =>
-    set((state) => ({
-      habits: [...state.habits, habit],
-    })),
+    const index = habitIds.indexOf(selectedHabitId);
+    const next = habitIds[(index + 1) % habitIds.length];
 
-  updateHabit: (id, name) =>
-    set((state) => ({
-      habits: state.habits.map((h) =>
-        h.id === id ? { ...h, name } : h
-      ),
-      selectedHabit:
-        state.selectedHabit?.id === id
-          ? { ...state.selectedHabit, name }
-          : state.selectedHabit,
-    })),
-
-  deleteHabit: (id) =>
-    set((state) => ({
-      habits: state.habits.filter((h) => h.id !== id),
-      selectedHabit:
-        state.selectedHabit?.id === id ? null : state.selectedHabit,
-    })),
-
-  nextHabit: () => {
-    const { habits, selectedHabit } = get();
-    if (!selectedHabit || habits.length === 0) return;
-
-    const index = habits.findIndex(h => h.id === selectedHabit.id);
-    const next = habits[(index + 1) % habits.length];
-
-    set({ selectedHabit: next });
+    set({ selectedHabitId: next });
   },
 
-  prevHabit: () => {
-    const { habits, selectedHabit } = get();
-    if (!selectedHabit || habits.length === 0) return;
+  prevHabit: (habitIds) => {
+    const { selectedHabitId } = get();
+    if (!selectedHabitId || habitIds.length === 0) return;
 
-    const index = habits.findIndex(h => h.id === selectedHabit.id);
-    const prev = habits[(index - 1 + habits.length) % habits.length];
+    const index = habitIds.indexOf(selectedHabitId);
+    const prev = habitIds[(index - 1 + habitIds.length) % habitIds.length];
 
-    set({ selectedHabit: prev });
+    set({ selectedHabitId: prev });
   },
-
-  replaceHabit: (tempId: string, realHabit: Habit) =>
-    set((state) => ({
-      habits: state.habits.map(h =>
-        h.id === tempId ? realHabit : h
-      )
-    })),
 }));
