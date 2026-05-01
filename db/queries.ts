@@ -22,16 +22,24 @@ export const getCompletions = (
         .where(eq(habitCompletions.userId, userId)); // 🔥 FIX
     }
 
-    const start = new Date();
-    const end = new Date();
-    start.setDate(start.getDate() - range);
+    const today = new Date();
+    const past = new Date();
+    past.setDate(today.getDate() - range);
+
+    // ✅ IMPORTANT: normalize
+    const startStr = formatDate(past);
+    const endStr = formatDate(today);
 
     const data = await db
-  .select()
-  .from(habitCompletions)
-  .where(eq(habitCompletions.userId, userId));
-      console.log("USER:", userId);
-      console.log("DATA FROM DB:", data);
+      .select()
+      .from(habitCompletions)
+      .where(
+        and(
+          eq(habitCompletions.userId, userId),
+          gte(habitCompletions.date, startStr),
+          lte(habitCompletions.date, endStr)
+        )
+      );
     return data;
   }
 );
