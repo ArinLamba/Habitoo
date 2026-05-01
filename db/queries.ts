@@ -8,7 +8,7 @@ import { and, eq, gte, lte } from "drizzle-orm";
 
 import { cache } from "react";
 
-export const getCompletions = cache(
+export const getCompletions = (
   async (range: number | "all") => {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -27,16 +27,11 @@ export const getCompletions = cache(
     start.setDate(start.getDate() - range);
 
     const data = await db
-      .select()
-      .from(habitCompletions)
-      .where(
-        and(
-          eq(habitCompletions.userId, userId),
-          gte(habitCompletions.date, formatDate(start)),
-          lte(habitCompletions.date, formatDate(end))
-        )
-      );
-
+  .select()
+  .from(habitCompletions)
+  .where(eq(habitCompletions.userId, userId));
+      console.log("USER:", userId);
+      console.log("DATA FROM DB:", data);
     return data;
   }
 );
