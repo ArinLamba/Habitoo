@@ -15,16 +15,16 @@ export const getCompletions = cache(
 
     console.log("🔥 DB HIT: getCompletions", new Date().toISOString());
 
-    // month is 0-based (JS), so adjust
-    // const start = new Date(year, month - 2, 1);
-    // const end = new Date(year, month + 1, 1);
-    if(range === "all") {
-      return db.select().from(habitCompletions);
+    if (range === "all") {
+      return db
+        .select()
+        .from(habitCompletions)
+        .where(eq(habitCompletions.userId, userId)); // 🔥 FIX
     }
 
     const start = new Date();
     const end = new Date();
-    start.setDate(end.getDate() - range);
+    start.setDate(start.getDate() - range);
 
     const data = await db
       .select()
