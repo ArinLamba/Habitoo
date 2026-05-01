@@ -11,7 +11,17 @@ export const formatDate = (date: Date) => {
 };
 
 // ✅ today
-export const getToday = () => formatDate(new Date());
+export const getToday = () => {
+  const now = new Date();
+
+  const local = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  return formatDate(local);
+};
 
 // ➕ add days to string date
 export const addDays = (dateStr: string, days: number) => {

@@ -1,48 +1,46 @@
 "use server";
 import db from "@/db/index";
 import { habitCompletions } from "@/db/schema";
-import { formatDate } from "@/lib/date";
+import { formatDate, getToday } from "@/lib/date";
 
 import { auth } from "@clerk/nextjs/server";
 import { and, eq, gte, lte } from "drizzle-orm";
 
 import { cache } from "react";
 
-export const getCompletions = (
-  async (range: number | "all") => {
-    const { userId } = await auth();
-    if (!userId) throw new Error("Unauthorized");
+export const getCompletions = async (range: number | "all") => {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
 
-    console.log("🔥 DB HIT: getCompletions", new Date().toISOString());
+  console.log("🔥 DB HIT: getCompletions", new Date().toISOString());
 
-    if (range === "all") {
-      return db
-        .select()
-        .from(habitCompletions)
-        .where(eq(habitCompletions.userId, userId)); // 🔥 FIX
-    }
-
-    const today = new Date();
-    const past = new Date();
-    past.setDate(today.getDate() - range);
-
-    // ✅ IMPORTANT: normalize
-    const startStr = formatDate(past);
-    const endStr = formatDate(today);
-
-    const data = await db
+  if (range === "all") {
+    return db
       .select()
       .from(habitCompletions)
-      .where(
-        and(
-          eq(habitCompletions.userId, userId),
-          gte(habitCompletions.date, startStr),
-          lte(habitCompletions.date, endStr)
-        )
-      );
-    return data;
+      .where(eq(habitCompletions.userId, userId));
   }
-);
+
+  const todayStr = getToday();
+
+  const past = new Date(todayStr); // important
+  past.setDate(past.getDate() - range);
+
+  const pastStr = formatDate(past);
+
+  const data = await db
+    .select()
+    .from(habitCompletions)
+    .where(
+      and(
+        eq(habitCompletions.userId, userId),
+        gte(habitCompletions.date, pastStr),
+        lte(habitCompletions.date, todayStr)
+      )
+    );
+
+  return data;
+};
 
 export const getRecentCompletions = cache(async (range: number | "all") => {
   const { userId } = await auth();
