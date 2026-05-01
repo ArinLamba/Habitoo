@@ -14,13 +14,13 @@ export const formatDate = (date: Date) => {
 export const getToday = () => {
   const now = new Date();
 
-  const local = new Date(
+  return new Date(
     now.getFullYear(),
     now.getMonth(),
     now.getDate()
-  );
-
-  return formatDate(local);
+  )
+    .toISOString()
+    .slice(0, 10);
 };
 
 // ➕ add days to string date
