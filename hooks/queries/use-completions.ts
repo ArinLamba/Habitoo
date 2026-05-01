@@ -15,12 +15,12 @@ export const useCompletions = () => {
 
 
     // staleTime: 1000 * 60 * 10, // 10 minutes
-    staleTime: 0,
+    staleTime: 1000 * 10,
     gcTime: 1000 * 60 * 30,
 
     refetchOnWindowFocus: false,
     // refetchOnMount: false,
-    refetchOnMount: true,
+    refetchOnMount: "always",
     refetchOnReconnect: false,
   });
 };

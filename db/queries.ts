@@ -21,11 +21,13 @@ export const getCompletions = async (range: number | "all") => {
       .where(eq(habitCompletions.userId, userId));
   }
 
-  const todayStr = getToday();
+  const today = new Date(); // 🔥 use real Date, not string
+  today.setHours(0, 0, 0, 0);
 
-  const past = new Date(todayStr); // important
+  const past = new Date(today);
   past.setDate(past.getDate() - range);
 
+  const todayStr = formatDate(today);
   const pastStr = formatDate(past);
 
   const data = await db
