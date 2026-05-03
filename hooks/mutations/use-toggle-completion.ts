@@ -3,6 +3,8 @@ import { markHabit } from "@/actions/mark-habit";
 import { Completion } from "@/lib/types";
 import { useRangeStore } from "@/store/use-range-store";
 
+// /hooks/mutations/use-toggle-completion.ts
+
 export const useToggleCompletion = () => {
   const queryClient = useQueryClient();
   const range = useRangeStore(s => s.range);
@@ -11,22 +13,27 @@ export const useToggleCompletion = () => {
     mutationFn: ({ habitId, date }: { habitId: string; date: string }) =>
       markHabit(habitId, date),
 
-    // 🔥 OPTIMISTIC UPDATE
     onMutate: async ({ habitId, date }) => {
+      // 1. Get today's date string (must match exactly what useCompletions uses)
+      const localToday = new Date().toLocaleDateString('en-CA');
       
-      const key = ["completions", range];
+      // 2. Construct the EXACT key used in useCompletions
+      const key = ["completions", range, localToday];
 
+      // 3. Cancel outgoing fetches so they don't overwrite our optimistic update
       await queryClient.cancelQueries({ queryKey: key });
 
+      // 4. Snapshot the previous value
       const previous = queryClient.getQueryData(key);
 
-      // ✅ update monthly
-      queryClient.setQueryData(["completions", range], (old: Completion[] = []) => {
+      // 5. Optimistically update the cache
+      queryClient.setQueryData(key, (old: Completion[] = []) => {
         const index = old.findIndex(
           (c) => c.habitId === habitId && c.date === date
         );
 
         if (index !== -1) {
+          // If it exists, toggle the completed state
           const updated = [...old];
           updated[index] = {
             ...updated[index],
@@ -35,28 +42,23 @@ export const useToggleCompletion = () => {
           return updated;
         }
 
+        // If it doesn't exist in the local cache yet, add it
         return [...old, { habitId, date, completed: true }];
       });
-
 
       return { previous, key };
     },
 
-    // ❌ ROLLBACK if error
     onError: (_err, variables, context) => {
-      if (!context) return;
-
-      queryClient.setQueryData(
-        context.key,
-        context.previous
-      );
+      if (context?.key) {
+        queryClient.setQueryData(context.key, context.previous);
+      }
     },
 
-    // 🔄 SYNC WITH SERVER
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({
-    //     queryKey: ["completions"]
-    //   });
-    // },
+    onSettled: (data, error, variables, context) => {
+      if (context?.key) {
+        queryClient.invalidateQueries({ queryKey: context.key });
+      }
+    },
   });
 };

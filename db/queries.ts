@@ -1,17 +1,19 @@
 "use server";
 import db from "@/db/index";
 import { habitCompletions } from "@/db/schema";
-import { formatDate, getToday } from "@/lib/date";
+import { formatDate } from "@/lib/date";
 
 import { auth } from "@clerk/nextjs/server";
 import { and, eq, gte, lte } from "drizzle-orm";
 
 import { cache } from "react";
 
-export const getCompletions = async (range: number | "all") => {
+// /db/queries.ts
+
+export const getCompletions = async (range: number | "all", clientTodayStr?: string) => {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
-
+  
   console.log("🔥 DB HIT: getCompletions", new Date().toISOString());
 
   if (range === "all") {
@@ -21,16 +23,21 @@ export const getCompletions = async (range: number | "all") => {
       .where(eq(habitCompletions.userId, userId));
   }
 
-  const today = new Date(); // 🔥 use real Date, not string
-  today.setHours(0, 0, 0, 0);
+  // 1. Create a reference date from the client string
+  // We add 'T00:00:00' to prevent the server from shifting the date
+  const referenceDate = clientTodayStr 
+    ? new Date(`${clientTodayStr}T00:00:00`) 
+    : new Date();
 
-  const past = new Date(today);
+  // 2. Calculate the 'past' date based on the range
+  const past = new Date(referenceDate);
   past.setDate(past.getDate() - range);
 
-  const todayStr = formatDate(today);
+  // 3. Format them back to YYYY-MM-DD strings for the DB query
+  const todayStr = formatDate(referenceDate);
   const pastStr = formatDate(past);
 
-  const data = await db
+  return await db
     .select()
     .from(habitCompletions)
     .where(
@@ -40,8 +47,6 @@ export const getCompletions = async (range: number | "all") => {
         lte(habitCompletions.date, todayStr)
       )
     );
-
-  return data;
 };
 
 export const getRecentCompletions = cache(async (range: number | "all") => {
