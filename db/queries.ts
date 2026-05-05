@@ -1,6 +1,6 @@
 "use server";
 import db from "@/db/index";
-import { habitCompletions } from "@/db/schema";
+import { habitCompletions, habits } from "@/db/schema";
 import { formatDate } from "@/lib/date";
 
 import { auth } from "@clerk/nextjs/server";
@@ -85,6 +85,7 @@ export const getHabits = cache(async () => {
   console.log("🔥 DB HIT: getHabits", new Date().toISOString());
 
   const data = await db.query.habits.findMany({
+    where: (eq(habits.userId, userId)),
     orderBy: (habits, { asc }) => [
       asc(habits.createdAt),
       asc(habits.id)
