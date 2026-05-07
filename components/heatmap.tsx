@@ -5,13 +5,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { generateHeatmapGrid } from "@/lib/helper";
+import { generateHeatmapGrid, getActiveHabits } from "@/lib/helper";
 
 import { useDateStore } from "@/store/use-date-store";
 
 import { useStats } from "@/hooks/use-stats";
 
 import { Completion, Habit } from "@/lib/types";
+import { indianFormat } from "@/lib/date";
+import { useMemo } from "react";
 
 type Props = {
   habits: Habit[];
@@ -23,12 +25,27 @@ export const Heatmap = ({
   completions,
 }: Props) => {
 
-  const { setCurrentDate } = useDateStore();
+  const setCurrentDate  = useDateStore(state => state.setCurrentDate);
 
   const stats = useStats(habits, completions);
 
   const data = stats.dayCount;
   const weeks = generateHeatmapGrid(90);
+
+  const activeHabitCountMap = useMemo(() => {
+    const map = new Map<string, number>();
+
+    weeks.flat().forEach((date) => {
+      const activeHabits = getActiveHabits(
+        habits,
+        new Date(date)
+      );
+
+      map.set(date, activeHabits.length);
+    });
+
+    return map;
+  }, [weeks, habits]);
 
   return (
     <div className="p-1 dark:bg-zinc-900 inline-block mx-auto">
@@ -97,17 +114,23 @@ export const Heatmap = ({
             >
               {week.map((date) => {
                 const count = data.get(date) || 0;
+                const parseDate = new Date(date);
+                const totalHabits = activeHabitCountMap.get(date) || 0;
+
+                const percentage = totalHabits === 0 ? 0 : count / totalHabits;
 
                 const color =
-                  count === 0
+                  percentage === 0
                     ? "bg-gray-700"
-                    : count < 2
+                    : percentage < 0.25
                     ? "bg-green-900"
-                    : count < 4
+                    : percentage < 0.5
                     ? "bg-green-700"
-                    : count < 7 
+                    : percentage < 0.75
                     ? "bg-green-500"
-                    : "bg-green-300"
+                    : "bg-green-300";
+                  
+                const displayDate = indianFormat(parseDate);
 
                 return (
                   <Tooltip key={date}>
@@ -119,8 +142,10 @@ export const Heatmap = ({
                     </TooltipTrigger>
 
                     <TooltipContent side="top" className="text-xs px-2 py-1 rounded-md shadow-md pointer-events-none ">
-                      <p> {count} habit{count !== 1 && "s"} on </p>
-                      <p className="text-muted-foregroun"> {date} </p>
+                      {totalHabits 
+                      ? <p> {count} / {totalHabits} Habits completed : {displayDate}</p>
+                      : <p> No Active Habits on {displayDate}</p>
+                      }
                     </TooltipContent>
                   </Tooltip>
                 );

@@ -37,7 +37,7 @@ export const getCompletions = async (range: number | "all", clientTodayStr?: str
   const todayStr = formatDate(referenceDate);
   const pastStr = formatDate(past);
 
-  return await db
+  return db
     .select()
     .from(habitCompletions)
     .where(
@@ -49,50 +49,23 @@ export const getCompletions = async (range: number | "all", clientTodayStr?: str
     );
 };
 
-export const getRecentCompletions = cache(async (range: number | "all") => {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  console.log("🔥 DB HIT: getRecentCompletions", new Date().toISOString());
-  if(range === "all") {
-    return db.select().from(habitCompletions);
-  }
-
-  const today = new Date();
-  const past = new Date();
-  past.setDate(today.getDate() - range);
-
-  const data = await db
-    .select()
-    .from(habitCompletions)
-    .where(
-      and(
-        eq(habitCompletions.userId, userId),
-        gte(habitCompletions.date, formatDate(past)),
-        lte(habitCompletions.date, formatDate(today))
-      )
-    );
-
-  return data;
-  }
-);
-
 // TODO: make a separate order column because it will be helpful in drag and drop later 
 
-export const getHabits = cache(async () => {
+export const getHabits = async () => {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized") ;
 
   console.log("🔥 DB HIT: getHabits", new Date().toISOString());
 
   const data = await db.query.habits.findMany({
-    where: (eq(habits.userId, userId)),
+    where: eq(habits.userId, userId),
     orderBy: (habits, { asc }) => [
       asc(habits.createdAt),
       asc(habits.id)
     ],
   });
   return data;
-});
+};
 
 export const getNoteByDate = cache(async (date: string) => {
   const { userId } = await auth();

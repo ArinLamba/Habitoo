@@ -39,35 +39,39 @@ export const HabitList = ({
   };
   
   return (
-    <div className=" flex no-scrollbar overflow-x-auto flex-col gap-y-1 border-r-white/30 mr-2 ">
-      <div className="flex  items-center justify-center mb-3 gap-5">
-        <Button variant={"secondary"} onClick={prevMonth}>
-          <MoveLeftIcon />
-        </Button >
+    <div className="flex flex-col gap-y-1 ">
+      <div className="flex w-full items-center justify-center mb-3">
+        <div className="flex items-center justify-between min-w-[250px] ">
+          <Button variant={"secondary"} onClick={prevMonth}>
+            <MoveLeftIcon />
+          </Button >
 
-        <h2 className="text-lg shrink-0 font-semibold">
-          {monthName} {year}
-        </h2>
+          <h2 className="text-lg shrink-0 font-semibold">
+            {monthName} {year}
+          </h2>
 
-        <Button variant={"secondary"} onClick={() => setCurrentDate(new Date(year, month + 1, 1))}>
-          <MoveRightIcon />
-        </Button >
+          <Button variant={"secondary"} onClick={() => setCurrentDate(new Date(year, month + 1, 1))}>
+            <MoveRightIcon />
+          </Button >
+        </div>
       </div>
       
-      {habits
-        .filter((h) => h && h.id) // 👈 prevents crash
-        .map((habit) => {
-          const currentHabit = stats.habitStatsMap.get(habit.id);
-          return (
-          <HabitItem
-            key={habit.id}
-            habit={habit}
-            currentStreak={currentHabit?.currentStreak ?? 0}
-          />
-        )
-})}
+      <div className="flex no-scrollbar overflow-x-auto flex-col gap-y-1 border-r-white/30 mr-2">
+        {habits
+          .filter((h) => h && h.id) // 👈 prevents crash
+          .map((habit) => {
+            const currentHabit = stats.habitStatsMap.get(habit.id);
+            return (
+            <HabitItem
+              key={habit.id}
+              habit={habit}
+              currentStreak={currentHabit?.currentStreak ?? 0}
+            />
+          )
+        })}
 
-      <AddHabitInput />
+        <AddHabitInput />
+      </div>
     </div>
   );
 };

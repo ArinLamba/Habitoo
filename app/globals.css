@@ -14,7 +14,9 @@
   preferredStrategy: "pseudoelements"; /* Optional: defaults to 'standard' */
 }
 
-
+.cl-userButtonPopoverCard {
+  z-index: 9999 !important;
+}
 
 @custom-variant dark (&:is(.dark *));
 

@@ -10,12 +10,12 @@ import { DialogTitle } from "@radix-ui/react-dialog"
 
 export const MobileSidebar = () => {
 	return (
-		<Sheet>
+		<Sheet modal={false}>
 			<SheetTrigger>
 				<Menu className="dark:text-white "/>
 				<DialogTitle />
 			</SheetTrigger>
-			<SheetContent className="p-0 z-[100]" side="left">
+			<SheetContent className="p-0 z-[100] overflow-visible" side="left">
 				<Sidebar />
 			</SheetContent>
 		</Sheet>

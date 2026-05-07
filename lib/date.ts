@@ -10,6 +10,24 @@ export const formatDate = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
+export const indianFormat = (date: Date) => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${day}-${month}-${year}`;
+};
+
+export const normalize = (d: Date) => {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
+
+
 // ✅ today
 export const getToday = () => {
   const now = new Date();

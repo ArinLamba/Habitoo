@@ -42,7 +42,7 @@ export const Sidebar = ({ className }: Props) => {
           iconSrc="/plan.svg" 
         />
       </div>
-      <div className="p-4">   
+      <div className="p-4 z-100">   
         <UserButton />
       </div>
     </div>

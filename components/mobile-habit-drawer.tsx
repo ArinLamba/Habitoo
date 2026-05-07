@@ -15,9 +15,9 @@ export const MobileHabitDrawer = () => {
       {/* Trigger Button */}
       <Drawer open={isOpen} onOpenChange={(open) => !open && close()}>
 
-        <DrawerContent className="h-[85vh] flex flex-col px-3 pt-3">
+        <DrawerContent className="h-full flex flex-col px-3 pt-3">
           {/* 👇 reuse your entire UI */}
-          <StickyWrapperClient />
+          {isOpen && <StickyWrapperClient /> }
 
         </DrawerContent>
       </Drawer>

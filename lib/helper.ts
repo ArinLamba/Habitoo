@@ -1,4 +1,4 @@
-import { formatDate } from "./date";
+import { formatDate, normalize } from "./date";
 import { Completion } from "./types";
 
 
@@ -82,4 +82,20 @@ export const generateHeatmapGrid = (days = 90) => {
   return result;
 };
 
+import { Habit } from "@/lib/types";
 
+
+export const getActiveHabits = (
+  habits: Habit[],
+  date: Date
+) => {
+  const normalizedCurrent = normalize(date);
+
+  return habits.filter((habit) => {
+    if (!habit?.createdAt) return false;
+
+    const created = normalize(new Date(habit.createdAt));
+
+    return created <= normalizedCurrent;
+  });
+};

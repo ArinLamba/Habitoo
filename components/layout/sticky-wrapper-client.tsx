@@ -48,6 +48,7 @@ export const StickyWrapperClient = () => {
       setSelectedHabitId(habits[habits.length - 1].id);
     }
   };
+  
   return (
     <div className="flex flex-col">
       <HabitHeader />
