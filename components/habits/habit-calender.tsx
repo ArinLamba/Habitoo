@@ -3,7 +3,7 @@
 import { getDaysInMonth } from "@/lib/helper";
 import { formatDate } from "@/lib/date";
 
-import { Completion, Habit } from "@/lib/types";
+import { Completion, Habit, HABIT_STATUS } from "@/lib/types";
 
 import { useDateStore } from "@/store/use-date-store";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -30,10 +30,10 @@ export const HabitCalendar = ({
 
   const days = getDaysInMonth(currentDate);
 
-  const map = new Map<string, boolean>();
+  const map = new Map<string, Completion["status"]>();
   completions
     .filter(c => c.habitId === habit.id)
-    .forEach(c => map.set(c.date, c.completed!));
+    .forEach(c => map.set(c.date, c.status));
 
   const monthLabel = currentDate.toLocaleString("default", {
     month: "long",
@@ -55,7 +55,7 @@ export const HabitCalendar = ({
 
   const getStreakDates = () => {
     const doneDates = completions
-      .filter(c => c.habitId === habit.id && c.completed)
+      .filter(c => c.habitId === habit.id && c.status === HABIT_STATUS.COMPLETED)
       .map(c => c.date);
 
     const set = new Set(doneDates);
@@ -112,7 +112,9 @@ export const HabitCalendar = ({
           if (!date) return <div key={i} />;
 
           const key = formatDate(date);
-          const completed = map.get(key);
+          const status = map.get(key);
+
+          const isCompleted = status === HABIT_STATUS.COMPLETED;
           const isToday =
             date.getDate() === realToday.getDate() &&
             month === realToday.getMonth() &&
@@ -128,11 +130,10 @@ export const HabitCalendar = ({
                 h-8 w-8  flex items-center justify-center rounded-md text-sm cursor-pointer`,
                 isFuture && "opacity-30 cursor-not-allowed",
                 isToday && "border dark:border-white border-black",
-                completed === true 
+                isCompleted === true 
                 ? "bg-pink-500 dark:text-black text-white"
                 : "dark:hover:bg-white/10 hover:bg-black/5",
                 isStreak && "bg-orange-500",
-                currentDate.getDate() === date.getDate() && "dark:bg-white dark:text-black bg-black text-white",
               )}
               onClick={() => setCurrentDate(date)}
               disabled={isFuture}

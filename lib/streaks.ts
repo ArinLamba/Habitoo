@@ -1,9 +1,9 @@
 import { getNextDay, getPrevDay, getToday } from "./date";
-import { Completion, Habit } from "./types";
+import { Completion, Habit, HABIT_STATUS } from "./types";
 
 export const getStreaks = (completions: Completion[]) => {
   const doneDates = completions
-    .filter(c => c.completed)
+    .filter(c => c.status === HABIT_STATUS.COMPLETED)
     .map(c => c.date);
 
   if (doneDates.length === 0) {
@@ -77,7 +77,7 @@ export const getHabitStreaks = (
     .filter(
       (c) =>
         c.habitId === habitId &&
-        c.completed &&
+        c.status === HABIT_STATUS.COMPLETED &&
         c.date <= today
     )
     .map((c) => c.date);

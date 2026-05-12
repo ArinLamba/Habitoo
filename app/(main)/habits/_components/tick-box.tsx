@@ -1,61 +1,49 @@
 "use client";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 
-import { useMemo } from "react";
-import { Check } from "lucide-react";
-import { Completion, Habit } from "@/lib/types";
+import { ArrowRight, Check, X } from "lucide-react";
+import { Habit, HABIT_STATUS, HabitStatus } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 
-import { useToggleCompletion } from "@/hooks/mutations/use-toggle-completion";
+import { useHabitActions } from "@/hooks/use-habit-actions";
 
 import { cn } from "@/lib/utils";
-import { formatDate, getIsFuture } from "@/lib/date";
+import { formatDate, getIsFuture, normalize } from "@/lib/date";
+import { useSelectedCellStore } from "@/store/use-selected-cell-store";
 
 
 type Props = {
   habit: Habit;
-  completions: Completion[];
   year: number;
   month: number;
+  completionMap: Map<string, HabitStatus>;
 };
 
 export const TickBox = ({
   habit,
-  completions,
   year,
-  month
+  month,
+  completionMap
 }: Props) => {
 
-  const {id, createdAt } = habit;
-  
-  const { mutate } = useToggleCompletion();
-  
+  const { id, startDate } = habit;
+  const setSelectedCell = useSelectedCellStore(s => s.setSelectedCell);
+  const { toggle } = useHabitActions({ completionMap });
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  
 
-  const completionSet = useMemo(() => {
-    return new Set(
-      completions
-        .filter((c) => c.completed)
-        .map((c) => `${c.habitId}-${c.date}`)
-    );
-  }, [completions]);
-    
 
-  const handleMarkHabit = async (id: string, date: string) => {
-    mutate({ habitId: id, date });
-  };
-
-  const normalize = (d: Date) => {
-    const x = new Date(d);
-    x.setHours(0, 0, 0, 0);
-    return x;
-  };
-
-  const created = normalize(new Date(createdAt!));
+  const created = normalize(new Date(startDate));
   
   return (
     <div
@@ -66,8 +54,12 @@ export const TickBox = ({
         const dateObj = new Date(year, month, day);
         const normalizedDate = normalize(dateObj);
         const date = formatDate(dateObj);
+        const status = completionMap.get(`${id}-${date}`) ?? null;
 
-        const isDone = completionSet.has(`${id}-${date}`);
+        const isDone = status === HABIT_STATUS.COMPLETED;
+        const isSkipped = status === HABIT_STATUS.SKIPPED;
+        const isFailed = status === HABIT_STATUS.FAILED;
+
         const isBeforeStart = normalizedDate < created;
         const isFuture = getIsFuture(date);
 
@@ -91,45 +83,88 @@ export const TickBox = ({
           `
           : isDone
           ? `
-            bg-green-500/30 dark:bg-green-600/70
+            bg-green-500/30 dark:bg-green-500/70
             hover:bg-green-500/40 dark:hover:bg-green-500/80
             shadow-sm
           `
-          : `
+          : isSkipped
+          ? `
+            bg-amber-500/10
+            border border-amber-400/30
+            hover:bg-amber-500/20
+            text-amber-400
+          `
+          : isFailed
+          ? `
+            bg-rose-500/10
+            border border-rose-400/30
+            hover:bg-rose-500/20
+            text-rose-400
+          `
+          :  `
             bg-gray-100 dark:bg-zinc-800
             hover:bg-gray-200 dark:hover:bg-zinc-700
           `;
 
-        const button = (
-          <Button
-            size="mark"
-            variant="mark"
+        return (
+          <ContextMenu
             key={day}
-            disabled={isDisabled}
-            className={cn(
-              stateStyles,
-              "transition-all duration-200 rounded-md ease-out"
-            )}
-            onClick={() => {
-              if (isDisabled) return;
-              handleMarkHabit(id, date);
+            onOpenChange={(open) => {
+              if (open && !isDisabled) {
+                setSelectedCell({habitId: id, date});
+              }
             }}
           >
-            {isDone && (
-              <Check className="dark:text-green-200 text-green-700 opacity-90" />
-            )}
+            <ContextMenuTrigger asChild>
+              <Button
+                size="mark"
+                variant="mark"
+                disabled={isDisabled}
+                className={cn(stateStyles, "transition-all duration-200 rounded-md ease-out")}
+                onClick={() => {
+                  if (isDisabled) return;
+                  setSelectedCell({habitId: id, date});
 
-            {!isDisabled && !isDone && (
-              <div className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-            )}
+                  toggle(id, date, HABIT_STATUS.COMPLETED);
+                }}
+              >
+                {isDone && <Check className="text-emerald-950" />}
+                {isSkipped && <ArrowRight />}
+                {isFailed && <X />}
 
-            {isFuture && (
-              <div className="w-1 h-1 rounded-full bg-blue-700/70 dark:bg-blue-400/70 mx-auto" />
-            )}
-          </Button>
+                {!isDisabled && !isDone && !isSkipped && !isFailed && (
+                  <div className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                )}
+
+                {isFuture && (
+                  <div className="w-1 h-1 rounded-full bg-blue-700/70 mx-auto" />
+                )}
+              </Button>
+            </ContextMenuTrigger>
+
+            <ContextMenuContent className="w-56">
+              <ContextMenuItem onClick={() => toggle(id, date, HABIT_STATUS.COMPLETED)}>
+                Mark as Done
+                <ContextMenuShortcut> Alt + D</ContextMenuShortcut>
+              </ContextMenuItem>
+
+              <ContextMenuItem onClick={() => toggle(id, date, HABIT_STATUS.SKIPPED)}>
+                Mark as Skipped
+                <ContextMenuShortcut> Alt + S</ContextMenuShortcut>
+              </ContextMenuItem>
+
+              <ContextMenuItem onClick={() => toggle(id, date, HABIT_STATUS.FAILED)}>
+                Mark as Failed
+                <ContextMenuShortcut> Alt + F</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuItem onClick={() => toggle(id, date, null)}>
+                Clear Logs
+                <ContextMenuShortcut> Del</ContextMenuShortcut>
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         );
-
-        return button;
       })}
     </div>
   );

@@ -1,4 +1,4 @@
-import { Completion, Habit } from "@/lib/types";
+import { Completion, Habit, HABIT_STATUS } from "@/lib/types";
 
 export const HabitInsights = ({ habits, completions }: {
   habits: Habit[];
@@ -10,7 +10,7 @@ export const HabitInsights = ({ habits, completions }: {
   habits.forEach(h => map.set(h.id, 0));
 
   completions.forEach(c => {
-    if (c.completed) {
+    if (c.status === HABIT_STATUS.COMPLETED) {
       map.set(c.habitId, (map.get(c.habitId) || 0) + 1);
     }
   });

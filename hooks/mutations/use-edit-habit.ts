@@ -1,7 +1,7 @@
 // /hooks/mutations/use-edit-habit.ts
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { editHabit } from "@/actions/edit-habit";
+import { editHabit } from "@/server/actions/edit-habit";
 
 export const useEditHabit = () => {
   const queryClient = useQueryClient();

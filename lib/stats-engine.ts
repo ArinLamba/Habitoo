@@ -1,4 +1,4 @@
-import { Completion, Habit } from "./types";
+import { Completion, Habit, HABIT_STATUS } from "./types";
 import { formatDate } from "./date";
 import { getStreaks, getHabitStreaks } from "./streaks"; // 👈 your functions
 
@@ -15,7 +15,7 @@ export const buildStats = (
 
   // ✅ SINGLE PASS
   completions.forEach((c) => {
-    if (!c.completed || c.date > todayStr) return;
+    if (c.status !== HABIT_STATUS.COMPLETED ||c.date > todayStr) return;
 
     // global
     doneSet.add(c.date);
@@ -86,7 +86,7 @@ export const buildStats = (
   // 🔥 ===== CONSISTENCY =====
   const consistencySet = new Set(
     completions
-      .filter((c) => c.completed && c.date <= todayStr)
+      .filter((c) => c.status === HABIT_STATUS.COMPLETED && c.date <= todayStr)
       .map((c) => `${c.habitId}-${c.date}`)
   );
 
@@ -114,6 +114,15 @@ export const buildStats = (
           Math.round((consistencySet.size / totalDays) * 100)
         )
       : 0;
+  
+
+  //  ====== Completion Set =====
+  const completionMap = new Map(
+    completions.map((c) => [
+      `${c.habitId}-${c.date}`,
+      c.status
+    ])
+  );
 
   // 🔥 FINAL RETURN
   return {
@@ -133,5 +142,9 @@ export const buildStats = (
     // insights
     mostActiveDay,
     longestBreak,
+
+    // Completion
+    completionMap
+
   };
 };

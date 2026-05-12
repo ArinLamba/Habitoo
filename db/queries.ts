@@ -2,8 +2,8 @@
 import db from "@/db/index";
 import { habitCompletions, habits } from "@/db/schema";
 import { formatDate } from "@/lib/date";
+import { getUserId } from "@/lib/get-user-id";
 
-import { auth } from "@clerk/nextjs/server";
 import { and, eq, gte, lte } from "drizzle-orm";
 
 import { cache } from "react";
@@ -11,7 +11,7 @@ import { cache } from "react";
 // /db/queries.ts
 
 export const getCompletions = async (range: number | "all", clientTodayStr?: string) => {
-  const { userId } = await auth();
+  const userId = await getUserId();
   if (!userId) throw new Error("Unauthorized");
   
   console.log("🔥 DB HIT: getCompletions", new Date().toISOString());
@@ -52,7 +52,7 @@ export const getCompletions = async (range: number | "all", clientTodayStr?: str
 // TODO: make a separate order column because it will be helpful in drag and drop later 
 
 export const getHabits = async () => {
-  const { userId } = await auth();
+  const userId = await getUserId();
   if (!userId) throw new Error("Unauthorized") ;
 
   console.log("🔥 DB HIT: getHabits", new Date().toISOString());
@@ -68,7 +68,7 @@ export const getHabits = async () => {
 };
 
 export const getNoteByDate = cache(async (date: string) => {
-  const { userId } = await auth();
+  const userId = await getUserId();
   if (!userId) throw new Error("Unauthorized");
 
   console.log("🔥 DB HIT: getNoteByDate", new Date().toISOString());

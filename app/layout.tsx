@@ -28,7 +28,7 @@ export default function RootLayout({
     className={`${geistSans.className} antialiased `}
     suppressHydrationWarning
     >
-        <body className="bg-gray-100 dark:bg-zinc-950">
+        <body className="bg-white dark:bg-zinc-950">
           <ClerkProvider>
             <QueryProviders>
               <ThemeProvider

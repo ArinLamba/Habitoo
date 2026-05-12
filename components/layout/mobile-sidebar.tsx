@@ -12,7 +12,7 @@ export const MobileSidebar = () => {
 	return (
 		<Sheet modal={false}>
 			<SheetTrigger>
-				<Menu className="dark:text-white "/>
+				<Menu className="dark:text-white block lg:hidden" size={18}/>
 				<DialogTitle />
 			</SheetTrigger>
 			<SheetContent className="p-0 z-[100] overflow-visible" side="left">

@@ -2,9 +2,10 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { formatDate } from "@/lib/date";
-import { Completion, Habit } from "@/lib/types";
+import { Completion, Habit, HABIT_STATUS } from "@/lib/types";
 
 import { useDateStore } from "@/store/use-date-store";
+
 
 
 type Props = {
@@ -17,6 +18,7 @@ export const CircularProgress = ({
   completions
 }: Props) => {
 
+
   const [animatedPercent, setAnimatedPercent] = useState(0);
   
   const currentDate = useDateStore((s) => s.currentDate);
@@ -24,15 +26,13 @@ export const CircularProgress = ({
   const day = currentDate.getDate();
   const year = currentDate.getFullYear();
 
-
-  
   const selectedDateStr = formatDate(currentDate);
 
   const activeHabits = useMemo(() => {
     return habits.filter((habit) => {
-      if (!habit || !habit.createdAt) return false;
+      if (!habit || !habit.startDate) return false;
 
-      const created = normalize(new Date(habit.createdAt));
+      const created = normalize(new Date(habit.startDate));
       const current = normalize(currentDate);
 
       return created <= current;
@@ -45,7 +45,7 @@ export const CircularProgress = ({
 
   const completed = useMemo(() => {
     return completions.filter(c =>
-      c.completed &&
+      c.status === HABIT_STATUS.COMPLETED &&
       c.date === selectedDateStr &&
       activeIds.has(c.habitId)
     ).length;
@@ -59,8 +59,8 @@ export const CircularProgress = ({
       : 0;
   }, [completed, total]);
 
-  const radius = 78;
-  const stroke = 8;
+  const radius = 70;
+  const stroke = 7;
   const normalizedRadius = radius - stroke / 2;
 
   const circumference = 2 * Math.PI * normalizedRadius;
@@ -80,11 +80,21 @@ export const CircularProgress = ({
     return () => clearTimeout(timeout);
   }, [percentage]);
 
-  return (
-    <div className="flex flex-col px-6  ">
-      <p className="text-sm text-muted-foreground  pl-2">Progress {day} {monthName} {year}</p>
+  // Place this right before the "return (" block
+  if (total === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 text-center border-2 border-dashed rounded-xl">
+        <p className="text-sm text-muted-foreground">No active habits for {day} {monthName}</p>
+        <p className="text-xs text-muted-foreground mt-1">Create a habit to start tracking!</p>
+      </div>
+    );
+  }
 
-      <div className="flex items-center gap-6 ">
+  return (
+    <div className="flex flex-col items-center justify-center ">
+      <p className="text-sm text-muted-foreground p-2">Progress {day} {monthName} {year}</p>
+
+      <div className="flex  items-center gap-5 ">
         
         {/* Circle */}
         <div className="relative flex items-center justify-center w-40 h-40 mt-2">
@@ -125,7 +135,7 @@ export const CircularProgress = ({
           </div>
         </div>
         
-        <div className="w-px h-20 bg-border" />
+        <div className="w-px h-20 border" />
 
         {/* Right side text */}
         <div className="flex flex-col">

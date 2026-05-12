@@ -2,42 +2,103 @@ import {
   pgTable,
   uuid,
   text,
-  boolean,
   date,
   timestamp,
-  index
+  index,
+  pgEnum,
+  numeric,
 } from "drizzle-orm/pg-core";
 
-// 🧩 HABITS
+// =========================
+// ENUMS
+// =========================
+
+export const completionStatusEnum = pgEnum(
+  "completion_status",
+  ["completed", "skipped", "failed"]
+);
+
+export const habitLifecycleEnum = pgEnum(
+  "habit_lifecycle",
+  ["active", "completed", "archived"]
+);
+
+export const habitFrequencyEnum = pgEnum(
+  "habit_frequency",
+  ["day", "week", "month", "year"]
+);
+
+// =========================
+// HABITS
+// =========================
+
 export const habits = pgTable("habits", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull(),
   name: text("name").notNull(),
-  isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
+  description: text("description"),
+  icon: text("icon"),
+  color: text("color"),
+  lifecycle: habitLifecycleEnum("lifecycle")
+    .default("active")
+    .notNull(),
+  startDate: date("start_date").notNull(),
+  targetValue: numeric("target_value"),
+  currentValue: numeric("current_value"),
+  unit: text("unit"),
+  frequency: habitFrequencyEnum("frequency")
+    .default("day")
+    .notNull(),
+  createdAt: timestamp("created_at")
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull(),
 });
 
-// ✅ COMPLETIONS (CORE TABLE)
-export const habitCompletions = pgTable("habit_completions", {
+// =========================
+// HABIT COMPLETIONS / LOGS
+// =========================
+
+export const habitCompletions = pgTable(
+  "habit_completions",
+  {
     id: uuid("id").primaryKey().defaultRandom(),
     habitId: uuid("habit_id")
-      .references(() => habits.id, {onDelete: "cascade"})
+      .references(() => habits.id, {
+        onDelete: "cascade",
+      })
       .notNull(),
     userId: text("user_id").notNull(),
     date: date("date").notNull(),
-    completed: boolean("completed").default(true),
-    completedAt: timestamp("completed_at").defaultNow().notNull(),
+    status: completionStatusEnum("status")
+      .default("completed")
+      .notNull(),
+    // for measurable habits
+    value: numeric("value"),
+    note: text("note"),
+    completedAt: timestamp("completed_at")
+      .defaultNow()
+      .notNull(),
   },
   (table) => ({
-    habitDateIdx: index("habit_date_idx").on(table.habitId, table.date),
+    habitDateIdx: index("habit_date_idx")
+      .on(table.habitId, table.date),
   })
 );
 
-// ✍️ DAILY NOTES
+// =========================
+// DAILY NOTES
+// =========================
+
 export const dailyNotes = pgTable("daily_notes", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id").notNull(),
   date: date("date").notNull(),
   note: text("note"),
   highlight: text("highlight"),
+  createdAt: timestamp("created_at")
+    .defaultNow()
+    .notNull(),
 });

@@ -1,7 +1,7 @@
 // /hooks/mutations/use-delete-habit.ts
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteHabit } from "@/actions/delete-habit";
+import { deleteHabit } from "@/server/actions/delete-habit";
 import { Habit } from "@/lib/types";
 
 export const useDeleteHabit = () => {

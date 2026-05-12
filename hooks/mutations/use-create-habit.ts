@@ -1,8 +1,8 @@
 // /hooks/mutations/use-create-habit.ts
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { upsertNewHabit } from "@/actions/add-habit";
-import { Habit } from "@/lib/types";
+import { upsertNewHabit } from "@/server/actions/add-habit";
+import { Habit, HabitFormValues } from "@/lib/types";
 
 export const useCreateHabit = () => {
   const queryClient = useQueryClient();
@@ -10,7 +10,7 @@ export const useCreateHabit = () => {
   return useMutation({
     mutationFn: upsertNewHabit,
 
-    onMutate: async (name: string) => {
+    onMutate: async (data: HabitFormValues) => {
       await queryClient.cancelQueries({ queryKey: ["habits"] });
 
       const prev = queryClient.getQueryData(["habits"]);
@@ -21,7 +21,7 @@ export const useCreateHabit = () => {
         ...old,
         {
           id: tempId,
-          name,
+          ...data,
           createdAt: new Date().toISOString(),
         },
       ]);

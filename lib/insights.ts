@@ -1,4 +1,4 @@
-import { Completion, Habit } from "./types";
+import { Completion, Habit, HABIT_STATUS } from "./types";
 
 const getWeeklyPerformance = (completions: Completion[]) => {
   const days = Array(7).fill(0);        // completed
@@ -8,7 +8,7 @@ const getWeeklyPerformance = (completions: Completion[]) => {
     const day = new Date(c.date + "T00:00:00").getDay();
     totals[day]++;
 
-    if (c.completed) days[day]++;
+    if (c.status === HABIT_STATUS.COMPLETED) days[day]++;
   });
 
   const percentages = days.map((done, i) =>
@@ -70,7 +70,7 @@ export const getHabitPerformance = (
     );
 
     const total = habitCompletions.length;
-    const done = habitCompletions.filter(c => c.completed).length;
+    const done = habitCompletions.filter(c => c.status === HABIT_STATUS.COMPLETED).length;
 
     const percentage = total === 0 ? 0 : (done / total) * 100;
 
@@ -106,7 +106,7 @@ export const getMostActiveDay = (completions: Completion[]) => {
   const count = new Map();
 
   completions.forEach((c) => {
-    if (!c.completed) return;
+    if (c.status !== HABIT_STATUS.COMPLETED) return;
 
     const day = new Date(c.date + "T00:00:00").toLocaleString("default", {
       weekday: "long",

@@ -18,15 +18,17 @@ export const Sidebar = ({ className }: Props) => {
   // const { isSignedIn } = useAuth();
 
   return (
-    <div className={cn("flex h-full xl:w-[200px] md:fixed left-0 top-0 px-4 flex-col",
+    <div className={cn("flex h-full xl:w-[240px] md:fixed left-0 top-0 px-4 flex-col",
     className,
     )}>
 
       <Link href="/habits">
-        <div className="pt-8 pl-4 pb-7 flex items-center gap-x-3 ">
-          <Image src="/logo.svg" height={40} width={40} alt="logo" />
-          <h1 className="text-2xl">
-            Habitoo
+        <div className="pt-8 pl- pb-7 flex items-center gap-x-3 ">
+          <Image src="/logo.svg" height={30} width={30} alt="logo" />
+          <h1 className="text-lg  whitespace-nowrap">
+            <p className="font-lightt italic ">
+              HABIT  <span className="font-bold not-italic p-1 font">TRACKER</span>
+            </p>
           </h1>
         </div>
       </Link>

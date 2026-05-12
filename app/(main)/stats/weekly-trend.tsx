@@ -1,6 +1,6 @@
 
 import { formatDate } from "@/lib/date";
-import { Completion } from "@/lib/types";
+import { Completion, HABIT_STATUS } from "@/lib/types";
 
 export const WeeklyTrend = ({ completions }: {
   completions: Completion[];
@@ -9,7 +9,7 @@ export const WeeklyTrend = ({ completions }: {
   const doneMap = new Map();
 
   completions.forEach(c => {
-    if (!c.completed) return;
+    if (c.status !== HABIT_STATUS.COMPLETED) return;
     doneMap.set(c.date, (doneMap.get(c.date) || 0) + 1);
   });
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { Completion, Habit } from "@/lib/types";
 import { useStats } from "@/hooks/use-stats";
+import { ChartNoAxesCombined } from "lucide-react";
 
 type Props = {
   habits: Habit[];
@@ -47,9 +48,12 @@ export const AnalysisBoard = ({
       <div className="absolute right-0 top-2 mr-3 lg:static">
         <Link
           href="/stats"
-          className="text-xs px-3 py-1.5 rounded-md border hover:bg-muted transition"
+          className="text-xs px-3 py-1.5 rounded-md border hover:bg-muted transition flex"
         >
-          View stats →
+          <p className="flex">
+            View stats 
+            <ChartNoAxesCombined size={18} className="ml-2"/>
+          </p>
         </Link>
       </div>
     </div>

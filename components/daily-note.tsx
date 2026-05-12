@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDateStore } from "@/store/use-date-store";
 import { formatDate } from "@/lib/date";
 import { getNoteByDate } from "@/db/queries";
-import { upsertNote } from "@/actions/add-note";
+import { upsertNote } from "@/server/actions/add-note";
 
 export const DailyNote = () => {
   const { currentDate } = useDateStore();
@@ -29,13 +29,13 @@ export const DailyNote = () => {
     const load = async () => {
       const res = await getNoteByDate(dateStr);
 
-      const n = res?.note || "";
+      // const n = res?.note || "";
       const h = res?.highlight || "";
 
-      setNote(n);
+      // setNote(n);
       setHighlight(h);
 
-      setSavedNote(n);
+      // setSavedNote(n);
       setSavedHighlight(h);
     };
 
@@ -49,7 +49,7 @@ export const DailyNote = () => {
     try {
       await upsertNote(dateStr, note, highlight);
 
-      setSavedNote(note);
+      // setSavedNote(note);
       setSavedHighlight(highlight);
     } finally {
       setLoading(false);
@@ -69,7 +69,7 @@ export const DailyNote = () => {
         className="w-full p-2 rounded-md bg-background border text-sm shadow-sm"
       />
 
-      <p className="text-sm text-muted-foreground mb-2">
+      {/* <p className="text-sm text-muted-foreground mb-2">
         📝 Reflection ({dateStr})
       </p>
 
@@ -78,7 +78,7 @@ export const DailyNote = () => {
         onChange={(e) => setNote(e.target.value)}
         placeholder="Reflect on Your Day ..."
         className="min-h-[120px] w-full rounded-md bg-background border text-sm shadow-sm"
-      />
+      /> */}
 
       <Button
         onClick={handleSave}

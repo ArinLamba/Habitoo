@@ -1,61 +1,28 @@
 "use client";
 
-import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
-
 import { HabitItem } from "../_components/habit-item";
 import { AddHabitInput } from "../_components/add-habit-input";
-import { Button } from "@/components/ui/button";
-
-import { useDateStore } from "@/store/use-date-store";
-
 import { Completion, Habit } from "@/lib/types";
 import { useStats } from "@/hooks/use-stats";
-
 
 type Props = {
   habits: Habit[];
   completions: Completion[];
-  year: number;
-  month: number;
 };
 
 export const HabitList = ({
   habits,
   completions,
-  year,
-  month,
 }: Props) => {
-
-  const { currentDate, setCurrentDate } = useDateStore();
 
   const stats = useStats(habits, completions);
   
-  
-  const monthName = currentDate.toLocaleString("default", { month: "long",});
-
-  const prevMonth = () => {
-    const newDate = new Date(year, month, 0); // 👈 magic
-    setCurrentDate(newDate);
-  };
-  
   return (
     <div className="flex flex-col gap-y-1 ">
-      <div className="flex w-full items-center justify-center mb-3">
-        <div className="flex items-center justify-between min-w-[250px] ">
-          <Button variant={"secondary"} onClick={prevMonth}>
-            <MoveLeftIcon />
-          </Button >
-
-          <h2 className="text-lg shrink-0 font-semibold">
-            {monthName} {year}
-          </h2>
-
-          <Button variant={"secondary"} onClick={() => setCurrentDate(new Date(year, month + 1, 1))}>
-            <MoveRightIcon />
-          </Button >
-        </div>
+      <div className="bg-blue-500/5 mr-3 mb-2.5 py-6.25 text-center rounded">
+        <h3 className="text-blue-400 font-semibold tracking-wide ">Habits </h3>
       </div>
-      
+
       <div className="flex no-scrollbar overflow-x-auto flex-col gap-y-1 border-r-white/30 mr-2">
         {habits
           .filter((h) => h && h.id) // 👈 prevents crash
@@ -69,7 +36,8 @@ export const HabitList = ({
             />
           )
         })}
-
+      </div>
+      <div className="flex items-center bg-aber-200 justify-center p-2 text-xs">
         <AddHabitInput />
       </div>
     </div>

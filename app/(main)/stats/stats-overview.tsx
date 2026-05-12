@@ -1,5 +1,5 @@
 import { Card } from "@/components/stats-card";
-import { Completion, Habit } from "@/lib/types";
+import { Completion, Habit, HABIT_STATUS } from "@/lib/types";
 
 export const StatsOverview = ({ habits, completions }: {
   habits: Habit[];
@@ -7,7 +7,7 @@ export const StatsOverview = ({ habits, completions }: {
 }) => {
 
   const total = completions.length;
-  const done = completions.filter(c => c.completed).length;
+  const done = completions.filter(c => c.status === HABIT_STATUS.COMPLETED).length;
 
   const rate = total === 0 ? 0 : Math.round((done / total) * 100);
 

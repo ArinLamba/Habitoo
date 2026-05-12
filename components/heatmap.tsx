@@ -57,7 +57,7 @@ export const Heatmap = ({
 
       {/* Month Labels */}
       <div className="flex gap-[5px] mb-1 text-[10px] text-muted-foreground">
-        <div className="w-6" /> {/* space for day labels */}
+        <div className="w-5" /> {/* space for day labels */}
 
         {weeks.map((week, i) => {
           const currentMonth = new Date(week[0]).getMonth();
@@ -69,7 +69,7 @@ export const Heatmap = ({
           return (
             <div
               key={i}
-              className={`w-3 text-center ${
+              className={`w-[10px] text-center ${
                 isNewMonth ? "ml-[11px] font-medium" : ""
               }`}
             >
@@ -84,7 +84,7 @@ export const Heatmap = ({
       </div>
 
       {/* Grid */}
-      <div className="flex gap-[6px]">
+      <div className="flex gap-[5px]">
         
         {/* Day labels */}
         <div className="flex flex-col gap-[px] text-[10px] text-muted-foreground mr-1">
@@ -109,7 +109,7 @@ export const Heatmap = ({
             <div
               key={i}
               className={`flex flex-col gap-[4px] ${
-                isNewMonth ? "ml-2" : ""
+                isNewMonth ? "ml-1" : ""
               }`}
             >
               {week.map((date) => {

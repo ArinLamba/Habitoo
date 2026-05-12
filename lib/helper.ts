@@ -1,6 +1,5 @@
-import { formatDate, normalize } from "./date";
-import { Completion } from "./types";
-
+import { formatDate, normalize } from "@/lib/date";
+import { Habit, Completion, HABIT_STATUS } from "@/lib/types";
 
 export const getDaysInMonth = (date: Date) => {
   const year = date.getFullYear();
@@ -31,7 +30,7 @@ export const getHeatmapData = (completions: Completion[]) => {
   const map = new Map();
 
   completions.forEach((c) => {
-    if (!c.completed) return;
+    if (c.status !== HABIT_STATUS.COMPLETED) return;
 
     const date = c.date;
 
@@ -81,8 +80,6 @@ export const generateHeatmapGrid = (days = 90) => {
 
   return result;
 };
-
-import { Habit } from "@/lib/types";
 
 
 export const getActiveHabits = (

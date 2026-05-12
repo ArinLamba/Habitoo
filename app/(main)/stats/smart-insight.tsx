@@ -1,5 +1,5 @@
 
-import { Completion } from "@/lib/types";
+import { Completion, HABIT_STATUS } from "@/lib/types";
 import { getLongestBreak, getMostActiveDay, getSmartInsight } from "@/lib/insights";
 import { useMemo } from "react";
 
@@ -10,7 +10,7 @@ export const SmartInsight = ({ completions }: {
 
   const { insight, longestBreak, mostActive } = useMemo(() => {
     const dates = completions
-      .filter(c => c.completed)
+      .filter(c => c.status === HABIT_STATUS.COMPLETED)
       .map(c => c.date);
 
     return {

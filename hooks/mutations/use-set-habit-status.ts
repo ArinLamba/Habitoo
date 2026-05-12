@@ -1,19 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { markHabit } from "@/actions/mark-habit";
-import { Completion } from "@/lib/types";
+import { setHabit } from "@/server/actions/set-habit";
+import { Completion, HabitStatus } from "@/lib/types";
 import { useRangeStore } from "@/store/use-range-store";
 
 // /hooks/mutations/use-toggle-completion.ts
 
-export const useToggleCompletion = () => {
+export const useSetHabitStatus = () => {
   const queryClient = useQueryClient();
   const range = useRangeStore(s => s.range);
 
   return useMutation({
-    mutationFn: ({ habitId, date }: { habitId: string; date: string }) =>
-      markHabit(habitId, date),
+    mutationFn: ({ habitId, date, status }: { habitId: string; date: string, status: HabitStatus }) =>
+      setHabit(habitId, date, status),
 
-    onMutate: async ({ habitId, date }) => {
+    onMutate: async ({ habitId, date, status }) => {
       // 1. Get today's date string (must match exactly what useCompletions uses)
       const localToday = new Date().toLocaleDateString('en-CA');
       
@@ -27,24 +27,43 @@ export const useToggleCompletion = () => {
       const previous = queryClient.getQueryData(key);
 
       // 5. Optimistically update the cache
-      queryClient.setQueryData(key, (old: Completion[] = []) => {
+      queryClient.setQueryData(key,(old: Completion[] = []) => {
+
         const index = old.findIndex(
-          (c) => c.habitId === habitId && c.date === date
+          (c) =>
+            c.habitId === habitId &&
+            c.date === date
         );
 
+        // CLEAR
+        if (status === null) {
+
+          return old.filter(
+            (c) =>
+              !(
+                c.habitId === habitId &&
+                c.date === date
+              )
+          );
+        }
+
+        // UPDATE
         if (index !== -1) {
-          // If it exists, toggle the completed state
+
           const updated = [...old];
+
           updated[index] = {
             ...updated[index],
-            completed: !updated[index].completed,
+            status,
           };
+
           return updated;
         }
 
-        // If it doesn't exist in the local cache yet, add it
-        return [...old, { habitId, date, completed: true }];
-      });
+        // INSERT
+        return [...old,{ habitId, date, status },];
+      }
+    );
 
       return { previous, key };
     },

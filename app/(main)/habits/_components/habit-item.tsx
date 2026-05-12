@@ -42,9 +42,6 @@ export const HabitItem = ({
   const { open } = useDrawerModal();
   const setView  = useViewStore((s) => s.setView);
   const isMobile = useIsMobile();
-
-  // TODO: fix streaks to precompute or move it from here
-  // const { currentStreak } = getHabitStreaks(habit.id, completions);
  
 
   const handleDelete = () => {
@@ -93,7 +90,7 @@ export const HabitItem = ({
             />
           ) : (
             <div
-              className="truncate mr-2 cursor-pointer"
+              className="truncate mr-2 cursor-pointer text-sm font-medium"
               title={habit?.name}
               onClick={() => {
                 if (!habit) return;

@@ -5,6 +5,12 @@
 /* * {
   outline: 1px solid red;
 } */
+
+html,
+body,
+:root {
+  @apply h-full;
+}
  
 @plugin "tailwind-scrollbar";
 
