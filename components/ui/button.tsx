@@ -19,8 +19,9 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        sidebar: "bg-transparent text-zinc-500 dark:text-zinc-400 border border-transparent hover:bg-zinc-100/70 dark:hover:bg-zinc-800/70 hover:text-zinc-900 dark:hover:text-white transition-all duration-150 ease-out",
-        sidebarOutline: "border border-zinc-300/70 dark:border-zinc-700 bg-zinc-100/80 dark:bg-zinc-800/80 text-zinc-900 dark:text-white shadow-sm",
+        sidebar: "text-zinc-500 dark:text-zinc-400 border border-transparent hover:bg-indigo-50/70 dark:hover:bg-indigo-500/10 hover:text-indigo-700 dark:hover:text-indigo-200 transition-all duration-200",
+
+        sidebarOutline: "border border-indigo-500/10 dark:border-indigo-400/10 bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-200 shadow-sm",
         save: " bg-green-600/10 dark:bg-green-600/20 hover:bg-green-600/10 dark:hover:bg-green-600/30",
         mark: " rounded hover:scale-120 cursor-pointer transition-all border border-black/10 dark:border-white/10",
         calendar: "hover:text-foregound aria-expanded:bg-muted aria-expanded:text-foreground"

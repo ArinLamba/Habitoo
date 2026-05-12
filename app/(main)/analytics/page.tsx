@@ -5,10 +5,10 @@ import { FeedWrapper } from "@/components/layout/feed-wrapper";
 import { StatsClient } from "./stats-client";
 import { StickyWrapperClient } from "@/components/layout/sticky-wrapper-client";
 
-const StatsPage = () => {
+const AnalyticsPage = () => {
 
   return (
-    <div className="flex  gap-[20px] px-6 ">
+    <div>
       <FeedWrapper>
         <StatsClient />
       </FeedWrapper>
@@ -19,4 +19,4 @@ const StatsPage = () => {
   );
 };
 
-export default StatsPage;
+export default AnalyticsPage;

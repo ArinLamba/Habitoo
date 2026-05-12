@@ -1,18 +1,21 @@
-import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 import Image from "next/image";
+
+import { MobileLeftSidebar } from "@/components/layout/mobile-left-sidebar";
+import { MobileRightSidebar } from "@/components/layout/mobile-right-sidebar";
+
 import { ModeToggle } from "../mode-toggle";
-import { RangeSelect } from "../range-selector";
 import { GridListTogle } from "../grid-list-toggle";
+import { UserButton } from "@clerk/nextjs";
 
 
 export const MobileHeader = () => {
   return (
-    <nav className="px-4 h-[50px] flex items-center justify-between bg-gray-50 dark:bg-zinc-900 border-b border-b-gray-300 dark:border-b-gray-800 shadow-xs fixed top-0 w-full z-50">
+    <nav className="px-4 h-[50px] flex items-center justify-between bg-gray-50 dark:bg-zinc-900 border- border-b-gray-300 dark:border-b-gray-800 shadow-xs fixed top-0 w-full z-50">
 
       {/* LEFT */}
       <div className="flex items-center gap-6">
-        <MobileSidebar />
-        <div className="flex items-center justify-center gap-x-2">
+        <MobileLeftSidebar />
+        <div className=" items-center justify-center gap-x-2 lg:flex hidden">
           <Image src="/logo.svg" height={28} width={28} alt="logo" />
           <h1 className="text-lg  whitespace-nowrap">
             <p className="font-lightt italic ">
@@ -29,11 +32,10 @@ export const MobileHeader = () => {
 
       {/* RIGHT */}
       <div className="flex items-center gap-2">
-        <RangeSelect />
-        <ModeToggle />
+        <UserButton />
+        <MobileRightSidebar />
       </div>
 
     </nav>
   );
 };
-

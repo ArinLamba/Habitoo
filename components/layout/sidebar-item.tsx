@@ -22,7 +22,7 @@ export const SidebarItem = ({
   return (
     <Button
       variant={active ? "sidebarOutline" : "sidebar"}
-      className="justify-start h-[52px]"
+      className="justify-start h-10 "
       asChild
     >
       <Link href={href}>
@@ -30,8 +30,8 @@ export const SidebarItem = ({
           src={iconSrc}
           alt={label}
           className="mr-5 "
-          height={32}
-          width={32}
+          height={24}
+          width={24}
         />
         {label}
       </Link>

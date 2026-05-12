@@ -8,14 +8,14 @@ import {
 import { Sidebar } from "@/components/layout/sidebar"
 import { DialogTitle } from "@radix-ui/react-dialog"
 
-export const MobileSidebar = () => {
+export const MobileLeftSidebar = () => {
 	return (
-		<Sheet modal={false}>
+		<Sheet >
 			<SheetTrigger>
 				<Menu className="dark:text-white block lg:hidden" size={18}/>
 				<DialogTitle />
 			</SheetTrigger>
-			<SheetContent className="p-0 z-[100] overflow-visible" side="left">
+			<SheetContent className="p-0 z-100 overflow-visible" side="left">
 				<Sidebar />
 			</SheetContent>
 		</Sheet>

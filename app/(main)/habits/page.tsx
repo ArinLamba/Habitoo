@@ -12,7 +12,7 @@ export default function HabitsPage() {
   console.log("🚨 PAGE RENDER", new Date().toISOString());
 
   return (
-    <div className="flex flex-row gap-x-4">
+    <div>
       <FeedWrapper>
         <HabitsClient />
       </FeedWrapper>

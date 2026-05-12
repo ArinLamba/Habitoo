@@ -22,7 +22,7 @@ export const StatsClient = () => {
   const stats = useStats(habits, completions);
 
   return (
-    <div className="px-2 pb-5 flex flex-col gap-6  mx-auto">
+    <div className="px-2 pb-5 flex flex-col gap-4  mx-auto">
 
 
       {/* 🟩 SECTION 1 — Overview */}
