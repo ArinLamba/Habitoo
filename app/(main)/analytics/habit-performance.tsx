@@ -1,6 +1,6 @@
 import { getHabitPerformance } from "@/lib/insights";
 import { Completion, Habit } from "@/lib/types";
-import { useRangeStore } from "@/store/use-range-store";
+
 import { useMemo } from "react";
 
 export const HabitPerformance = ({
@@ -11,7 +11,7 @@ export const HabitPerformance = ({
   completions: Completion[];
 }) => {
 
-  const { range } = useRangeStore();
+
 
   const data = useMemo(() => {
     return getHabitPerformance(habits, completions);
@@ -25,7 +25,7 @@ export const HabitPerformance = ({
 
       <div className="flex flex-col gap-3">
         <p className="text-xs text-muted-foreground">
-          Based on last {range === "all" ? "all time" : `${range} days`}
+          Based on last 
         </p>
         {data.map((h, i) => (
           <div key={i}>

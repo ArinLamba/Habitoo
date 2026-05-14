@@ -23,7 +23,7 @@ const buttonVariants = cva(
 
         sidebarOutline: "border border-indigo-500/10 dark:border-indigo-400/10 bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-200 shadow-sm",
         save: " bg-green-600/10 dark:bg-green-600/20 hover:bg-green-600/10 dark:hover:bg-green-600/30",
-        mark: " rounded hover:scale-120 cursor-pointer transition-all border border-black/10 dark:border-white/10",
+        mark: " rounded-none hover:scale-120 cursor-pointer transition-all",
         calendar: "hover:text-foregound aria-expanded:bg-muted aria-expanded:text-foreground"
       },
       size: {

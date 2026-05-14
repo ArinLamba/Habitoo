@@ -7,6 +7,7 @@ import {
   index,
   pgEnum,
   numeric,
+  integer,
 } from "drizzle-orm/pg-core";
 
 // =========================
@@ -43,8 +44,8 @@ export const habits = pgTable("habits", {
     .default("active")
     .notNull(),
   startDate: date("start_date").notNull(),
-  targetValue: numeric("target_value"),
-  currentValue: numeric("current_value"),
+  targetValue: integer("target_value").notNull(),
+  currentValue: integer("current_value"),
   unit: text("unit"),
   frequency: habitFrequencyEnum("frequency")
     .default("day")

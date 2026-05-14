@@ -82,18 +82,21 @@ export const HabitMarking = ({
 
   return (
     <div className="">
-      <div className="flex items-center justify-center mb-2 gap-x-6 ">
-        <Button variant={"secondary"} onClick={prevMonth}>
-          <MoveLeftIcon />
-        </Button >
+      <div className="flex items-center justify-center py-[9px] mb-2 gap-x-6 border-b  pr-0">
+        <div className="flex items-center justify-between bg-amber-60 max-w-50 w-full">
+          <h2 className=" shrink-0 font-semibold">
+            {monthName} {year}
+          </h2>
+          <div>
+            <Button variant={"secondary"} onClick={prevMonth}>
+              <MoveLeftIcon />
+            </Button >
 
-        <h2 className="text-lg shrink-0 font-semibold">
-          {monthName} {year}
-        </h2>
-
-        <Button variant={"secondary"} onClick={() => setCurrentDate(new Date(year, month + 1, 1))}>
-          <MoveRightIcon />
-        </Button >
+            <Button variant={"secondary"} onClick={() => setCurrentDate(new Date(year, month + 1, 1))}>
+              <MoveRightIcon />
+            </Button >
+          </div>
+        </div>
       </div>
     
       <div className="ml-3 overflow-x-auto scrollbar-thin">

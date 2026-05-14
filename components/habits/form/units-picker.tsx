@@ -2,6 +2,8 @@ import * as React from "react"
 import { Check, ChevronsUpDown, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { UNIT_GROUPS } from "@/lib/constants"
+
 import {
   Command,
   CommandEmpty,
@@ -16,7 +18,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { UNIT_GROUPS } from "@/lib/constants"
 
 export function UnitPicker({ value, onChange }: { value: string, onChange: (val: string) => void }) {
   const [open, setOpen] = React.useState(false)
@@ -78,5 +79,5 @@ export function UnitPicker({ value, onChange }: { value: string, onChange: (val:
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 };

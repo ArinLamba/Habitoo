@@ -72,51 +72,77 @@ export const getHabitStreaks = (
 ) => {
   const today = getToday();
 
-  // ✅ get only completed dates for this habit (no future)
-  const done = completions
-    .filter(
-      (c) =>
-        c.habitId === habitId &&
-        c.status === HABIT_STATUS.COMPLETED &&
-        c.date <= today
-    )
-    .map((c) => c.date);
+  // Map date → status (important fix)
+  const statusMap = new Map<string, string>();
 
-  if (done.length === 0) {
-    return { currentStreak: 0, bestStreak: 0 };
+  for (const c of completions) {
+    if (c.habitId === habitId) {
+      statusMap.set(c.date, c.status);
+    }
   }
 
-  const set = new Set(done);
+  const isSuccess = (date: string) => {
+    const status = statusMap.get(date);
 
-  // 🔥 CURRENT STREAK (clean logic)
+    if (status === HABIT_STATUS.COMPLETED) return true;
+    if (status === HABIT_STATUS.SKIPPED) return "skip";
+
+    return false; // FAILED / null / undefined
+  };
+
+  // -------------------------
+  // 🔥 CURRENT STREAK
+  // -------------------------
   let currentStreak = 0;
-  let current = getToday();
+  let current = today;
 
-  // start from today OR yesterday
-  if (!set.has(current)) {
-    current = getPrevDay(current);
+  // if today not completed, try yesterday
+  const todayStatus = isSuccess(today);
+  if (todayStatus !== true) {
+    current = getPrevDay(today);
   }
 
-  while (set.has(current)) {
-    currentStreak++;
-    current = getPrevDay(current);
+  while (true) {
+    const status = isSuccess(current);
+
+    if (status === true) {
+      currentStreak++;
+      current = getPrevDay(current);
+      continue;
+    }
+
+    if (status === "skip") {
+      // skip does NOT break streak, just go back
+      current = getPrevDay(current);
+      continue;
+    }
+
+    // FAILED or no data → break
+    break;
   }
 
+  // -------------------------
   // 🏆 BEST STREAK
-  const sorted = Array.from(new Set(done)).sort(
-    (a, b) => new Date(a).getTime() - new Date(b).getTime()
-  );
-
+  // -------------------------
+  const allDates = Array.from(statusMap.keys())
+    .filter((d) => new Date(d) <= new Date(today))
+    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
   let bestStreak = 0;
-  let temp = 1;
+  let temp = 0;
 
-  for (let i = 1; i < sorted.length; i++) {
-    if (sorted[i] === getNextDay(sorted[i - 1])) {
+  for (let i = 0; i < allDates.length; i++) {
+    const status = isSuccess(allDates[i]);
+
+    if (status === true) {
       temp++;
+    } else if (status === "skip") {
+      // skip doesn't break streak
+      continue;
     } else {
+      // break streak
       bestStreak = Math.max(bestStreak, temp);
-      temp = 1;
+      temp = 0;
     }
   }
 

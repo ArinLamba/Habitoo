@@ -1,10 +1,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {
-  UserButton,
 
-} from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
 import { SidebarItem } from "./sidebar-item";

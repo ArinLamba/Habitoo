@@ -31,7 +31,7 @@ export const MobileHeader = () => {
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center  gap-2">
         <UserButton />
         <MobileRightSidebar />
       </div>

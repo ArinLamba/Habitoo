@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { setHabit } from "@/server/actions/set-habit";
 import { Completion, HabitStatus } from "@/lib/types";
-import { useRangeStore } from "@/store/use-range-store";
+
 
 // /hooks/mutations/use-toggle-completion.ts
 
 export const useSetHabitStatus = () => {
   const queryClient = useQueryClient();
-  const range = useRangeStore(s => s.range);
 
   return useMutation({
     mutationFn: ({ habitId, date, status }: { habitId: string; date: string, status: HabitStatus }) =>
@@ -18,7 +17,7 @@ export const useSetHabitStatus = () => {
       const localToday = new Date().toLocaleDateString('en-CA');
       
       // 2. Construct the EXACT key used in useCompletions
-      const key = ["completions", range, localToday];
+      const key = ["completions", localToday];
 
       // 3. Cancel outgoing fetches so they don't overwrite our optimistic update
       await queryClient.cancelQueries({ queryKey: key });

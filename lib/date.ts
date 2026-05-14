@@ -78,3 +78,11 @@ export const getIsPast = (dateStr: string) => {
 export const getIsSameOrBefore = (a: string, b: string) => {
   return a <= b;
 };
+
+export const formatDisplayDate = (dateStr: string) => {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("default", {
+    day: "numeric",
+    month: "short",
+  });
+};
