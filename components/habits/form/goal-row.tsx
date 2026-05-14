@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select"
 
 import { UnitPicker } from "./units-picker"
-import React from "react"
 import { HabitFormValues } from "@/lib/types"
 
 interface Props {
@@ -33,7 +32,8 @@ export const GoalRow = ({
         control={control}
         render={({ field }) => (
           <Input
-            {...field}
+            value={field.value}
+            onChange={(e) => field.onChange(e.target.valueAsNumber)}
             type="number"
             placeholder="1"
             className=""
@@ -90,6 +90,6 @@ export const GoalRow = ({
         )}
       />
 
-      </div>
-  )
-}
+    </div>
+  );
+};

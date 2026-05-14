@@ -1,4 +1,5 @@
 "use client";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Select,
@@ -8,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { useRangeStore } from "@/store/use-range-store";
 
 const options = [
   { label: "Last 7 days", value: "7" },
@@ -20,16 +20,26 @@ const options = [
 ];
 
 export const RangeSelect = () => {
-  const { range, setRange } = useRangeStore();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const currentRange = searchParams.get("range") || "90";
 
   return (
     <Select
-      value={String(range)}
-      onValueChange={(val) =>
-        setRange(val === "all" ? "all" : Number(val))
-      }
+      value={currentRange}
+      onValueChange={(val) => {
+        const params = new URLSearchParams(
+          searchParams.toString()
+        );
+
+        params.set("range", val);
+
+        router.replace(`?${params.toString()}`);
+      }}
+      
     >
-      <SelectTrigger className="w-[140px] border-0 shadow-2xl bg-white dark:bg-zinc-700/50">
+      <SelectTrigger className="w-[140px] border-0  rounded-none dark:bg-zinc-900">
         <SelectValue  />
       </SelectTrigger>
 

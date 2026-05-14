@@ -2,32 +2,61 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { editHabit } from "@/server/actions/edit-habit";
+import { Habit } from "@/lib/types";
+
+import { HabitFormValues } from "@/lib/types";
+
+type EditHabitPayload = {
+  id: string;
+  data: HabitFormValues;
+};
 
 export const useEditHabit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, name }: { id: string; name: string }) =>
-      editHabit(id, name),
+    mutationFn: ({ id, data }: EditHabitPayload) =>
+      editHabit(id, data),
 
-    onMutate: async ({ id, name }) => {
+    onMutate: async ({ id, data }) => {
       await queryClient.cancelQueries({ queryKey: ["habits"] });
+      await queryClient.cancelQueries({ queryKey: ["habit", id] });
 
-      const prev = queryClient.getQueryData(["habits"]);
+      const prevHabits = queryClient.getQueryData(["habits"]);
+      const prevHabit = queryClient.getQueryData(["habit", id]);
 
-      queryClient.setQueryData(["habits"], (old: any[] = []) =>
-        old.map((h) => (h.id === id ? { ...h, name } : h))
+      queryClient.setQueryData(["habits"], (old: Habit[] = []) =>
+        old.map((h) =>
+          h.id === id ? { ...h, ...data } : h
+        )
       );
 
-      return { prev };
+      queryClient.setQueryData(
+        ["habit", id],
+        (old: Habit | undefined) =>
+          old ? { ...old, ...data } : old
+      );
+
+      return { prevHabits, prevHabit };
     },
 
-    onError: (_, __, ctx) => {
-      queryClient.setQueryData(["habits"], ctx?.prev);
+    onError: (_err, vars, ctx) => {
+      queryClient.setQueryData(["habits"], ctx?.prevHabits);
+
+      queryClient.setQueryData(
+        ["habit", vars.id],
+        ctx?.prevHabit
+      );
     },
 
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["habits"] });
+    onSettled: (_data, _err, vars) => {
+      queryClient.invalidateQueries({
+        queryKey: ["habits"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["habit", vars.id],
+      });
     },
   });
 };

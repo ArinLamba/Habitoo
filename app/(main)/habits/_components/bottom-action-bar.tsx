@@ -1,5 +1,4 @@
 
-import { Separator } from "@/components/ui/separator";
 
 import { useHabitActions } from "@/hooks/use-habit-actions";
 import { HABIT_STATUS, HabitStatus } from "@/lib/types";
@@ -26,43 +25,38 @@ export const BottomActionBar = ({ completionMap }: Props) => {
   };
 
   return (
-    <div className="sticky bottom-0 z-50 mt-2 flex shrink-0 rounded-md border-t border-zinc-700 bg-zinc-900 p-3 pb-safe">
+    <div className="flex rounded-0 border border-t-0 dark:border-white/10 border-black/10  dark:bg-zinc-900 bg-white pl-2">
       <AddHabitInput />
 
-      <Separator orientation="vertical" className="mr-5" />
-
-      <div className="flex lg:space-x-7 space-x-3 text-xs">
+      <div className="flex lg:space-x- space-x- text-xs bg-amer-800">
         <button
           disabled={isDisabled}
           onClick={() => handleClick(HABIT_STATUS.COMPLETED)}
-          className={`flex gap-3 ${
-            isDisabled ? "text-gray-500 cursor-not-allowed" : "text-indigo-400"
+          className={`flex items-center gap-2 h-7 px-4 py-4.5 border-l border-r ${
+            isDisabled ? "text-gray-500 cursor-not-allowed" : "dark:text-indigo-400 text-blue-700 font-semibold"
           }`}
         >
           <Check size={18} />
           <p>Complete</p>
         </button>
 
-        <Separator orientation="vertical" />
 
         <button
           disabled={isDisabled}
           onClick={() => handleClick(HABIT_STATUS.SKIPPED)}
-          className={`flex gap-3 ${
-            isDisabled ? "text-gray-500 cursor-not-allowed" : "text-indigo-400"
+          className={`flex items-center gap-3 h-7 px-4 py-4.5  ${
+            isDisabled ? "text-gray-500 cursor-not-allowed" : "dark:text-indigo-400 text-blue-700 font-semibold"
           }`}
         >
           <ArrowRight size={18} />
           <p>Skip</p>
         </button>
 
-        <Separator orientation="vertical" />
-
         <button
           disabled={isDisabled}
           onClick={() => handleClick(HABIT_STATUS.FAILED)}
-          className={`flex gap-3 ${
-            isDisabled ? "text-gray-500 cursor-not-allowed" : "text-indigo-400"
+          className={`flex gap-3 items-center h-7 px-4 py-4.5 border-l ${
+            isDisabled ? "text-gray-500 cursor-not-allowed" : "dark:text-indigo-400 text-blue-700 font-semibold"
           }`}
         >
           <X size={18} />

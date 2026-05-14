@@ -9,7 +9,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { HABIT_COLORS, HABIT_ICONS, LucideIconName } from "@/lib/constants"
+import { HABIT_COLORS, HABIT_ICONS } from "@/lib/constants"
+import { LucideIconName } from "@/lib/types"
 
 // 1. Define strict types for props
 interface HabitIconPickerProps {

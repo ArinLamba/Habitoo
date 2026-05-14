@@ -1,12 +1,10 @@
 "use client";
 
-import { useHabitStats } from "@/hooks/use-habit-stats";
+
 import { cn } from "@/lib/utils";
 
 export const HabitStats = () => {
-  const stats = useHabitStats();
 
-  if (!stats) return null;
 
   return (
     <div className="mt-4 space-y-3">
@@ -25,29 +23,29 @@ export const HabitStats = () => {
 
           <div className="fle items-end justify-between m">
             <p className="text-lg font-semibold tracking-tight">
-              {stats.consistency}%
+              78%
             </p>
             
             <p className="text-[10px] mt-1 text-muted-foreground">
-              Since <span className="text-white">{formatDisplayDate(stats.habitStartDate)}</span>
+              Since <span className="text-white">14</span>
             </p>
           </div>
         </div>
 
         {/* Other Cards */}
-        <MiniCard label="Last" value={stats.lastDoneText} />
-        <MiniCard label="Week" value={`${stats.weekDone}/7`} />
+        <MiniCard label="Last" value="14" />
+        <MiniCard label="Week" value="5" />
       </div>
 
       {/* Row 2 */}
       <div className="grid grid-cols-3 gap-2">
-        <MiniCard label="🔥 Current" value={`${stats.currentStreak}`} />
-        <MiniCard label="🏆 Best" value={`${stats.bestStreak}`} />
+        <MiniCard label="🔥 Current" value="324" />
+        <MiniCard label="🏆 Best" value="asdf" />
       </div>
 
       {/* Insight */}
       <div className="text-xs text-muted-foreground px-1">
-        {stats.insight}
+        asdf
       </div>
     </div>
   );

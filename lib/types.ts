@@ -1,18 +1,22 @@
 import * as z from "zod";
+import * as Icons from "lucide-react";
 
 import { habitCompletions, habits } from "@/db/schema";
 
 export type Completion = typeof habitCompletions.$inferSelect;
 export type Habit = typeof habits.$inferSelect;
-
-
+export type LucideIconName = keyof typeof Icons;
 
 export type HabitStats = {
-  habitId: string;
-  name: string;
+  consistency: number;
   currentStreak: number;
   bestStreak: number;
-};
+  weekDone: number;
+  lastDoneText: string;
+  insight: string;
+  habitStartDate: string;
+  completionMap: Map<string, HabitStatus>;
+} | null ;
 
 export type HabitStatus = "completed" | "skipped" | "failed" | null;
 

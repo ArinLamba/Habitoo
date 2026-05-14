@@ -22,7 +22,7 @@ export const MonthDates = ({ perfectDaysSet }: Props) => {
 
  
   return (
-    <div className="grid grid-cols-31 p gap-x-9 mb-4 mt-1">
+    <div className="grid grid-cols-31 gap-x-[40.5px] mb-4 ml-1 mt-1">
       {days.map((day) => {
         const dateObj = new Date(year, month, day);
         const date = formatDate(dateObj);
@@ -43,7 +43,7 @@ export const MonthDates = ({ perfectDaysSet }: Props) => {
         return (
           <Button
             key={day}
-            className={`text-xs cursor-pointer px-3 h-7 w-7 rounded-full ${
+            className={`text-[11px] cursor-pointer  h-7 w-7 rounded-full ${
               isSelected
                 ? "bg-zinc-800 dark:bg-white border-0 font-bold "
                 : isToday

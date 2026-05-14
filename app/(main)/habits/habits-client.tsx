@@ -1,8 +1,6 @@
 "use client";
 import { useMemo } from "react";
 
-
-import { AnalysisBoard } from "./_components/analysis-board";
 import { HabitList } from "./_components/habit-list";
 import { HabitMarking } from "./habit-marking";
 
@@ -84,27 +82,22 @@ export const HabitsClient = () => {
     return result;
   }, [completions, habits]);
 
-  return (
-    <div className="space-y-4 h-full flex flex-col">
-      {/* <AnalysisBoard 
-        habits={habits} 
-        completions={completions}
-      /> */}
-
-      <div className={cn(
-        "flex-1 min-h-0 flex flex-col shadow-md  border  dark:bg-zinc-900 bg-white border-black/10 dark:border-white/10 p-3 rounded-md",
-        )}>
+return (
+  <div className="h-[calc(100vh-60px)] flex flex-col">
+    <div
+      className={cn(
+        "flex-1 min-h-0 flex flex-col overflow-hidden rounded-0 border rounded-t-md  border-black/10 bg-white pl-3 pt-0 pb-0 pr-3 shadow-md dark:border-white/10 dark:bg-zinc-900"
+      )}
+    >
+      {/* SCROLL AREA */}
+       <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
         {habitViewLayout === "grid" ? (
           <ResizablePanelGroup
             orientation="horizontal"
-            className="flex-1 min-h-0"
+            className="h-full"
           >
             <ResizablePanel defaultSize={25}>
-              {/* 👇 PASS DATA DOWN */}
-              <HabitList
-                habits={habits}
-                completions={completions}
-              />
+              <HabitList habits={habits} />
             </ResizablePanel>
 
             <ResizableHandle withHandle />
@@ -126,13 +119,16 @@ export const HabitsClient = () => {
             </ResizablePanel>
           </ResizablePanelGroup>
         ) : (
-          <HabitStackView 
+          <HabitStackView
             habits={habits}
             completions={completions}
           />
         )}
-        <BottomActionBar completionMap={completionMap}/>
       </div>
+
+      {/* BOTTOM BAR */}
     </div>
-  );
+      <BottomActionBar completionMap={completionMap} />
+  </div>
+)
 };

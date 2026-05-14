@@ -18,7 +18,7 @@ export const createHabit = async (
       name: data.name,
       description: data.description,
       startDate: data.startDate,
-      targetValue: String(data.targetValue),
+      targetValue: data.targetValue,
       unit: data.unit,
       frequency: data.frequency,
       icon: data.icon,
@@ -33,17 +33,29 @@ export const createHabit = async (
 export const updateHabit = async (
   userId: string,
   id: string,
-  name: string
+  data: HabitFormValues
 ) => {
-  await db
+  const [updated] = await db
     .update(habits)
-    .set({ name })
+    .set({
+      name: data.name,
+      description: data.description,
+      icon: data.icon,
+      color: data.color,
+      startDate: data.startDate,
+      targetValue: data.targetValue,
+      unit: data.unit,
+      frequency: data.frequency,
+      updatedAt: new Date(),
+    })
     .where(
       and(
         eq(habits.id, id),
         eq(habits.userId, userId)
       )
-    );
+    ).returning();
+
+    return updated;
 };
 
 export const removeHabit = async (

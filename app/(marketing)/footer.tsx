@@ -1,9 +1,10 @@
 
 export const Footer = () => {
 	return (
-		<footer className="hidden lg:block h-20 w-full border-t-2 border-slate-200 p-2">
+		<footer className="hidden lg:block h-20 w-full border-t border-slate-800 p-2">
 			<div className="flex items-center h-full justify-evenly">
 				<div>
+					{/* TODO: */}
 					Add Something or remove the Footer
 				</div>
 				<div>

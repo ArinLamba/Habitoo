@@ -96,3 +96,9 @@ export const getActiveHabits = (
     return created <= normalizedCurrent;
   });
 };
+
+export const last7Days = [...Array(7)].map((_, i) => {
+  const d = new Date();
+  d.setDate(d.getDate() - i);
+  return d;
+});
