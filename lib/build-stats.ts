@@ -95,7 +95,7 @@ export const buildStats = (
   for (const habit of habits) {
     if (!habit?.createdAt) continue;
 
-    const created = new Date(habit.createdAt);
+    const created = new Date(habit.startDate);
     const today = new Date();
 
     const diff =
@@ -117,7 +117,7 @@ export const buildStats = (
   
 
   //  ====== Completion Set =====
-  const completionMap = new Map(
+  const statusMap = new Map(
     completions.map((c) => [
       `${c.habitId}-${c.date}`,
       c.status
@@ -144,7 +144,7 @@ export const buildStats = (
     longestBreak,
 
     // Completion
-    completionMap
+    statusMap
 
   };
 };

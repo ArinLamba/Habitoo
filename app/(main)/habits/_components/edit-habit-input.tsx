@@ -7,9 +7,9 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { HabitNamePicker } from "@/components/habits/form/habit-name-picker";
-import { GoalRow } from "@/components/habits/form/goal-row";
-import { SettingRow } from "@/components/habits/form/setting-row";
+import { HabitNamePicker } from "@/app/(main)/habits/_components/form/habit-name-picker";
+import { GoalRow } from "@/app/(main)/habits/_components/form/goal-row";
+import { SettingRow } from "@/app/(main)/habits/_components/form/setting-row";
 import { Input } from "@/components/ui/input";
 import { Field, FieldError } from "@/components/ui/field";
 
@@ -29,14 +29,15 @@ import {
   DialogTrigger 
 } from "@/components/ui/dialog";
 
-import { Pen } from "lucide-react";
+import { DeleteButton } from "./delete-button";
 
 type Props = {
   habit: Habit;
+  children: React.ReactNode;
 }
 
 
-export const EditHabitInput = ({ habit }: Props) => {
+export const EditHabitInput = ({ habit, children }: Props) => {
 
   const [open, setOpen] = useState(false);
 
@@ -97,17 +98,15 @@ export const EditHabitInput = ({ habit }: Props) => {
   }, [habit, reset]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} >
       <DialogTrigger asChild>
-        <Button variant={"ghost"}>
-          <Pen size={18}/>
-        </Button>
+        {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] overflow-hidden">
+      <DialogContent className="sm:max-w-125 overflow-hidden">
         <DialogHeader>
         <DialogTitle>Edit Habit</DialogTitle>
         <DialogDescription>
-          Edit Habit
+          Change the Attributes
         </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col w-full">
@@ -155,10 +154,21 @@ export const EditHabitInput = ({ habit }: Props) => {
             </SettingRow>
           </form>
         </div>
-        <DialogFooter>  
+        <DialogFooter className="flex justify-between">
+          <div className="space-x-2">
+            <Button variant="outline" className="text-xs">
+              Archive
+            </Button>
+          <DeleteButton id={habit.id}>
+            <Button variant={"destructive"}>
+              Delete
+            </Button>
+          </DeleteButton>
+          </div>
+          <div className="space-x-2">
             <Button
               type="button"
-              variant="secondary"
+              variant="outline"
               onClick={() => reset()}
             >
               Reset
@@ -167,9 +177,11 @@ export const EditHabitInput = ({ habit }: Props) => {
             <Button
               type="submit"
               form="habit-form"
+              style={{ backgroundColor: habit.color! }}
             >
               Save Changes
             </Button>
+          </div>          
         </DialogFooter>
       </DialogContent>
     </Dialog>

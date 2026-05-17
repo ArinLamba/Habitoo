@@ -59,8 +59,8 @@ export const CircularProgress = ({
       : 0;
   }, [completed, total]);
 
-  const radius = 70;
-  const stroke = 7;
+  const radius =60;
+  const stroke = 6;
   const normalizedRadius = radius - stroke / 2;
 
   const circumference = 2 * Math.PI * normalizedRadius;
@@ -80,15 +80,6 @@ export const CircularProgress = ({
     return () => clearTimeout(timeout);
   }, [percentage]);
 
-  // Place this right before the "return (" block
-  if (total === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center p-6 text-center border-2 border-dashed rounded-xl">
-        <p className="text-sm text-muted-foreground">No active habits for {day} {monthName}</p>
-        <p className="text-xs text-muted-foreground mt-1">Create a habit to start tracking!</p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center justify-center ">
@@ -97,7 +88,7 @@ export const CircularProgress = ({
       <div className="flex  items-center gap-5 ">
         
         {/* Circle */}
-        <div className="relative flex items-center justify-center w-40 h-40 mt-2">
+        <div className="relative flex items-center justify-center  my-2 bg-amber-30">
           <svg height={radius * 2} width={radius * 2}>
             <circle
               stroke="currentColor"
@@ -143,7 +134,7 @@ export const CircularProgress = ({
             Completed
           </span>
 
-          <span className={`text-xl font-bold `} style={{ color }}>
+          <span className={`text-lg font-bold `} style={{ color }}>
             {completed} / {total}
           </span>
 

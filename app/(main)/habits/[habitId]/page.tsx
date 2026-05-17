@@ -17,7 +17,7 @@ type Props = {
 
 const HabitPage = async ({ params, searchParams  }: Props) => {
   const { habitId } = await params;
-const resolvedSearchParams = await searchParams;
+  const resolvedSearchParams = await searchParams;
 
   const range =
     resolvedSearchParams.range === "all"
@@ -37,14 +37,15 @@ const resolvedSearchParams = await searchParams;
 
   if(!habit) return null;
 
-  const stats = buildHabitStats(habit, completions);
+  const analytics = buildHabitStats(habit, completions);
+  if(!analytics) return null;
 
   return (
     <div className="">
       <FeedWrapper>
         <HabitOverview 
           habit={habit} 
-          stats={stats}
+          analytics={analytics}
         />
       </FeedWrapper>
 

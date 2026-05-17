@@ -150,7 +150,3 @@ export const getCompletionsByHabitId = cache(async(habitId: string, range: numbe
   return completionsById;
 });
 
-// export const getUserId = async () => {
-//   const { userId } = await auth();
-//   return userId;
-// }

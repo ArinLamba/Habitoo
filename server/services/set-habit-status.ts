@@ -1,8 +1,6 @@
 import db from "@/db";
 
-import {
-  habitCompletions,
-} from "@/db/schema";
+import { habitCompletions } from "@/db/schema";
 
 import { eq } from "drizzle-orm";
 

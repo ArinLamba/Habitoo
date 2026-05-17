@@ -23,12 +23,11 @@ const buttonVariants = cva(
 
         sidebarOutline: "border border-indigo-500/10 dark:border-indigo-400/10 bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-200 shadow-sm",
         save: " bg-green-600/10 dark:bg-green-600/20 hover:bg-green-600/10 dark:hover:bg-green-600/30",
-        mark: " rounded-none hover:scale-120 cursor-pointer transition-all",
-        calendar: "hover:text-foregound aria-expanded:bg-muted aria-expanded:text-foreground"
+        mark: " rounded-none hover:scale-110 cursor-pointer transition-all",
+        calendar: "hover:text-foregound aria-expanded:bg-muted aria-expanded:text-foreground rounded-none gap-0"
       },
       size: {
-        default:
-          "h-8 gap-1. px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        default: "h-8 gap-1. px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         md:"h-10 px-4",
@@ -39,7 +38,8 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
-        mark: "h-[28.5px] w-[28.5px]"
+        mark: "h-[28.5px] w-[28.5px]",
+        calendar: "h-7 w-7 lg:w-13"
       },
     },
     defaultVariants: {

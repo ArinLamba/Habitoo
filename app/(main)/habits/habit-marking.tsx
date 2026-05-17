@@ -18,7 +18,7 @@ type Props = {
   year: number;
   month: number;
   perfectDaysSet: Set<string>; // 👈 ADD
-  completionMap: Map<string, HabitStatus>;
+  statusMap: Map<string, HabitStatus>;
 };
 
 export const HabitMarking = ({
@@ -26,12 +26,12 @@ export const HabitMarking = ({
   year,
   month,
   perfectDaysSet,
-  completionMap
+  statusMap
 }: Props) => {
 
   // const { habitViewLayout, setHabitViewLayout } = usehabitViewLayoutStore();
   const { currentDate, setCurrentDate } = useDateStore();
-  const { toggle, clear } = useHabitActions({ completionMap });
+  const { toggle, clear } = useHabitActions({ statusMap });
 
   const monthName = currentDate.toLocaleString("default", { month: "long",});
   const selectedCell = useSelectedCellStore(s => s.selectedCell);
@@ -108,7 +108,7 @@ export const HabitMarking = ({
             habit={habit}
             year={year}
             month={month}
-            completionMap={completionMap}
+            statusMap={statusMap}
           />
         ))}
       </div>

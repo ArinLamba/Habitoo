@@ -7,10 +7,14 @@ import { SubtleGrid } from "@/components/subtle-grid";
 
 type Props = {
   currentStreak: number;
-  completedDates: Map<string, HabitStatus>;
+  calendar: {
+    completed: Set<string>;
+    skipped: Set<string>;
+    failed: Set<string>;
+  };
 };
 
-export const StreakCard = ({ currentStreak, completedDates } : Props) => {
+export const StreakCard = ({ currentStreak, calendar } : Props) => {
 
   const { title, message } = getStreakMessage(currentStreak);
   
@@ -55,10 +59,9 @@ export const StreakCard = ({ currentStreak, completedDates } : Props) => {
             weekday: "short",
           });
 
-          const status = completedDates.get(dateStr);
-          const isDone = status === HABIT_STATUS.COMPLETED;
-          const isSkipped = status === HABIT_STATUS.SKIPPED;
-          const isFailed = status === HABIT_STATUS.FAILED;
+          const isDone = calendar.completed.has(dateStr);
+          const isSkipped = calendar.skipped.has(dateStr);
+          const isFailed = calendar.failed.has(dateStr);
 
           const icon =
             isSkipped ? <ArrowRight className="h-4 w-4 text-zinc-300 stroke-2.5" /> :

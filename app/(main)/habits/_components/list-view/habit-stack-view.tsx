@@ -12,7 +12,7 @@ export const HabitStackView = ({
   completions
 }: Props) => {
 
-  const { completionMap, habitStatsMap } = useStats(habits, completions);
+  const { statusMap, habitStatsMap } = useStats(habits, completions);
 
   return (
     <div>
@@ -22,7 +22,7 @@ export const HabitStackView = ({
           <div key={habit.id} className="mb-4">
             <HabitCard 
               habit={habit}
-              completionMap={completionMap}
+              statusMap={statusMap}
               currentStreak={currentHabit?.currentStreak ?? 0}
               longestStreak={currentHabit?.bestStreak ?? 0}
             />

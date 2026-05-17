@@ -1,22 +1,13 @@
 import * as z from "zod";
-import * as Icons from "lucide-react";
 
 import { habitCompletions, habits } from "@/db/schema";
+import { buildHabitStats } from "./build-habit-stats";
 
 export type Completion = typeof habitCompletions.$inferSelect;
 export type Habit = typeof habits.$inferSelect;
-export type LucideIconName = keyof typeof Icons;
 
-export type HabitStats = {
-  consistency: number;
-  currentStreak: number;
-  bestStreak: number;
-  weekDone: number;
-  lastDoneText: string;
-  insight: string;
-  habitStartDate: string;
-  completionMap: Map<string, HabitStatus>;
-} | null ;
+
+export type HabitStats = ReturnType<typeof buildHabitStats>;
 
 export type HabitStatus = "completed" | "skipped" | "failed" | null;
 
@@ -31,7 +22,7 @@ export const formSchema = z.object({
   name: z.string().min(2, "Habit name is required."),
   description: z.string().max(100, "Keep it brief.").optional(),
   startDate: z.string().min(1, "Please select a start date."),
-  targetValue: z.number().positive(),
+  targetValue: z.number().positive().nonoptional(),
   unit: z.string(),
   frequency: z.enum(["day","week","month","year",]),
   icon: z.string(),
@@ -39,3 +30,13 @@ export const formSchema = z.object({
 })
 
 export type HabitFormValues = z.infer<typeof formSchema>;
+
+export type ChartPoint = {
+  label: string;
+  value: number; // 0–100 (% completion)
+};
+
+export type TrendPoint = {
+  date: string;
+  value: number; // rolling consistency
+};

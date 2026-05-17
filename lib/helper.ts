@@ -102,3 +102,45 @@ export const last7Days = [...Array(7)].map((_, i) => {
   d.setDate(d.getDate() - i);
   return d;
 });
+
+export const getLast14Days = () => {
+  const days = [];
+
+  for (let i = 14; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+
+    days.push({
+      date: formatDate(d),
+      shortDay: d.toLocaleDateString("en-US", {
+        weekday: "short",
+      }),
+    });
+  }
+
+  return days;
+};
+
+
+export const buildCalendarDays = (
+  startDate: string,
+  months = 2
+) => {
+  const start = new Date(startDate);
+  const today = new Date();
+
+  const days: Date[] = [];
+
+  const end = new Date(today);
+  end.setMonth(end.getMonth() + months);
+
+  const cursor = new Date(start);
+  cursor.setDate(1);
+
+  while (cursor <= end) {
+    days.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  return days;
+};

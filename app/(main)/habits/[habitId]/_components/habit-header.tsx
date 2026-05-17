@@ -1,21 +1,21 @@
 "use client";
-import * as Icons from "lucide-react";
 
 import { RangeSelect } from "@/components/range-selector";
 import { Button } from "@/components/ui/button";
 
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft, Notebook } from "lucide-react";
+import { ChevronLeft, Notebook, PencilIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { EditHabitInput } from "../../_components/edit-habit-input";
-import { Habit, LucideIconName } from "@/lib/types";
+import { Habit } from "@/lib/types";
+import { HabitIconName, ICON_MAP } from "@/lib/habit-icons";
 
 type Props = {
   habit: Habit;
 };
 
 export const HabitHeader = ({ habit }: Props) => {
-  const IconComponent = (Icons[habit.icon as LucideIconName] as React.ElementType) || Icons.Activity;
+  const IconComponent = (ICON_MAP[habit.icon as HabitIconName] as React.ElementType) || ICON_MAP.Social;
 
   const router = useRouter();
   
@@ -28,7 +28,7 @@ export const HabitHeader = ({ habit }: Props) => {
         </Button>
         <Separator orientation="vertical"/>
         <div className="ml-4 flex">
-          <IconComponent size={18} color={habit.color}/>
+          <IconComponent size={20} color={habit.color}/>
           <h2 className="ml-2">{habit.name}</h2>
         </div>
 
@@ -39,7 +39,11 @@ export const HabitHeader = ({ habit }: Props) => {
         <RangeSelect />
         <Separator orientation="vertical"/>
         <div className="flex items-center">
-          <EditHabitInput habit={habit}/>
+          <EditHabitInput habit={habit}>
+            <Button variant={"ghost"}>
+              <PencilIcon />
+            </Button>
+          </EditHabitInput>
           <Separator orientation="vertical"/>
           <Button variant={"ghost"} className="">
             <Notebook />

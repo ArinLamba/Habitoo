@@ -62,31 +62,29 @@ export const habits = pgTable("habits", {
 // HABIT COMPLETIONS / LOGS
 // =========================
 
-export const habitCompletions = pgTable(
-  "habit_completions",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    habitId: uuid("habit_id")
-      .references(() => habits.id, {
-        onDelete: "cascade",
-      })
-      .notNull(),
-    userId: text("user_id").notNull(),
-    date: date("date").notNull(),
-    status: completionStatusEnum("status")
-      .default("completed")
-      .notNull(),
-    // for measurable habits
-    value: numeric("value"),
-    note: text("note"),
-    completedAt: timestamp("completed_at")
-      .defaultNow()
-      .notNull(),
-  },
+export const habitCompletions = pgTable("habit_completions",{
+  id: uuid("id").primaryKey().defaultRandom(),
+  habitId: uuid("habit_id")
+    .references(() => habits.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  userId: text("user_id").notNull(),
+  date: date("date").notNull(),
+  status: completionStatusEnum("status")
+    .default("completed")
+    .notNull(),
+  // for measurable habits
+  value: numeric("value"),
+  note: text("note"),
+  completedAt: timestamp("completed_at")
+    .defaultNow()
+    .notNull(),
+},
   (table) => ({
     habitDateIdx: index("habit_date_idx")
       .on(table.habitId, table.date),
-  })
+   })
 );
 
 // =========================

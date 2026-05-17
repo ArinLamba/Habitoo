@@ -8,7 +8,7 @@ type Props = {
 export const DashboardCard = ({ children, className }: Props) => {
   return (
     <div className={cn(
-      "rounded-xl border bg-zinc-900/80 p-4 shadow-sm", 
+      "rounded-xl border border-black/10 dark:border-white/10 dark:bg-zinc-800/40 p-2 shadow-lg", 
       className
     )}>
       {children}

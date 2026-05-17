@@ -86,7 +86,7 @@ export const DayCell = memo(({
           onClick={() => handleToggle(HABIT_STATUS.COMPLETED)}
           className={cn(
             variant,
-            "transition-all duration-200 rounded-none px-5 py-4.25 ease-out"
+            "transition-all duration-200 rounded-none h-9 w-12 ease-out"
           )}
           style={
             isDone
