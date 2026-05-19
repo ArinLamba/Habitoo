@@ -1,4 +1,5 @@
-import { Habit, HabitStatus } from "@/lib/types";
+
+import { Habit, HabitStatus, Completion } from "@/lib/types";
 import { HabitRow } from "./habit-row";
 import { HabitGridHeader } from "./habit-grid-header";
 import { AddHabitInput } from "../add-habit-input";
@@ -10,14 +11,17 @@ type TempHabitStats = {
   bestStreak: number;
 };
 
+
 type Props = {
   habits: Habit[];
+  completions: Completion[];
   statusMap: Map<string, HabitStatus>;
   habitStatsMap: Map<string, TempHabitStats>;
 };
 
 export const HabitGridView = ({
   habits,
+  completions,
   statusMap,
   habitStatsMap
 }: Props) => {
@@ -30,6 +34,7 @@ export const HabitGridView = ({
           <HabitRow
             key={habit.id}
             habit={habit}
+            completions={completions}
             statusMap={statusMap}
             streak={stats?.currentStreak ?? 0}
           />

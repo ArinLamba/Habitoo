@@ -1,3 +1,4 @@
+"use server";
 import db from "@/db";
 
 import { habits } from "@/db/schema";
@@ -11,21 +12,17 @@ export const createHabit = async (
   data: HabitFormValues
 ) => {
 
-  const [habit] = await db
-    .insert(habits)
-    .values({
-      userId,
-      name: data.name,
-      description: data.description,
-      startDate: data.startDate,
-      targetValue: data.targetValue,
-      unit: data.unit,
-      frequency: data.frequency,
-      icon: data.icon,
-      color: data.color,    
-      
-    })
-    .returning();
+  const [habit] = await db.insert(habits).values({
+    userId,
+    name: data.name,
+    description: data.description,
+    startDate: data.startDate,
+    targetValue: data.targetValue,
+    unit: data.unit,
+    frequency: data.frequency,
+    icon: data.icon,
+    color: data.color,    
+  }).returning();
 
   return habit;
 };

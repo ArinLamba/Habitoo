@@ -1,51 +1,34 @@
 "use client";
+import { memo } from "react";
+import Link from "next/link";
 
 import { Flame } from "lucide-react";
 
-import { memo, useMemo } from "react";
+import { ICON_MAP, HabitIconName } from "@/lib/habit-icons";
 
-import { Habit, HABIT_STATUS, HabitStatus } from "@/lib/types";
 
-import { getLast14Days } from "@/lib/helper";
-
-import { DayCell } from "./day-cell";
-import { CELL_VARIANTS } from "@/lib/variants";
-
-import { useHabitActions } from "@/hooks/use-habit-actions";
-
-import { useSelectedCellStore } from "@/store/use-selected-cell-store";
-import { getIsFuture } from "@/lib/date";
+import { Habit, HabitStatus } from "@/lib/types";
+import { Completion } from "@/lib/types";
 
 import { HabitActions } from "../habit-actions";
-import { ICON_MAP, HabitIconName } from "@/lib/habit-icons";
-import Link from "next/link";
 
+import { HabitFrequencyGrid } from "./habit-frequency-grid";
 
 type Props = {
   habit: Habit;
+  completions: Completion[];
   statusMap: Map<string, HabitStatus>;
   streak: number;
 };
 
 export const HabitRow = memo(({
   habit,
+  completions,
   statusMap,
   streak
 }: Props) => {
   
-  const days = useMemo(() => getLast14Days(), []);
-  // const stats = useMemo(() => buildHabitStats(habit), []);
-
   const IconComponent = (ICON_MAP[habit.icon as HabitIconName] ) || ICON_MAP.QuestionMark;
-
-
-  const { toggle } = useHabitActions({
-    statusMap,
-  });
-
-  const setSelectedCell = useSelectedCellStore(
-    (state) => state.setSelectedCell
-  );
 
   return (
     <div className="flex items-stretch border-b border-black/10 dark:border-white/10 ">
@@ -64,6 +47,8 @@ export const HabitRow = memo(({
             <div className="truncate text-sm font-medium w-full">
               {habit.name}
             </div>
+            {/* Progress Area */}
+            
           </Link>
           <HabitActions habit={habit}/>
         </div>
@@ -73,10 +58,18 @@ export const HabitRow = memo(({
       <div className="w-0.5 bg-black/10 dark:bg-white/10" />
       
       {/* RIGHT */}
-      <div className="flex flex- flex-row-reverse overflow-hidden">
+      <div className="flex flex-1 min-w-0 overflow-hidden">
 
+
+        {/* GRID ACCORDING TO FREQUENCY */}
+        <HabitFrequencyGrid
+          habit={habit}
+          completions={completions}
+          statusMap={statusMap}
+        />
         {/* STREAK */}
-        <div className="w-12 shrink-0 flex items-center justify-center border-l border-black/10 dark:border-white/10 text-amber-600 text-sm font-semibold">
+
+        <div className="w-14 shrink-0 flex items-center justify-center border-l border-black/10 dark:border-white/10 text-amber-600 text-sm font-semibold">
           <div className="flex items-center gap-x-1">
             <Flame
               size={16}
@@ -85,60 +78,6 @@ export const HabitRow = memo(({
             />
             <p>{streak}</p>
           </div>
-        </div>
-
-        {/* DAYS */}
-        <div className="flex flex-row-reverse min-w-0  overflow-hidden">
-          {[...days].reverse().map((day) => {
-
-            const isBeforeStart = habit.startDate > day.date;
-            const isFuture = getIsFuture(day.date);
-            const isDisabled = isBeforeStart || isFuture;
-
-            const key = `${habit.id}-${day.date}`;
-
-            const status =
-              statusMap.get(key) ?? null;
-
-            const isDone =
-              status === HABIT_STATUS.COMPLETED;
-
-            const isSkipped =
-              status === HABIT_STATUS.SKIPPED;
-
-            const isFailed =
-              status === HABIT_STATUS.FAILED;
-
-            let variant = CELL_VARIANTS.default;
-
-            if (isBeforeStart) {
-              variant = CELL_VARIANTS.beforeStart;
-            } else if (isFuture) {
-              variant = CELL_VARIANTS.future;
-            } else if (isDone) {
-              variant = CELL_VARIANTS.completed;
-            } else if (isSkipped) {
-              variant = CELL_VARIANTS.skipped;
-            } else if (isFailed) {
-              variant = CELL_VARIANTS.failed;
-            }
-
-            return (
-              <DayCell
-                key={day.date}
-                habitId={habit.id}
-                date={day.date}
-                status={status}
-                color={habit.color!}
-                isDisabled={isDisabled}
-                isFuture={isFuture}
-                variant={variant}
-                isBeforeStart={isBeforeStart}
-                setSelectedCell={setSelectedCell}
-                toggle={toggle}
-              />
-            );
-          })}
         </div>
       </div>
     </div>

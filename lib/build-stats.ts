@@ -1,5 +1,6 @@
-import { Completion, Habit, HABIT_STATUS } from "./types";
+import { Completion, Habit, HABIT_STATUS, HabitStatus } from "./types";
 import { formatDate } from "./date";
+import { isHabitCompletedForDate } from "./habits/progress";
 import { getStreaks, getHabitStreaks } from "./streaks"; // 👈 your functions
 
 export const buildStats = (
@@ -12,10 +13,32 @@ export const buildStats = (
   const doneSet = new Set<string>();
   const dayCount = new Map<string, number>();
   const weekdayCount = Array(7).fill(0);
+  const habitMap = new Map(
+    habits.map((habit) => [habit.id, habit])
+  );
+  const completedPairs = new Set<string>();
 
   // ✅ SINGLE PASS
   completions.forEach((c) => {
-    if (c.status !== HABIT_STATUS.COMPLETED ||c.date > todayStr) return;
+    if (c.date > todayStr) return;
+
+    const habit = habitMap.get(c.habitId);
+    if (!habit) return;
+
+    const key = `${c.habitId}-${c.date}`;
+    if (completedPairs.has(key)) return;
+
+    if (
+      !isHabitCompletedForDate(
+        habit,
+        completions,
+        c.date
+      )
+    ) {
+      return;
+    }
+
+    completedPairs.add(key);
 
     // global
     doneSet.add(c.date);
@@ -117,12 +140,24 @@ export const buildStats = (
   
 
   //  ====== Completion Set =====
-  const statusMap = new Map(
-    completions.map((c) => [
-      `${c.habitId}-${c.date}`,
-      c.status
-    ])
-  );
+  const statusMap = new Map<string, HabitStatus>();
+
+  completions.forEach((c) => {
+    const key = `${c.habitId}-${c.date}`;
+    const current = statusMap.get(key);
+
+    if (
+      c.status === HABIT_STATUS.SKIPPED ||
+      c.status === HABIT_STATUS.FAILED
+    ) {
+      statusMap.set(key, c.status);
+      return;
+    }
+
+    if (c.value === null && current === undefined) {
+      statusMap.set(key, c.status);
+    }
+  });
 
   // 🔥 FINAL RETURN
   return {

@@ -85,6 +85,7 @@ export const HabitsClient = () => {
             ) : (
               <HabitGridView 
                 habits={habits} 
+                completions={completions}
                 statusMap={statusMap}
                 habitStatsMap={habitStatsMap}
               /> 

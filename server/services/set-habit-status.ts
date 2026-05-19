@@ -1,8 +1,10 @@
+"use server";
+
 import db from "@/db";
 
 import { habitCompletions } from "@/db/schema";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const setHabitStatus = async (
   userId: string,
@@ -40,7 +42,13 @@ export const setHabitStatus = async (
 
     await db
       .delete(habitCompletions)
-      .where(eq(habitCompletions.id, existing.id));
+      .where(
+        and(
+          eq(habitCompletions.habitId, habitId),
+          eq(habitCompletions.date, date),
+          eq(habitCompletions.userId, userId)
+        )
+      );
 
     return null;
   }

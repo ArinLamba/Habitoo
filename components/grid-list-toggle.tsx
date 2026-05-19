@@ -20,6 +20,6 @@ export const GridListTogle = () => {
           <List /> <p>List</p>
         </Button>
       </ButtonGroup>
-    </div> 
+    </div>
   );
 };

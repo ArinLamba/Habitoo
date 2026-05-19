@@ -1,9 +1,30 @@
+"use client";
 
+import { useMemo, useState } from "react";
+import {
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react";
 
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { Button } from "@/components/ui/button";
+import { formatDate, getIsFuture } from "@/lib/date";
+import { calculateHabitProgress } from "@/lib/habits/progress";
+import { Completion, Habit, HABIT_STATUS, HabitStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/date";
-import { ArrowRight, X } from "lucide-react";
-
+import { useHabitActions } from "@/hooks/use-habit-actions";
+import { useAddLog } from "@/hooks/mutations/use-add-log";
+import { useSelectedCellStore } from "@/store/use-selected-cell-store";
 
 type Sets = {
   completed: Set<string>;
@@ -12,30 +33,62 @@ type Sets = {
 };
 
 type Props = {
+  habit: Habit;
   color: string;
   calendar: Sets;
+  completions: Completion[];
 };
 
 const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 
+const getMonthMeta = (date: Date) => ({
+  year: date.getFullYear(),
+  month: date.getMonth(),
+});
+
 function MonthGrid({
+  habit,
   year,
   month,
   calendar,
   color,
+  completions,
 }: {
+  habit: Habit;
   year: number;
   month: number;
   calendar: Sets;
   color: string;
+  completions: Completion[];
 }) {
   const { completed, skipped, failed } = calendar;
+  const { mutate: addLog } = useAddLog();
+  const setSelectedCell = useSelectedCellStore(
+    (state) => state.setSelectedCell
+  );
+
+  const statusMap = useMemo(() => {
+    const map = new Map<string, HabitStatus>();
+
+    completed.forEach((date) =>
+      map.set(`${habit.id}-${date}`, HABIT_STATUS.COMPLETED)
+    );
+    skipped.forEach((date) =>
+      map.set(`${habit.id}-${date}`, HABIT_STATUS.SKIPPED)
+    );
+    failed.forEach((date) =>
+      map.set(`${habit.id}-${date}`, HABIT_STATUS.FAILED)
+    );
+
+    return map;
+  }, [completed, failed, habit.id, skipped]);
+
+  const { toggle } = useHabitActions({ statusMap });
 
   const start = new Date(year, month, 1);
   const end = new Date(year, month + 1, 0);
 
   const days: (Date | null)[] = [];
-
   const cursor = new Date(start);
 
   while (cursor <= end) {
@@ -43,19 +96,45 @@ function MonthGrid({
     cursor.setDate(cursor.getDate() + 1);
   }
 
-  // padding for first week
-  const offset = start.getDay();
-  for (let i = 0; i < offset; i++) {
+  for (let i = 0; i < start.getDay(); i++) {
     days.unshift(null);
   }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const isFuture = (date: Date) => {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d > today;
+  const selectDate = (date: string) => {
+    setSelectedCell({
+      habitId: habit.id,
+      date,
+    });
+  };
+
+  const fillRemaining = (date: string) => {
+    const progress = calculateHabitProgress(
+      habit,
+      completions,
+      date
+    );
+    const remaining = progress.target - progress.current;
+
+    selectDate(date);
+
+    if (remaining <= 0) return;
+
+    addLog({
+      habitId: habit.id,
+      date,
+      value: remaining,
+    });
+  };
+
+  const markStatus = (
+    date: string,
+    status: HabitStatus
+  ) => {
+    selectDate(date);
+    toggle(habit.id, date, status);
   };
 
   return (
@@ -64,53 +143,117 @@ function MonthGrid({
         {start.toLocaleString("default", { month: "short" })}
       </div>
 
-      {/* weekdays */}
       <div className="grid grid-cols-7 text-[10px] text-zinc-500 font-bold">
-        {weekDays.map((d, i) => (
-          <div key={i} className="text-center">
-            {d}
+        {weekDays.map((day, index) => (
+          <div key={`${day}-${index}`} className="text-center">
+            {day}
           </div>
         ))}
       </div>
 
-      {/* grid */}
-      <div className="grid grid-cols-7 ">
-        {days.map((date, i) => {
+      <div className="grid grid-cols-7">
+        {days.map((date, index) => {
           if (!date) {
-            return <div key={i} className="h-5 w-5" />;
+            return <div key={`empty-${index}`} className="h-7 w-7 lg:w-13 my-px" />;
           }
 
           const key = formatDate(date);
-
+          const progress = calculateHabitProgress(
+            habit,
+            completions,
+            key
+          );
           const isCompleted = completed.has(key);
           const isSkipped = skipped.has(key);
           const isFailed = failed.has(key);
-
-          const isToday = date.getDate() === today.getDate()
-        
-
-          
+          const isPartial =
+            progress.current > 0 &&
+            !isCompleted &&
+            !isSkipped &&
+            !isFailed;
+          const isToday = key === formatDate(today);
+          const isDisabled =
+            key < habit.startDate ||
+            getIsFuture(key);
 
           return (
-            <button
-              key={i}
-              className={cn(
-                "h-7 w-7 lg:w-13 my-px flex items-center justify-center lg:text-[10px] text-[8px] ",
-                isFuture(date) && "opacity-20",
-                isToday && "rounded-r-lg"
-              )}
-              style={isCompleted ? { backgroundColor: color} : undefined}
-            >
-              {isSkipped ? (
-                <ArrowRight size={14} color={color}/>
-              ) : (
-                isFailed ? (
-                  <X size={14} color="red"/>
-                ) : (
-                  date.getDate()
-                )
-              )}
-            </button>
+            <ContextMenu key={key}>
+              <ContextMenuTrigger asChild>
+                <button
+                  disabled={isDisabled}
+                  onClick={() => fillRemaining(key)}
+                  className={cn(
+                    "relative h-7 w-7 lg:w-13 my-px overflow-hidden flex items-center justify-center lg:text-[10px] text-[8px] transition",
+                    "border border-transparent hover:border-black/10 dark:hover:border-white/10",
+                    isDisabled && "opacity-20 cursor-not-allowed",
+                    isToday && "rounded-r-lg"
+                  )}
+                  style={
+                    isCompleted
+                      ? { backgroundColor: color }
+                      : undefined
+                  }
+                >
+                  {isPartial && (
+                    <div
+                      className="absolute inset-y-0 left-0 opacity-70"
+                      style={{
+                        width: `${progress.percentage}%`,
+                        backgroundColor: color,
+                      }}
+                    />
+                  )}
+
+                  <span className="relative z-10 flex items-center justify-center">
+                    {isCompleted ? (
+                      <Check size={13} className="text-emerald-950" />
+                    ) : isSkipped ? (
+                      <ArrowRight size={14} color={color} />
+                    ) : isFailed ? (
+                      <X size={14} color="red" />
+                    ) : (
+                      date.getDate()
+                    )}
+                  </span>
+                </button>
+              </ContextMenuTrigger>
+
+              <ContextMenuContent className="w-56">
+                <ContextMenuItem
+                  onClick={() => fillRemaining(key)}
+                  disabled={isDisabled}
+                >
+                  Fill Remaining
+                  <ContextMenuShortcut>Alt + D</ContextMenuShortcut>
+                </ContextMenuItem>
+
+                <ContextMenuItem
+                  onClick={() => markStatus(key, HABIT_STATUS.SKIPPED)}
+                  disabled={isDisabled}
+                >
+                  Mark as Skipped
+                  <ContextMenuShortcut>Alt + S</ContextMenuShortcut>
+                </ContextMenuItem>
+
+                <ContextMenuItem
+                  onClick={() => markStatus(key, HABIT_STATUS.FAILED)}
+                  disabled={isDisabled}
+                >
+                  Mark as Failed
+                  <ContextMenuShortcut>Alt + F</ContextMenuShortcut>
+                </ContextMenuItem>
+
+                <ContextMenuSeparator />
+
+                <ContextMenuItem
+                  onClick={() => markStatus(key, null)}
+                  disabled={isDisabled}
+                >
+                  Clear Logs
+                  <ContextMenuShortcut>Del</ContextMenuShortcut>
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           );
         })}
       </div>
@@ -118,26 +261,89 @@ function MonthGrid({
   );
 }
 
-export const HabitCalendar = ({ color, calendar }: Props) => {
-  const now = new Date();
+export const HabitCalendar = ({
+  habit,
+  color,
+  calendar,
+  completions,
+}: Props) => {
+  const [anchorMonth, setAnchorMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
 
-  const currentMonth = {
-    year: now.getFullYear(),
-    month: now.getMonth(),
+  const previous = new Date(
+    anchorMonth.getFullYear(),
+    anchorMonth.getMonth() - 1,
+    1
+  );
+
+  const goPrevious = () => {
+    setAnchorMonth(
+      (current) =>
+        new Date(
+          current.getFullYear(),
+          current.getMonth() - 1,
+          1
+        )
+    );
   };
 
-  const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
-  const prevMonth = {
-    year: prevMonthDate.getFullYear(),
-    month: prevMonthDate.getMonth(),
+  const goNext = () => {
+    setAnchorMonth(
+      (current) =>
+        new Date(
+          current.getFullYear(),
+          current.getMonth() + 1,
+          1
+        )
+    );
   };
 
   return (
-    <div className="">
-      <div className="flex gap-4 items-start justify-center bg-amber-80">
-        <MonthGrid {...prevMonth} calendar={calendar} color={color} />
-        <MonthGrid {...currentMonth} calendar={calendar} color={color}/>
+    <div>
+      <div className="mb-2 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={goPrevious}
+          aria-label="Previous month"
+        >
+          <ChevronLeft />
+        </Button>
+
+        <p className="text-xs font-medium text-muted-foreground">
+          {previous.toLocaleString("default", { month: "short" })}{" "}
+          {previous.getFullYear()} -{" "}
+          {anchorMonth.toLocaleString("default", { month: "short" })}{" "}
+          {anchorMonth.getFullYear()}
+        </p>
+
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={goNext}
+          aria-label="Next month"
+        >
+          <ChevronRight />
+        </Button>
+      </div>
+
+      <div className="flex gap-4 items-start justify-center">
+        <MonthGrid
+          {...getMonthMeta(previous)}
+          habit={habit}
+          calendar={calendar}
+          color={color}
+          completions={completions}
+        />
+        <MonthGrid
+          {...getMonthMeta(anchorMonth)}
+          habit={habit}
+          calendar={calendar}
+          color={color}
+          completions={completions}
+        />
       </div>
     </div>
   );

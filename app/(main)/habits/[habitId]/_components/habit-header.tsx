@@ -4,11 +4,12 @@ import { RangeSelect } from "@/components/range-selector";
 import { Button } from "@/components/ui/button";
 
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft, Notebook, PencilIcon } from "lucide-react";
+import { ChevronLeft, PencilIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { EditHabitInput } from "../../_components/edit-habit-input";
 import { Habit } from "@/lib/types";
 import { HabitIconName, ICON_MAP } from "@/lib/habit-icons";
+import { AddLogForm } from "@/app/(main)/habits/_components/grid-view/add-log-form";
 
 type Props = {
   habit: Habit;
@@ -45,9 +46,8 @@ export const HabitHeader = ({ habit }: Props) => {
             </Button>
           </EditHabitInput>
           <Separator orientation="vertical"/>
-          <Button variant={"ghost"} className="">
-            <Notebook />
-          </Button>
+          <AddLogForm habit={habit}/>
+          
         </div>
       </div>
     </div>

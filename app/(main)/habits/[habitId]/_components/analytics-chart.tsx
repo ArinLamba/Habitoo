@@ -1,7 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import {
+  Bar,
+  CartesianGrid,
+  Cell,
+  ComposedChart,
+  Line,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   Card,
@@ -22,6 +30,7 @@ type ChartKey = "day" | "week" | "month" | "year";
 type ChartPoint = {
   label: string;
   value: number;
+  target?: number;
 };
 
 type Props = {
@@ -81,10 +90,13 @@ export function AnalyticsChart({ color, charts }: Props) {
       {/* CHART */}
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
-          config={{}}
+          config={{
+            value: { label: "Progress" },
+            target: { label: "Target" },
+          }}
           className="aspect-auto h-[250px] w-full"
         >
-          <BarChart data={data} margin={{ left: 12, right: 12 }}>
+          <ComposedChart data={data} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
 
             <XAxis
@@ -93,6 +105,11 @@ export function AnalyticsChart({ color, charts }: Props) {
               axisLine={false}
               tickMargin={8}
             />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              width={28}
+            />
 
             <ChartTooltip content={<ChartTooltipContent />} />
 
@@ -100,8 +117,29 @@ export function AnalyticsChart({ color, charts }: Props) {
               dataKey="value"
               fill={color}
               radius={6}
+            >
+              {data.map((point, index) => (
+                <Cell
+                  key={`${point.label}-${index}`}
+                  fill={
+                    point.target !== undefined &&
+                    point.value > point.target
+                      ? "#f59e0b"
+                      : color
+                  }
+                />
+              ))}
+            </Bar>
+            <Line
+              dataKey="target"
+              type="monotone"
+              stroke="#a1a1aa"
+              strokeDasharray="4 4"
+              strokeWidth={2}
+              dot={false}
+              activeDot={false}
             />
-          </BarChart>
+          </ComposedChart>
         </ChartContainer>
       </CardContent>
     </Card>

@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { formatDate } from "@/lib/date";
-import { Completion, Habit, HABIT_STATUS } from "@/lib/types";
+import { Completion, Habit } from "@/lib/types";
+import { isHabitCompletedForDate } from "@/lib/habits/progress";
 
 import { useDateStore } from "@/store/use-date-store";
 
@@ -44,12 +45,15 @@ export const CircularProgress = ({
   }, [activeHabits]);
 
   const completed = useMemo(() => {
-    return completions.filter(c =>
-      c.status === HABIT_STATUS.COMPLETED &&
-      c.date === selectedDateStr &&
-      activeIds.has(c.habitId)
+    return activeHabits.filter((habit) =>
+      activeIds.has(habit.id) &&
+      isHabitCompletedForDate(
+        habit,
+        completions,
+        selectedDateStr
+      )
     ).length;
-  }, [completions, selectedDateStr, activeIds]);
+  }, [activeHabits, completions, selectedDateStr, activeIds]);
 
   const total = activeHabits.length;
 
@@ -142,7 +146,7 @@ export const CircularProgress = ({
             habits today
           </span>
           <p className="text-sm text-muted-foreground">
-            {total - completed} left
+            {Math.max(0, total - completed)} left
           </p>
 
           <p className="text-xs text-muted-foreground">

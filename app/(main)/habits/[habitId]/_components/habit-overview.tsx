@@ -1,5 +1,5 @@
 
-import { Habit, HabitStats } from "@/lib/types";
+import { Completion, Habit, HabitStats } from "@/lib/types";
 
 import { StreakCard } from "./streak-card";
 import { StatsCards } from "./stats-card";
@@ -12,10 +12,11 @@ import { AnalyticsChart } from "./analytics-chart";
 type Props = {
   habit: Habit;
   analytics: HabitStats;
+  completions: Completion[];
 }
 
 
-export const HabitOverview = ({ habit, analytics }: Props) => {
+export const HabitOverview = ({ habit, analytics, completions }: Props) => {
 
   if(!analytics) return null;
 
@@ -36,8 +37,10 @@ export const HabitOverview = ({ habit, analytics }: Props) => {
           <DashboardCard className="lg:w-2/3 w-full">
             <StatsCards analytics={analytics}/>
             <HabitCalendar 
+              habit={habit}
               color={habit.color!}
               calendar={analytics.calendar.sets}
+              completions={completions}
             />
           </DashboardCard>
 

@@ -150,3 +150,19 @@ export const getCompletionsByHabitId = cache(async(habitId: string, range: numbe
   return completionsById;
 });
 
+export const getHabitLogs = async (
+  habitId: string
+) => {
+  return await db.query.habitCompletions.findMany({
+    where: (hc, { and, eq, isNotNull }) =>
+      and(
+        eq(hc.habitId, habitId),
+        isNotNull(hc.value)
+      ),
+
+    orderBy: (hc, { desc }) => [
+      desc(hc.date),
+      desc(hc.completedAt),
+    ],
+  });
+};

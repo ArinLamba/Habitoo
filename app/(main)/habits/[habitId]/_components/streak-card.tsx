@@ -1,6 +1,5 @@
 
 import { formatDate } from "@/lib/date";
-import { HABIT_STATUS, HabitStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Flame, X } from "lucide-react";
 import { SubtleGrid } from "@/components/subtle-grid";

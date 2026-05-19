@@ -1,9 +1,14 @@
 import { FeedWrapper } from "@/components/layout/feed-wrapper";
 
-import { getCompletionsByHabitId, getHabitById } from "@/db/queries";
+import { getCompletionsByHabitId, getHabitById, getHabitLogs } from "@/db/queries";
 
 import { HabitOverview } from "./_components/habit-overview";
 import { buildHabitStats } from "@/lib/build-habit-stats";
+
+
+import { HabitDetailsPanel } from "./_components/habit-detail-panel";
+
+import { DetailPanelWrapper } from "@/components/layout/detail-panel-wrapper";
 
 type Props = {
   params: {
@@ -25,14 +30,17 @@ const HabitPage = async ({ params, searchParams  }: Props) => {
       : Number(resolvedSearchParams.range) || 90;
   
   const habitData = getHabitById(habitId);
+  const logsData = getHabitLogs(habitId);
   const completionsData = getCompletionsByHabitId(habitId, range);
   
   const [
     habit,
-    completions
+    completions,
+    logs,
   ] = await Promise.all([
     habitData,
-    completionsData
+    completionsData,
+    logsData
   ]);
 
   if(!habit) return null;
@@ -46,12 +54,16 @@ const HabitPage = async ({ params, searchParams  }: Props) => {
         <HabitOverview 
           habit={habit} 
           analytics={analytics}
+          completions={completions}
         />
       </FeedWrapper>
 
-      {/* <StickyWrapper>
-        <StickyWrapperClient />
-      </StickyWrapper> */}
+      <DetailPanelWrapper>
+        <HabitDetailsPanel
+          habit={habit}
+          logs={logs}
+        />
+      </DetailPanelWrapper>
     </div>
   );
 };
