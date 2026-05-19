@@ -1,4 +1,4 @@
-import { Card } from "@/components/stats-card";
+
 import { Completion, Habit, HABIT_STATUS } from "@/lib/types";
 
 export const StatsOverview = ({ habits, completions }: {
@@ -27,3 +27,26 @@ export const StatsOverview = ({ habits, completions }: {
   );
 };
 
+
+type CardProps = {
+  label: string;
+  value: string;
+};
+const Card = ({
+  label,
+  value,
+}: CardProps) => {
+  return (
+    <div className="border-r border-white/10 px-4 py-3 last:border-r-0">
+      <div className="flex items-center gap-1 text-[11px] font-semibold tracking-wide text-zinc-300">
+        <span>{label}</span>
+      </div>
+
+      <div className="mt-1 flex items-end gap-1">
+        <h2 className="text-sm font-bold leading-none text-white">
+          {value}
+        </h2>
+      </div>
+    </div>
+  );
+};
