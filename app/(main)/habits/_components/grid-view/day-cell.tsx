@@ -8,6 +8,9 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
@@ -37,6 +40,7 @@ type Props = {
   progress: Progress;
   transparentFill?: boolean;
   textColor?: string;
+  unit: string;
 
   setSelectedCell: (data: {
     habitId: string;
@@ -44,6 +48,7 @@ type Props = {
   }) => void;
 
   fillRemaining: () => void;
+  addValue?: (value: number) => void;
 
   toggle: (
     habitId: string,
@@ -64,8 +69,10 @@ export const DayCell = memo(({
   progress,
   transparentFill = false,
   textColor = "text-white",
+  unit,
   setSelectedCell,
   fillRemaining,
+  addValue,
   toggle,
 }: Props) => {
   const isLegacyDone =
@@ -180,6 +187,33 @@ export const DayCell = memo(({
             Alt + D
           </ContextMenuShortcut>
         </ContextMenuItem>
+
+        {addValue && (
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>
+              Add Logs
+            </ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-40">
+              {[1, Math.max(1, Math.round(progress.target / 2)), progress.target].map(
+                (value, index) => (
+                  <ContextMenuItem
+                    key={`${value}-${index}`}
+                    onClick={() => {
+                      selectCell();
+                      addValue(value);
+                    }}
+                  >
+                    +{value} {unit}
+                  </ContextMenuItem>
+                )
+              )}
+              <ContextMenuSeparator />
+              <ContextMenuItem onClick={handleFillRemaining}>
+                Fill Remaining
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+        )}
 
         <ContextMenuItem
           onClick={() =>

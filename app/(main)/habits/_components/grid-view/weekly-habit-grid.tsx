@@ -7,9 +7,9 @@ import { calculateHabitProgress, getPeriodDates } from "@/lib/habits/progress";
 import { getIsFuture } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { useAddLog } from "@/hooks/mutations/use-add-log";
-import { getVisibleDays } from "@/lib/habits/visible-days";
 import { useHabitActions } from "@/hooks/use-habit-actions";
 import { useSelectedCellStore } from "@/store/use-selected-cell-store";
+import { useVisibleDays } from "@/hooks/use-visible-days";
 
 import { DayCell } from "./day-cell";
 
@@ -103,7 +103,7 @@ export const WeeklyHabitGrid = ({
   completions,
   statusMap,
 }: Props) => {
-  const days = getVisibleDays();
+  const days = useVisibleDays();
   const { mutate: addLog } = useAddLog();
   const { toggle } = useHabitActions({ statusMap });
   const setSelectedCell = useSelectedCellStore(
@@ -233,6 +233,7 @@ export const WeeklyHabitGrid = ({
                             ? "text-emerald-950"
                             : "text-white/80"
                         }
+                        unit={habit.unit!}
                         setSelectedCell={setSelectedCell}
                         fillRemaining={() => {
                           if (isCompleted) return;
@@ -241,6 +242,15 @@ export const WeeklyHabitGrid = ({
                             habitId: habit.id,
                             date,
                             value: 1,
+                          });
+                        }}
+                        addValue={(value) => {
+                          if (isCompleted) return;
+
+                          addLog({
+                            habitId: habit.id,
+                            date,
+                            value,
                           });
                         }}
                         toggle={toggle}

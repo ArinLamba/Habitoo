@@ -1,9 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
-
-import { getLast14Days } from "@/lib/helper";
-
 import { getIsFuture } from "@/lib/date";
 
 import {
@@ -20,6 +16,7 @@ import { DayCell } from "./day-cell";
 
 import { useHabitActions } from "@/hooks/use-habit-actions";
 import { useAddLog } from "@/hooks/mutations/use-add-log";
+import { useVisibleDays } from "@/hooks/use-visible-days";
 
 import { useSelectedCellStore } from "@/store/use-selected-cell-store";
 
@@ -35,10 +32,7 @@ export const DailyHabitGrid = ({
   statusMap,
 }: Props) => {
 
-  const days = useMemo(
-    () => getLast14Days(),
-    []
-  );
+  const days = useVisibleDays();
 
   const { toggle } =
     useHabitActions({
@@ -132,6 +126,7 @@ export const DailyHabitGrid = ({
                 isBeforeStart={isBeforeStart}
                 progress={progress}
                 textColor="dark:text-emerald-950"
+                unit={habit.unit!}
                 setSelectedCell={
                   setSelectedCell
                 }
@@ -145,6 +140,13 @@ export const DailyHabitGrid = ({
                     habitId: habit.id,
                     date: day.date,
                     value: remaining,
+                  });
+                }}
+                addValue={(value) => {
+                  addLog({
+                    habitId: habit.id,
+                    date: day.date,
+                    value,
                   });
                 }}
                 toggle={toggle}

@@ -18,3 +18,15 @@ export const getVisibleDays = () => {
 
   return getLast14Days();
 };
+
+export const getVisibleDayCount = () => {
+  if (typeof window === "undefined") return 15;
+
+  const width = window.innerWidth;
+
+  if (width < 420) return 4;
+  if (width < 640) return 5;
+  if (width < 1024) return 7;
+
+  return 15;
+};

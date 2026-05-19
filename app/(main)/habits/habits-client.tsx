@@ -14,10 +14,12 @@ import { useStats } from "@/hooks/use-stats";
 import { HabitGridView } from "./_components/grid-view/habit-grid-view";
 import { EmptyState } from "@/components/empty";
 import { Loading } from "@/components/loading";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 
 export const HabitsClient = () => {
   const { habitViewLayout } = usehabitViewLayoutStore();
+  const isMobile = useIsMobile();
 
 
   // 🔥 SINGLE SOURCE OF TRUTH FETCHING
@@ -77,7 +79,7 @@ export const HabitsClient = () => {
       <div className={cn(
           "flex-1 flex flex-col overflow-x-hidden scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-700/50 rounded-0 border rounded-t-md  border-black/10 bg-white shadow-md dark:border-white/10 dark:bg-zinc-900/70"
         )}>
-          {habitViewLayout === "grid" ? ( 
+          {habitViewLayout === "grid" && !isMobile ? ( 
           <>
             {isLoading ? (
                <Loading /> 

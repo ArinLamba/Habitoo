@@ -40,7 +40,11 @@ import {
 
 import { useCreateHabit } from "@/hooks/mutations/use-create-habit";
 
-export const AddHabitInput = () => {
+type Props = {
+  variant?: "row" | "icon";
+};
+
+export const AddHabitInput = ({ variant = "row" }: Props) => {
   const [open, setOpen] = useState(false);
 
   const { mutate: createMutate } = useCreateHabit();
@@ -98,15 +102,22 @@ export const AddHabitInput = () => {
   };
 
   return (
-    <div className="flex-1 border-b p-2 text-xs">
+    <div className={variant === "row" ? "flex-1 border-b p-2 text-xs" : ""}>
       <Dialog
         open={open}
         onOpenChange={setOpen}
       >
         <DialogTrigger asChild>
-          <button className="flex items-center gap-2 font-semibold text-blue-700 dark:text-indigo-400">
-            <Plus size={18} />
-            <p>Add Habit</p>
+          <button
+            className={
+              variant === "icon"
+                ? "flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                : "flex items-center gap-2 font-semibold text-blue-700 dark:text-indigo-400"
+            }
+            aria-label="Add habit"
+          >
+            <Plus size={variant === "icon" ? 32 : 18} />
+            {variant === "row" && <p>Add Habit</p>}
           </button>
         </DialogTrigger>
 
