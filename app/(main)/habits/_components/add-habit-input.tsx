@@ -43,8 +43,7 @@ import { useCreateHabit } from "@/hooks/mutations/use-create-habit";
 export const AddHabitInput = () => {
   const [open, setOpen] = useState(false);
 
-  const { mutate: createMutate } =
-    useCreateHabit();
+  const { mutate: createMutate } = useCreateHabit();
 
   const defaultValues: HabitFormValues = {
     name: "",
@@ -81,9 +80,7 @@ export const AddHabitInput = () => {
     name: "color",
   });
 
-  const onSubmit = (
-    data: z.infer<typeof formSchema>
-  ) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     createMutate(data, {
       onSuccess: () => {
         toast.success("Habit Created!", {

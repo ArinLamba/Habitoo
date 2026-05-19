@@ -11,7 +11,7 @@ export const setHabit = async (
   const userId = await getUserId();
   if (!userId) throw new Error("Unauthorized");
   
-  console.log("🔥 DB HIT: markHabit", new Date().toISOString());
+  console.log("🔥 DB HIT: setHabit", new Date().toISOString());
 
   return setHabitStatus(userId, id, date, status);
 };

@@ -27,7 +27,11 @@ export const HabitFrequencyGrid = ({
     );
   }
 
-  if (habit.frequency === "week") {
+  if (
+    habit.frequency === "week" ||
+    habit.frequency === "month" ||
+    habit.frequency === "year"
+  ) {
     return (
       <WeeklyHabitGrid
         habit={habit}
@@ -37,9 +41,5 @@ export const HabitFrequencyGrid = ({
     );
   }
 
-  return (
-    <div className="flex items-center px-4 text-sm text-muted-foreground">
-      Coming Soon
-    </div>
-  );
+  return null;
 };

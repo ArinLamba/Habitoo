@@ -36,7 +36,7 @@ export const LogHistory = ({
       {Object.entries(groupedLogs).map(([date, logs]) => (
         <div key={date}>
           
-          <div className="sticky top- bg-muted-foreground/5 px-4 py-2 text-xs text-muted-foreground font-normal border-b">
+          <div className=" px-4 py-2 text-xs text-muted-foreground font-normal border-b">
             {formatDisplayDate(date)}
           </div>
 
@@ -44,17 +44,14 @@ export const LogHistory = ({
             {logs.map((log) => (
               <div
                 key={log.id}
-                className="flex items-center justify-between px-4 py-2 text-sm"
+                className="flex items-center justify-between px-4 py-2 text-sm bg-muted-foreground/5"
               >
                 <div>
                   +{log.value} {unit}
                 </div>
 
-                <div className="text-xs text-muted-foreground">
-                  {new Date(log.completedAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                <div className="text-xs text-muted-foreground ">
+                  {formatLogTime(log.completedAt)}
                 </div>
               </div>
             ))}
@@ -63,6 +60,14 @@ export const LogHistory = ({
       ))}
     </div>
   );
+};
+
+const formatLogTime = (date: string | Date) => {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(date));
 };
 
 const formatDisplayDate = (dateStr: string) => {
@@ -87,5 +92,6 @@ const formatDisplayDate = (dateStr: string) => {
   return d.toLocaleDateString("default", {
     day: "numeric",
     month: "short",
+    year: "numeric"
   });
 };

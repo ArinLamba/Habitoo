@@ -3,13 +3,16 @@ import {
 } from "@/lib/build-streak-timeline";
 
 import { StreakBar } from "./streak-bar";
+import { Habit } from "@/lib/types";
 
 type Props = {
+  frequency: Habit["frequency"];
   color: string;
   timeline: StreakTimelineData;
 };
 
 export const StreakTimeline = ({
+  frequency,
   color,
   timeline,
 }: Props) => {
@@ -58,6 +61,7 @@ export const StreakTimeline = ({
             {timeline.recent.map(
               (segment, index) => (
                 <StreakBar
+                  frequency={frequency}
                   key={`${segment.start}-${index}`}
                   segment={segment}
                   maxLength={maxLength}
@@ -80,6 +84,7 @@ export const StreakTimeline = ({
             {timeline.top.map(
               (segment, index) => (
                 <StreakBar
+                  frequency={frequency}
                   key={`${segment.start}-${index}`}
                   segment={segment}
                   maxLength={maxLength}

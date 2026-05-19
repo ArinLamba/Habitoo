@@ -1,5 +1,4 @@
 "use client";
-import { useMemo } from "react";
 
 import { usehabitViewLayoutStore } from "@/store/use-habit-layout-store";
 
@@ -8,7 +7,6 @@ import { useCompletions } from "@/hooks/queries/use-completions";
 
 import { HabitStackView } from "./_components/list-view/habit-stack-view";
 import { cn } from "@/lib/utils";
-import { HABIT_STATUS } from "@/lib/types";
 import { BottomActionBar } from "./_components/bottom-action-bar";
 
 import { useStats } from "@/hooks/use-stats";
@@ -25,7 +23,10 @@ export const HabitsClient = () => {
   // 🔥 SINGLE SOURCE OF TRUTH FETCHING
   const { data: habits = [], isLoading: isHabitsLoading } = useHabits();
   const { data: completions = [], isLoading: isCompletionLoading} = useCompletions();
-  const { statusMap, habitStatsMap } = useStats(habits, completions);
+  const activeHabits = habits.filter(
+    (habit) => habit.lifecycle === "active"
+  );
+  const { statusMap, habitStatsMap } = useStats(activeHabits, completions);
   const habitsLength = habits.length;
   const isLoading = isHabitsLoading || isCompletionLoading;
   // const perfectDaysSet = useMemo(() => {

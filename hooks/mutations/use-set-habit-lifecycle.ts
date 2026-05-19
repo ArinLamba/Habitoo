@@ -1,24 +1,21 @@
-// /hooks/mutations/use-edit-habit.ts
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { editHabit } from "@/server/actions/edit-habit";
+
+import { setHabitLifecycle } from "@/server/actions/set-habit-lifecycle";
 import { Habit } from "@/lib/types";
 
-import { HabitFormValues } from "@/lib/types";
-
-type EditHabitPayload = {
+type Payload = {
   id: string;
-  data: Partial<HabitFormValues>;
+  lifecycle: Habit["lifecycle"];
 };
 
-export const useEditHabit = () => {
+export const useSetHabitLifecycle = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: EditHabitPayload) =>
-      editHabit(id, data),
+    mutationFn: ({ id, lifecycle }: Payload) =>
+      setHabitLifecycle(id, lifecycle),
 
-    onMutate: async ({ id, data }) => {
+    onMutate: async ({ id, lifecycle }) => {
       await queryClient.cancelQueries({ queryKey: ["habits"] });
       await queryClient.cancelQueries({ queryKey: ["habit", id] });
 
@@ -26,15 +23,17 @@ export const useEditHabit = () => {
       const prevHabit = queryClient.getQueryData(["habit", id]);
 
       queryClient.setQueryData(["habits"], (old: Habit[] = []) =>
-        old.map((h) =>
-          h.id === id ? { ...h, ...data } : h
+        old.map((habit) =>
+          habit.id === id
+            ? { ...habit, lifecycle }
+            : habit
         )
       );
 
       queryClient.setQueryData(
         ["habit", id],
         (old: Habit | undefined) =>
-          old ? { ...old, ...data } : old
+          old ? { ...old, lifecycle } : old
       );
 
       return { prevHabits, prevHabit };
@@ -42,21 +41,12 @@ export const useEditHabit = () => {
 
     onError: (_err, vars, ctx) => {
       queryClient.setQueryData(["habits"], ctx?.prevHabits);
-
-      queryClient.setQueryData(
-        ["habit", vars.id],
-        ctx?.prevHabit
-      );
+      queryClient.setQueryData(["habit", vars.id], ctx?.prevHabit);
     },
 
     onSettled: (_data, _err, vars) => {
-      queryClient.invalidateQueries({
-        queryKey: ["habits"],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["habit", vars.id],
-      });
+      queryClient.invalidateQueries({ queryKey: ["habits"] });
+      queryClient.invalidateQueries({ queryKey: ["habit", vars.id] });
     },
   });
 };

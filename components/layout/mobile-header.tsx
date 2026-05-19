@@ -3,7 +3,6 @@ import Image from "next/image";
 import { MobileLeftSidebar } from "@/components/layout/mobile-left-sidebar";
 import { MobileRightSidebar } from "@/components/layout/mobile-right-sidebar";
 
-import { ModeToggle } from "../mode-toggle";
 import { GridListTogle } from "../grid-list-toggle";
 import { UserButton } from "@clerk/nextjs";
 

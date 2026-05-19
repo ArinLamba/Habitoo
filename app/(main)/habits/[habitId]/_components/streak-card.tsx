@@ -1,10 +1,12 @@
 
 import { formatDate } from "@/lib/date";
+import { Habit } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Flame, X } from "lucide-react";
 import { SubtleGrid } from "@/components/subtle-grid";
 
 type Props = {
+  frequency: Habit["frequency"];
   currentStreak: number;
   calendar: {
     completed: Set<string>;
@@ -13,7 +15,11 @@ type Props = {
   };
 };
 
-export const StreakCard = ({ currentStreak, calendar } : Props) => {
+export const StreakCard = ({
+  frequency,
+  currentStreak,
+  calendar,
+} : Props) => {
 
   const { title, message } = getStreakMessage(currentStreak);
   
@@ -38,7 +44,7 @@ export const StreakCard = ({ currentStreak, calendar } : Props) => {
         </h1>
 
         <p className="mt-1 text-sm text-zinc-400">
-          day streak
+          {frequency} streak
         </p>
 
         <h2 className="mt-2 text-center text-sm font-medium text-zinc-300">

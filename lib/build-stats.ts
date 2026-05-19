@@ -1,7 +1,10 @@
 import { Completion, Habit, HABIT_STATUS, HabitStatus } from "./types";
 import { formatDate } from "./date";
-import { isHabitCompletedForDate } from "./habits/progress";
-import { getStreaks, getHabitStreaks } from "./streaks"; // 👈 your functions
+import {
+  getHabitPeriodStreaks,
+  isHabitCompletedForDate,
+} from "./habits/progress";
+import { getStreaks } from "./streaks";
 
 export const buildStats = (
   habits: Habit[],
@@ -56,9 +59,10 @@ export const buildStats = (
 
   // 🔥 ===== PER HABIT STREAKS =====
   const habitStats = habits.map((habit) => {
-    const { currentStreak, bestStreak } = getHabitStreaks(
-      habit.id,
-      completions
+    const { currentStreak, bestStreak } = getHabitPeriodStreaks(
+      habit,
+      completions,
+      todayStr
     );
 
     return {
@@ -183,3 +187,4 @@ export const buildStats = (
 
   };
 };
+

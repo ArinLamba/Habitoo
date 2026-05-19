@@ -82,6 +82,14 @@ type HabitProgress = {
   percentage: number;
 };
 
+type PeriodStreakSegment = {
+  start: string;
+  end: string;
+  length: number;
+  isCurrent?: boolean;
+  isBest?: boolean;
+};
+
 export const calculateHabitProgress = (
   habit: Habit,
   completions: Completion[],
@@ -166,4 +174,153 @@ export const isHabitCompletedForDate = (
     completions,
     targetDate
   ).completed;
+};
+
+const getNextPeriodDate = (
+  frequency: Habit["frequency"],
+  dateStr: string
+) => {
+  const date = new Date(`${dateStr}T00:00:00`);
+
+  if (frequency === "day") date.setDate(date.getDate() + 1);
+  if (frequency === "week") date.setDate(date.getDate() + 7);
+  if (frequency === "month") date.setMonth(date.getMonth() + 1);
+  if (frequency === "year") date.setFullYear(date.getFullYear() + 1);
+
+  return formatDate(date);
+};
+
+export const getHabitPeriodStreaks = (
+  habit: Habit,
+  completions: Completion[],
+  todayStr = formatDate(new Date())
+) => {
+  const periods: {
+    key: string;
+    start: string;
+    end: string;
+    completed: boolean;
+  }[] = [];
+
+  let cursor = getPeriodDates(
+    habit.frequency,
+    habit.startDate
+  ).start;
+  const currentPeriodStart = getPeriodDates(
+    habit.frequency,
+    todayStr
+  ).start;
+
+  while (cursor <= currentPeriodStart) {
+    const range = getPeriodDates(habit.frequency, cursor);
+
+    periods.push({
+      key: range.start,
+      start: range.start,
+      end: range.end,
+      completed: calculateHabitProgress(
+        habit,
+        completions,
+        cursor
+      ).completed,
+    });
+
+    cursor = getNextPeriodDate(habit.frequency, cursor);
+  }
+
+  let currentStreak = 0;
+  let currentIndex = periods.length - 1;
+
+  if (
+    currentIndex >= 0 &&
+    !periods[currentIndex].completed
+  ) {
+    currentIndex -= 1;
+  }
+
+  while (
+    currentIndex >= 0 &&
+    periods[currentIndex].completed
+  ) {
+    currentStreak++;
+    currentIndex--;
+  }
+
+  let bestStreak = 0;
+  let temp = 0;
+  const segments: PeriodStreakSegment[] = [];
+  let segmentStart: string | null = null;
+  let segmentEnd: string | null = null;
+
+  const pushSegment = () => {
+    if (!segmentStart || !segmentEnd || temp <= 0) return;
+
+    segments.push({
+      start: segmentStart,
+      end: segmentEnd,
+      length: temp,
+    });
+  };
+
+  for (const period of periods) {
+    if (period.completed) {
+      if (temp === 0) {
+        segmentStart = period.start;
+      }
+
+      temp++;
+      segmentEnd = period.end;
+      bestStreak = Math.max(bestStreak, temp);
+      continue;
+    }
+
+    pushSegment();
+    temp = 0;
+    segmentStart = null;
+    segmentEnd = null;
+  }
+
+  pushSegment();
+
+  const bestLength = Math.max(
+    ...segments.map((segment) => segment.length),
+    0
+  );
+
+  segments.forEach((segment, index) => {
+    if (segment.length === bestLength && bestLength > 0) {
+      segment.isBest = true;
+    }
+
+    if (index === segments.length - 1) {
+      segment.isCurrent = true;
+    }
+  });
+
+  const recent = [...segments]
+    .sort((a, b) => b.end.localeCompare(a.end))
+    .slice(0, 5);
+
+  const recentKeys = new Set(
+    recent.map((segment) => `${segment.start}-${segment.end}`)
+  );
+
+  const top = [...segments]
+    .filter(
+      (segment) =>
+        !recentKeys.has(`${segment.start}-${segment.end}`)
+    )
+    .sort((a, b) => b.length - a.length)
+    .slice(0, 3);
+
+  return {
+    currentStreak,
+    bestStreak,
+    timeline: {
+      recent,
+      top,
+      total: segments.length,
+      hidden: Math.max(segments.length - recent.length, 0),
+    },
+  };
 };

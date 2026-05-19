@@ -1,11 +1,11 @@
 import {
   formatDisplayDate,
   formatDate,
-  getNextDay,
-  getPrevDay,
 } from "@/lib/date";
-import { buildStreakTimeline } from "./build-streak-timeline";
-import { isHabitCompletedForDate } from "./habits/progress";
+import {
+  getHabitPeriodStreaks,
+  isHabitCompletedForDate,
+} from "./habits/progress";
 import {
   Completion,
   Habit,
@@ -40,93 +40,6 @@ const getWeekKey = (date: Date) => {
   );
 
   return `${date.getFullYear()}-${weekNumber}`;
-};
-
-const getDerivedHabitStreaks = (
-  completionMap: Map<string, HabitStatus>,
-  today: string
-) => {
-  const isSuccess = (date: string) => {
-    const status = completionMap.get(date);
-
-    if (status === HABIT_STATUS.COMPLETED) return true;
-    if (status === HABIT_STATUS.SKIPPED) return "skip";
-
-    return false;
-  };
-
-  let currentStreak = 0;
-  let current = today;
-
-  if (isSuccess(today) !== true) {
-    current = getPrevDay(today);
-  }
-
-  while (true) {
-    const status = isSuccess(current);
-
-    if (status === true) {
-      currentStreak++;
-      current = getPrevDay(current);
-      continue;
-    }
-
-    if (status === "skip") {
-      current = getPrevDay(current);
-      continue;
-    }
-
-    break;
-  }
-
-  const allDates = Array.from(completionMap.keys())
-    .filter((date) => date <= today)
-    .sort();
-
-  let bestStreak = 0;
-  let temp = 0;
-  let previous: string | null = null;
-
-  for (const date of allDates) {
-    if (previous && date !== getNextDay(previous)) {
-      bestStreak = Math.max(bestStreak, temp);
-      temp = 0;
-    }
-
-    const status = isSuccess(date);
-
-    if (status === true) {
-      temp++;
-    } else if (status !== "skip") {
-      bestStreak = Math.max(bestStreak, temp);
-      temp = 0;
-    }
-
-    previous = date;
-  }
-
-  bestStreak = Math.max(bestStreak, temp);
-
-  return { currentStreak, bestStreak };
-};
-
-const getDerivedCompletions = (
-  habit: Habit,
-  completionMap: Map<string, HabitStatus>
-) => {
-  return Array.from(completionMap.entries()).map(
-    ([date, status]) =>
-      ({
-        id: `${habit.id}-${date}`,
-        habitId: habit.id,
-        userId: habit.userId,
-        date,
-        status,
-        value: null,
-        note: null,
-        completedAt: new Date(`${date}T00:00:00`),
-      }) as Completion
-  );
 };
 
 export const buildHabitStats = (
@@ -192,14 +105,14 @@ export const buildHabitStats = (
     }
   }
 
-  const { currentStreak, bestStreak } = getDerivedHabitStreaks(
-    completionMap,
-    todayStr
-  );
-
-  const streakTimeline = buildStreakTimeline(
+  const {
+    currentStreak,
+    bestStreak,
+    timeline: streakTimeline,
+  } = getHabitPeriodStreaks(
     habit,
-    getDerivedCompletions(habit, completionMap)
+    habitCompletions,
+    todayStr
   );
 
   const totalDays =

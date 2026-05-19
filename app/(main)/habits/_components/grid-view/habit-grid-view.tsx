@@ -1,8 +1,9 @@
-
 import { Habit, HabitStatus, Completion } from "@/lib/types";
 import { HabitRow } from "./habit-row";
 import { HabitGridHeader } from "./habit-grid-header";
 import { AddHabitInput } from "../add-habit-input";
+import { LifecycleSection } from "../habit-life-cycle";
+
 
 type TempHabitStats = {
   habitId: string;
@@ -25,10 +26,20 @@ export const HabitGridView = ({
   statusMap,
   habitStatsMap
 }: Props) => {
+  const activeHabits = habits.filter(
+    (habit) => habit.lifecycle === "active"
+  );
+  const completedHabits = habits.filter(
+    (habit) => habit.lifecycle === "completed"
+  );
+  const archivedHabits = habits.filter(
+    (habit) => habit.lifecycle === "archived"
+  );
+
   return (
-    <div className="h-[calc(100vh-65px)] flex flex-col">
+    <div className="flex flex-col">
       <HabitGridHeader />
-      {habits.map(habit => {
+      {activeHabits.map(habit => {
         const stats = habitStatsMap.get(habit.id);
         return (
           <HabitRow
@@ -41,6 +52,16 @@ export const HabitGridView = ({
         )
       })}
       <AddHabitInput />
+      <LifecycleSection
+        title="Ended habits"
+        habits={completedHabits}
+      />
+      <LifecycleSection
+        title="Archived habits"
+        habits={archivedHabits}
+      />
     </div>
   );
 };
+
+

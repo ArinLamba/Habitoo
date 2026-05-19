@@ -27,7 +27,15 @@ export const Heatmap = ({
 
   const setCurrentDate  = useDateStore(state => state.setCurrentDate);
 
-  const stats = useStats(habits, completions);
+  const activeHabits = useMemo(
+    () =>
+      habits.filter(
+        (habit) => habit.lifecycle === "active"
+      ),
+    [habits]
+  );
+
+  const stats = useStats(activeHabits, completions);
 
   const data = stats.dayCount;
   const weeks = generateHeatmapGrid(90);
@@ -36,16 +44,16 @@ export const Heatmap = ({
     const map = new Map<string, number>();
 
     weeks.flat().forEach((date) => {
-      const activeHabits = getActiveHabits(
-        habits,
+      const activeForDate = getActiveHabits(
+        activeHabits,
         new Date(date)
       );
 
-      map.set(date, activeHabits.length);
+      map.set(date, activeForDate.length);
     });
 
     return map;
-  }, [weeks, habits]);
+  }, [weeks, activeHabits]);
 
   return (
     <div className="py-1 dark:bg-zinc-900 inline-block mx-auto">

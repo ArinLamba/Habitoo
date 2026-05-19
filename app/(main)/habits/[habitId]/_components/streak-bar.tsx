@@ -2,15 +2,17 @@ import { format } from "date-fns";
 import { Flame, Trophy } from "lucide-react";
 
 import { StreakSegment } from "@/lib/build-streak-timeline";
+import { Habit } from "@/lib/types";
 
 type Props = {
+  frequency: Habit["frequency"];
   segment: StreakSegment;
   maxLength: number;
-
   color: string;
 };
 
 export const StreakBar = ({
+  frequency,
   segment,
   maxLength,
   color,
@@ -72,7 +74,7 @@ export const StreakBar = ({
             )}
 
             <span className="text-sm font-semibold dark:text-white">
-              {segment.length} days
+              {segment.length} {frequency}
             </span>
           </div>
         </div>

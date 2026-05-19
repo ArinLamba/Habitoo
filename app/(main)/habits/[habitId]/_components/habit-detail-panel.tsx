@@ -1,11 +1,13 @@
 "use client";
 import { LogHistory } from "./log-history";
-import { HabitDetailsHeader } from "../habit-detail-header";
+import { HabitDetailsHeader } from "./habit-detail-header";
 
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
 import { Completion, Habit } from "@/lib/types";
+import { Notes } from "./notes";
+import { HabitAbout } from "./habit-about";
 
 type Props = {
   habit: Habit;
@@ -32,15 +34,11 @@ export const HabitDetailsPanel = ({
         )}
 
         {selectedTab === "Notes" && (
-          <div className="p-4">
-            Notes coming soon
-          </div>
+          <Notes />
         )}
 
         {selectedTab === "About" && (
-          <div className="p-4">
-            About section
-          </div>
+          <HabitAbout key={habit.id} habit={habit} />
         )}
       </div>
     </div>

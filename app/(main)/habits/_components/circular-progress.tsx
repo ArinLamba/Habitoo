@@ -31,6 +31,7 @@ export const CircularProgress = ({
 
   const activeHabits = useMemo(() => {
     return habits.filter((habit) => {
+      if (habit.lifecycle !== "active") return false;
       if (!habit || !habit.startDate) return false;
 
       const created = normalize(new Date(habit.startDate));

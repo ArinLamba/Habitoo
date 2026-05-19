@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 
 import { Completion, Habit, HabitStatus } from "@/lib/types";
-import { calculateHabitProgress } from "@/lib/habits/progress";
+import { calculateHabitProgress, getPeriodDates } from "@/lib/habits/progress";
 import { getIsFuture } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { useAddLog } from "@/hooks/mutations/use-add-log";
@@ -34,6 +34,36 @@ const getWeekNumber = (date: Date) => {
     (date.getTime() - firstDay.getTime()) / 86400000;
 
   return Math.ceil((pastDays + firstDay.getDay() + 1) / 7);
+};
+
+const getPeriodBlock = (
+  frequency: Habit["frequency"],
+  date: string
+) => {
+  const d = new Date(`${date}T00:00:00`);
+  const range = getPeriodDates(frequency, date);
+
+  if (frequency === "week") {
+    return {
+      key: `week-${range.start}`,
+      label: `W${getWeekNumber(d)}`,
+      startDate: range.start,
+    };
+  }
+
+  if (frequency === "month") {
+    return {
+      key: `month-${range.start}`,
+      label: d.toLocaleString("default", { month: "short" }),
+      startDate: range.start,
+    };
+  }
+
+  return {
+    key: `year-${range.start}`,
+    label: d.getFullYear().toString(),
+    startDate: range.start,
+  };
 };
 
 const getDayProgress = (
@@ -83,11 +113,9 @@ export const WeeklyHabitGrid = ({
   const weeks: WeekBlock[] = [];
 
   days.forEach((day, index) => {
-    const d = new Date(`${day.date}T00:00:00`);
-    const weekNumber = getWeekNumber(d);
-    const key = `${d.getFullYear()}-${weekNumber}`;
+    const period = getPeriodBlock(habit.frequency, day.date);
 
-    const existing = weeks.find((week) => week.key === key);
+    const existing = weeks.find((week) => week.key === period.key);
 
     if (existing) {
       existing.colSpan += 1;
@@ -96,9 +124,9 @@ export const WeeklyHabitGrid = ({
     }
 
     weeks.push({
-      key,
-      label: `W${weekNumber}`,
-      startDate: day.date,
+      key: period.key,
+      label: period.label,
+      startDate: period.startDate,
       colStart: index + 1,
       colSpan: 1,
       dates: [day.date],
@@ -171,20 +199,18 @@ export const WeeklyHabitGrid = ({
                   const isBeforeStart = habit.startDate > date;
                   const isFuture = getIsFuture(date);
                   const isDisabled = isBeforeStart || isFuture;
-                  // text color calculation
-                  const fillPerDay = 100 / week.dates.length;
                   const filledUntilIndex =
                     (percentage / 100) * week.dates.length;
 
                   const isInsideFilledArea =
                     index < filledUntilIndex;
-                    //
+
                   return (
                     <div
                       key={date}
                       className={cn(
                         "border-l border-black/10 first:border-l-0 dark:border-white/10",
-                        isCompleted && "text-white"
+                        (isCompleted || isInsideFilledArea) && "text-white"
                       )}
                     >
                       <DayCell

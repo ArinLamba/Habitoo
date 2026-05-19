@@ -2,7 +2,7 @@
 import { Completion, Habit, HabitStats } from "@/lib/types";
 
 import { StreakCard } from "./streak-card";
-import { StatsCards } from "./stats-card";
+import { StatsCards } from "./stats-cards";
 import { HabitHeader } from "./habit-header";
 import { HabitCalendar } from "./habit-calendar";
 import { DashboardCard } from "./dashboard-card";
@@ -30,19 +30,26 @@ export const HabitOverview = ({ habit, analytics, completions }: Props) => {
 
           <DashboardCard className="p-0 lg:w-1/3 w-full">
             <StreakCard
+              frequency={habit.frequency}
               currentStreak={analytics.streaks.currentStreak}
               calendar={analytics.calendar.sets}
             />
           </DashboardCard>
-          <DashboardCard className="lg:w-2/3 w-full">
-            <StatsCards analytics={analytics}/>
-            <HabitCalendar 
+          
+          <div className="w-full flex flex-col gap-2">
+            <StatsCards 
               habit={habit}
-              color={habit.color!}
-              calendar={analytics.calendar.sets}
-              completions={completions}
+              analytics={analytics}
             />
-          </DashboardCard>
+            <DashboardCard className="w-full">
+              <HabitCalendar 
+                habit={habit}
+                color={habit.color!}
+                calendar={analytics.calendar.sets}
+                completions={completions}
+                />
+            </DashboardCard>
+          </div>
 
         </div>
 
@@ -52,6 +59,7 @@ export const HabitOverview = ({ habit, analytics, completions }: Props) => {
 
           <DashboardCard className="w-full">
             <StreakTimeline 
+              frequency={habit.frequency}
               color={habit.color!}
               timeline={analytics.streaks.timeline}
             />

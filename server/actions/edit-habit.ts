@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/get-user-id";
 import { HabitFormValues } from "@/lib/types";
 import { updateHabit } from "@/server/services/habits";
 
-export const editHabit = async (id: string, data: HabitFormValues) => {
+export const editHabit = async (id: string, data: Partial<HabitFormValues>) => {
   const userId = await getUserId();
 
   if(!userId) throw new Error("Unauthorized");

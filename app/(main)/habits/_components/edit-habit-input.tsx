@@ -16,7 +16,6 @@ import { Field, FieldError } from "@/components/ui/field";
 import { formSchema, Habit, HabitFormValues } from "@/lib/types";
 
 import { useEditHabit } from "@/hooks/mutations/use-edit-habit";
-import { useRouter } from "next/navigation";
 
 
 import { 
@@ -30,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { DeleteButton } from "./delete-button";
+import { useSetHabitLifecycle } from "@/hooks/mutations/use-set-habit-lifecycle";
 
 type Props = {
   habit: Habit;
@@ -41,10 +41,10 @@ export const EditHabitInput = ({ habit, children }: Props) => {
 
   const [open, setOpen] = useState(false);
 
-  const router = useRouter();
   // 1. Destructured isLoading here
   // const { data: habit } = useHabitById(habitId!, open);
   const { mutate: editMutate } = useEditHabit();
+  const { mutate: setLifecycle } = useSetHabitLifecycle();
 
  
   const defaultValues: HabitFormValues = {
@@ -82,9 +82,9 @@ export const EditHabitInput = ({ habit, children }: Props) => {
       {
         onSuccess: () => {
           toast.success("Edit Successful", {
-          description: "None of your Business"
+          description: ""
         })
-        router.refresh()
+        
         setOpen(false);
       },
       onError: () => toast.error("Failed to update habit"),
@@ -156,7 +156,27 @@ export const EditHabitInput = ({ habit, children }: Props) => {
         </div>
         <DialogFooter className="flex justify-between">
           <div className="space-x-2">
-            <Button variant="outline" className="text-xs">
+            <Button
+              type="button"
+              variant="outline"
+              className="text-xs"
+              onClick={() => {
+                setLifecycle(
+                  {
+                    id: habit.id,
+                    lifecycle: "archived",
+                  },
+                  {
+                    onSuccess: () => {
+                      toast.success("Habit archived");
+                      setOpen(false);
+                    },
+                    onError: () =>
+                      toast.error("Failed to archive habit"),
+                  }
+                );
+              }}
+            >
               Archive
             </Button>
           <DeleteButton id={habit.id}>

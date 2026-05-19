@@ -1,4 +1,8 @@
 "use client";
+import { formatDate, getIsFuture } from "@/lib/date";
+import { calculateHabitProgress } from "@/lib/habits/progress";
+import { Completion, Habit, HABIT_STATUS, HabitStatus } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 import { useMemo, useState } from "react";
 import {
@@ -18,12 +22,11 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Button } from "@/components/ui/button";
-import { formatDate, getIsFuture } from "@/lib/date";
-import { calculateHabitProgress } from "@/lib/habits/progress";
-import { Completion, Habit, HABIT_STATUS, HabitStatus } from "@/lib/types";
-import { cn } from "@/lib/utils";
+
+
 import { useHabitActions } from "@/hooks/use-habit-actions";
 import { useAddLog } from "@/hooks/mutations/use-add-log";
+
 import { useSelectedCellStore } from "@/store/use-selected-cell-store";
 
 type Sets = {
@@ -205,9 +208,7 @@ function MonthGrid({
                   )}
 
                   <span className="relative z-10 flex items-center justify-center">
-                    {isCompleted ? (
-                      <Check size={13} className="text-emerald-950" />
-                    ) : isSkipped ? (
+                     {isSkipped ? (
                       <ArrowRight size={14} color={color} />
                     ) : isFailed ? (
                       <X size={14} color="red" />

@@ -89,6 +89,7 @@ export const getActiveHabits = (
   const normalizedCurrent = normalize(date);
 
   return habits.filter((habit) => {
+    if (habit.lifecycle !== "active") return false;
     if (!habit?.createdAt) return false;
 
     const created = normalize(new Date(habit.createdAt));
