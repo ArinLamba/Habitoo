@@ -81,6 +81,23 @@ export const getIsSameOrBefore = (a: string, b: string) => {
 
 export const formatDisplayDate = (dateStr: string) => {
   const d = new Date(dateStr + "T00:00:00");
+
+  const today = new Date();
+
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const formattedToday = formatDate(today);
+  const formattedYesterday = formatDate(yesterday);
+
+  if (dateStr === formattedToday) {
+    return "Today";
+  }
+
+  if (dateStr === formattedYesterday) {
+    return "Yesterday";
+  }
+
   return d.toLocaleDateString("default", {
     day: "numeric",
     month: "short",

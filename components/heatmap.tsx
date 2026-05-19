@@ -27,7 +27,15 @@ export const Heatmap = ({
 
   const setCurrentDate  = useDateStore(state => state.setCurrentDate);
 
-  const stats = useStats(habits, completions);
+  const activeHabits = useMemo(
+    () =>
+      habits.filter(
+        (habit) => habit.lifecycle === "active"
+      ),
+    [habits]
+  );
+
+  const stats = useStats(activeHabits, completions);
 
   const data = stats.dayCount;
   const weeks = generateHeatmapGrid(90);
@@ -36,19 +44,19 @@ export const Heatmap = ({
     const map = new Map<string, number>();
 
     weeks.flat().forEach((date) => {
-      const activeHabits = getActiveHabits(
-        habits,
+      const activeForDate = getActiveHabits(
+        activeHabits,
         new Date(date)
       );
 
-      map.set(date, activeHabits.length);
+      map.set(date, activeForDate.length);
     });
 
     return map;
-  }, [weeks, habits]);
+  }, [weeks, activeHabits]);
 
   return (
-    <div className="p-1 dark:bg-zinc-900 inline-block mx-auto">
+    <div className="py-1 dark:bg-zinc-900 inline-block mx-auto">
       
       {/* Title */}
       <p className="text-sm text-muted-foreground mb-3">
@@ -70,7 +78,7 @@ export const Heatmap = ({
             <div
               key={i}
               className={`w-[10px] text-center ${
-                isNewMonth ? "ml-[11px] font-medium" : ""
+                isNewMonth ? "ml-[11px] lg:ml-[2.5px] font-medium" : ""
               }`}
             >
               {isNewMonth
@@ -87,7 +95,7 @@ export const Heatmap = ({
       <div className="flex gap-[5px]">
         
         {/* Day labels */}
-        <div className="flex flex-col gap-[px] text-[10px] text-muted-foreground mr-1">
+        <div className="flex flex-col gap-[px] text-[10px] text-muted-foreground ">
           <span>Sun</span>
           <span>Mon</span>
           <span>Tue</span>
@@ -137,7 +145,7 @@ export const Heatmap = ({
                     <TooltipTrigger asChild>
                       <div
                         onClick={() => setCurrentDate(new Date(date))}
-                        className={`w-3 h-3 rounded-sm cursor-pointer transition-transform hover:scale-125 ${color}`}
+                        className={`lg:w-2.25 lg:h-2.25 w-3 h-3 rounded-sm cursor-pointer transition-transform hover:scale-125 ${color}`}
                       />
                     </TooltipTrigger>
 

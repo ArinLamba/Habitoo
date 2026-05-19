@@ -1,16 +1,25 @@
 
 import { formatDate } from "@/lib/date";
-import { HABIT_STATUS, HabitStatus } from "@/lib/types";
+import { Habit } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Flame, X } from "lucide-react";
 import { SubtleGrid } from "@/components/subtle-grid";
 
 type Props = {
+  frequency: Habit["frequency"];
   currentStreak: number;
-  completedDates: Map<string, HabitStatus>;
+  calendar: {
+    completed: Set<string>;
+    skipped: Set<string>;
+    failed: Set<string>;
+  };
 };
 
-export const StreakCard = ({ currentStreak, completedDates } : Props) => {
+export const StreakCard = ({
+  frequency,
+  currentStreak,
+  calendar,
+} : Props) => {
 
   const { title, message } = getStreakMessage(currentStreak);
   
@@ -35,7 +44,7 @@ export const StreakCard = ({ currentStreak, completedDates } : Props) => {
         </h1>
 
         <p className="mt-1 text-sm text-zinc-400">
-          day streak
+          {frequency} streak
         </p>
 
         <h2 className="mt-2 text-center text-sm font-medium text-zinc-300">
@@ -55,10 +64,9 @@ export const StreakCard = ({ currentStreak, completedDates } : Props) => {
             weekday: "short",
           });
 
-          const status = completedDates.get(dateStr);
-          const isDone = status === HABIT_STATUS.COMPLETED;
-          const isSkipped = status === HABIT_STATUS.SKIPPED;
-          const isFailed = status === HABIT_STATUS.FAILED;
+          const isDone = calendar.completed.has(dateStr);
+          const isSkipped = calendar.skipped.has(dateStr);
+          const isFailed = calendar.failed.has(dateStr);
 
           const icon =
             isSkipped ? <ArrowRight className="h-4 w-4 text-zinc-300 stroke-2.5" /> :

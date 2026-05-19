@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 
 import { Grid, List } from "lucide-react";
 import { ButtonGroup } from "./ui/button-group";
+import { cn } from "@/lib/utils";
 
 export const GridListTogle = () => {
 
@@ -13,13 +14,21 @@ export const GridListTogle = () => {
   return (
     <div className="flex">
       <ButtonGroup >
-        <Button variant="outline" size={"sm"} className="gap-2" onClick={() => setHabitViewLayout("grid")}>
+        <Button 
+          variant={habitViewLayout === "grid" ? "toggle" : "outline"}
+          size={"sm"} 
+          className="gap-2"
+          onClick={() => setHabitViewLayout("grid")}>
           <Grid/> <p>Grid</p>
         </Button>
-        <Button variant="outline" size={"sm"} className="gap-2" onClick={() => setHabitViewLayout("list")}>
+        <Button
+          variant={habitViewLayout === "list" ? "toggle" : "outline"}
+          size={"sm"} 
+          className="gap-2" 
+          onClick={() => setHabitViewLayout("list")}>
           <List /> <p>List</p>
         </Button>
       </ButtonGroup>
-    </div> 
+    </div>
   );
 };

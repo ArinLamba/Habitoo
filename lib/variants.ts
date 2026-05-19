@@ -1,6 +1,7 @@
 export const CELL_VARIANTS = {
   beforeStart: `
-    bg-pink-800/30
+    dark:bg-pink-800/30
+    bg-rose-800/30
     
     opacity-70
     cursor-not-allowed
@@ -20,20 +21,19 @@ export const CELL_VARIANTS = {
   `,
 
   skipped: `
-    bg-amber-500/10
-    
+    bg-amber-500/20
     hover:bg-amber-500/20
-    text-amber-400
+    text-amber-600
   `,
 
   failed: `
-    bg-rose-500/10
-    hover:bg-rose-500/20
-    text-rose-400
+    bg-rose-500/20
+    hover:bg-rose-500/30
+    text-rose-600
   `,
 
   default: `
-    bg-gray-100 dark:bg-zinc-800
+    bg-blue-900/20 dark:bg-blue-900/20
     hover:bg-gray-200 dark:hover:bg-zinc-700
   `,
 };

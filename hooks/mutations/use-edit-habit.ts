@@ -8,7 +8,7 @@ import { HabitFormValues } from "@/lib/types";
 
 type EditHabitPayload = {
   id: string;
-  data: HabitFormValues;
+  data: Partial<HabitFormValues>;
 };
 
 export const useEditHabit = () => {

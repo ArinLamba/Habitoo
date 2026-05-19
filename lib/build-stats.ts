@@ -1,6 +1,10 @@
-import { Completion, Habit, HABIT_STATUS } from "./types";
+import { Completion, Habit, HABIT_STATUS, HabitStatus } from "./types";
 import { formatDate } from "./date";
-import { getStreaks, getHabitStreaks } from "./streaks"; // 👈 your functions
+import {
+  getHabitPeriodStreaks,
+  isHabitCompletedForDate,
+} from "./habits/progress";
+import { getStreaks } from "./streaks";
 
 export const buildStats = (
   habits: Habit[],
@@ -12,10 +16,32 @@ export const buildStats = (
   const doneSet = new Set<string>();
   const dayCount = new Map<string, number>();
   const weekdayCount = Array(7).fill(0);
+  const habitMap = new Map(
+    habits.map((habit) => [habit.id, habit])
+  );
+  const completedPairs = new Set<string>();
 
   // ✅ SINGLE PASS
   completions.forEach((c) => {
-    if (c.status !== HABIT_STATUS.COMPLETED ||c.date > todayStr) return;
+    if (c.date > todayStr) return;
+
+    const habit = habitMap.get(c.habitId);
+    if (!habit) return;
+
+    const key = `${c.habitId}-${c.date}`;
+    if (completedPairs.has(key)) return;
+
+    if (
+      !isHabitCompletedForDate(
+        habit,
+        completions,
+        c.date
+      )
+    ) {
+      return;
+    }
+
+    completedPairs.add(key);
 
     // global
     doneSet.add(c.date);
@@ -33,9 +59,10 @@ export const buildStats = (
 
   // 🔥 ===== PER HABIT STREAKS =====
   const habitStats = habits.map((habit) => {
-    const { currentStreak, bestStreak } = getHabitStreaks(
-      habit.id,
-      completions
+    const { currentStreak, bestStreak } = getHabitPeriodStreaks(
+      habit,
+      completions,
+      todayStr
     );
 
     return {
@@ -95,7 +122,7 @@ export const buildStats = (
   for (const habit of habits) {
     if (!habit?.createdAt) continue;
 
-    const created = new Date(habit.createdAt);
+    const created = new Date(habit.startDate);
     const today = new Date();
 
     const diff =
@@ -117,12 +144,24 @@ export const buildStats = (
   
 
   //  ====== Completion Set =====
-  const completionMap = new Map(
-    completions.map((c) => [
-      `${c.habitId}-${c.date}`,
-      c.status
-    ])
-  );
+  const statusMap = new Map<string, HabitStatus>();
+
+  completions.forEach((c) => {
+    const key = `${c.habitId}-${c.date}`;
+    const current = statusMap.get(key);
+
+    if (
+      c.status === HABIT_STATUS.SKIPPED ||
+      c.status === HABIT_STATUS.FAILED
+    ) {
+      statusMap.set(key, c.status);
+      return;
+    }
+
+    if (c.value === null && current === undefined) {
+      statusMap.set(key, c.status);
+    }
+  });
 
   // 🔥 FINAL RETURN
   return {
@@ -144,7 +183,8 @@ export const buildStats = (
     longestBreak,
 
     // Completion
-    completionMap
+    statusMap
 
   };
 };
+

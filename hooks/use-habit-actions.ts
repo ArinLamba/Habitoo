@@ -2,10 +2,10 @@ import { useSetHabitStatus } from "@/hooks/mutations/use-set-habit-status";
 import { HabitStatus } from "@/lib/types";
 
 type Params = {
-  completionMap?: Map<string, HabitStatus>;
+  statusMap?: Map<string, HabitStatus>;
 };
 
-export const useHabitActions = ({ completionMap }: Params) => {
+export const useHabitActions = ({ statusMap }: Params) => {
   const { mutate } = useSetHabitStatus();
 
   const toggle = (
@@ -14,7 +14,7 @@ export const useHabitActions = ({ completionMap }: Params) => {
     newStatus: HabitStatus
   ) => {
     const currentStatus =
-      completionMap?.get(`${habitId}-${date}`) ?? null;
+      statusMap?.get(`${habitId}-${date}`) ?? null;
 
     const finalStatus =
       currentStatus === newStatus ? null : newStatus;

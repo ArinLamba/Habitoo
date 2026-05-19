@@ -8,6 +8,9 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
@@ -18,6 +21,13 @@ import { Button } from "@/components/ui/button";
 import { HABIT_STATUS, HabitStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+type Progress = {
+  current: number;
+  target: number;
+  completed: boolean;
+  percentage: number;
+};
+
 type Props = {
   habitId: string;
   date: string;
@@ -27,11 +37,18 @@ type Props = {
   isFuture: boolean;
   variant: string;
   isBeforeStart: boolean;
+  progress: Progress;
+  transparentFill?: boolean;
+  textColor?: string;
+  unit: string;
 
   setSelectedCell: (data: {
     habitId: string;
     date: string;
   }) => void;
+
+  fillRemaining: () => void;
+  addValue?: (value: number) => void;
 
   toggle: (
     habitId: string,
@@ -49,20 +66,44 @@ export const DayCell = memo(({
   isFuture,
   variant,
   isBeforeStart,
+  progress,
+  transparentFill = false,
+  textColor = "text-white",
+  unit,
   setSelectedCell,
+  fillRemaining,
+  addValue,
   toggle,
 }: Props) => {
-  const isDone = status === HABIT_STATUS.COMPLETED;
+  const isLegacyDone =
+    status === HABIT_STATUS.COMPLETED &&
+    progress.current === 0;
+  const isDone = progress.completed || isLegacyDone;
+  const hasProgress = progress.current > 0 && !isDone;
   const isSkipped = status === HABIT_STATUS.SKIPPED;
   const isFailed = status === HABIT_STATUS.FAILED;
 
-  const handleToggle = (nextStatus: HabitStatus | null) => {
-    if (isDisabled) return;
-
+  const selectCell = () => {
     setSelectedCell({
       habitId,
       date,
     });
+  };
+
+  const handleFillRemaining = () => {
+    if (isDisabled) return;
+
+    selectCell();
+
+    if (isDone) return;
+
+    fillRemaining();
+  };
+
+  const handleStatus = (nextStatus: HabitStatus | null) => {
+    if (isDisabled) return;
+
+    selectCell();
 
     toggle(habitId, date, nextStatus);
   };
@@ -83,13 +124,13 @@ export const DayCell = memo(({
           size="mark"
           variant="mark"
           disabled={isDisabled}
-          onClick={() => handleToggle(HABIT_STATUS.COMPLETED)}
+          onClick={handleFillRemaining}
           className={cn(
             variant,
-            "transition-all duration-200 rounded-none px-5 py-4.25 ease-out"
+            "relative transition-all duration-200 rounded-none h-9 w-full overflow-hidden ease-out"
           )}
           style={
-            isDone
+            !transparentFill && isDone
               ? {
                   backgroundColor: color,
                 }
@@ -108,19 +149,29 @@ export const DayCell = memo(({
               : undefined
           }
         >
-          {isDone && <Check className="text-emerald-950" />}
-          {isSkipped && <ArrowRight />}
+          {!transparentFill && hasProgress && (
+            <div
+              className="absolute inset-y-0 left-0 opacity-70 transition-all"
+              style={{
+                width: `${progress.percentage}%`,
+                backgroundColor: color,
+              }}
+            />
+          )}
+
+          {isDone && <Check className={textColor}/>}
+          {isSkipped && !isDone && <ArrowRight />}
           {isFailed && <X />}
 
           {!isDisabled &&
             !isDone &&
             !isSkipped &&
             !isFailed && (
-              <div className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+              <div className="relative z-10 w-1 h-1 rounded-full bg-muted-foreground/40" />
             )}
 
           {isFuture && (
-            <div className="w-1 h-1 rounded-full bg-blue-700/70 mx-auto" />
+            <div className="relative z-10 w-1 h-1 rounded-full bg-blue-700/70 mx-auto" />
           )}
         </Button>
       </ContextMenuTrigger>
@@ -128,18 +179,45 @@ export const DayCell = memo(({
       <ContextMenuContent className="w-56">
         <ContextMenuItem
           onClick={() =>
-            handleToggle(HABIT_STATUS.COMPLETED)
+            handleFillRemaining()
           }
         >
-          Mark as Done
+          Fill Remaining
           <ContextMenuShortcut>
             Alt + D
           </ContextMenuShortcut>
         </ContextMenuItem>
 
+        {addValue && (
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>
+              Add Logs
+            </ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-40">
+              {[1, Math.max(1, Math.round(progress.target / 2)), progress.target].map(
+                (value, index) => (
+                  <ContextMenuItem
+                    key={`${value}-${index}`}
+                    onClick={() => {
+                      selectCell();
+                      addValue(value);
+                    }}
+                  >
+                    +{value} {unit}
+                  </ContextMenuItem>
+                )
+              )}
+              <ContextMenuSeparator />
+              <ContextMenuItem onClick={handleFillRemaining}>
+                Fill Remaining
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+        )}
+
         <ContextMenuItem
           onClick={() =>
-            handleToggle(HABIT_STATUS.SKIPPED)
+            handleStatus(HABIT_STATUS.SKIPPED)
           }
         >
           Mark as Skipped
@@ -150,7 +228,7 @@ export const DayCell = memo(({
 
         <ContextMenuItem
           onClick={() =>
-            handleToggle(HABIT_STATUS.FAILED)
+            handleStatus(HABIT_STATUS.FAILED)
           }
         >
           Mark as Failed
@@ -162,7 +240,7 @@ export const DayCell = memo(({
         <ContextMenuSeparator />
 
         <ContextMenuItem
-          onClick={() => handleToggle(null)}
+          onClick={() => handleStatus(null)}
         >
           Clear Logs
           <ContextMenuShortcut>

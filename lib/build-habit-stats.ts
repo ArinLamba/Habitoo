@@ -1,103 +1,309 @@
-import { formatDisplayDate } from "@/lib/date";
-import { formatDate } from "./date";
-import { getHabitStreaks } from "./streaks";
-import { Completion, Habit, HABIT_STATUS, HabitStatus } from "./types";
+import {
+  formatDisplayDate,
+  formatDate,
+} from "@/lib/date";
+import {
+  getHabitPeriodStreaks,
+  isHabitCompletedForDate,
+} from "./habits/progress";
+import {
+  Completion,
+  Habit,
+  HABIT_STATUS,
+  HabitStatus,
+} from "./types";
 
-export const buildHabitStats = (habit: Habit, completions: Completion[]) => {
-      if (!habit) return null;
-    
-    // rest stays SAME
+type CalendarSets = {
+  completed: Set<string>;
+  skipped: Set<string>;
+  failed: Set<string>;
+};
 
-    const createdDate = new Date(habit.createdAt!);
-    if (isNaN(createdDate.getTime())) return null;
-    
-    createdDate.setHours(0, 0, 0, 0);
+const getDates = (start: Date, end: Date) => {
+  const arr: Date[] = [];
+  const cursor = new Date(start);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  while (cursor <= end) {
+    arr.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
 
-    const todayStr = formatDate(today);
-    const habitStartDate = formatDate(createdDate);
+  return arr;
+};
 
-    // 🔥 streaks
-    const { currentStreak, bestStreak } = getHabitStreaks(
-      habit.id,
-      completions
-    );
-    
+const getWeekKey = (date: Date) => {
+  const firstDay = new Date(date.getFullYear(), 0, 1);
+  const pastDays =
+    (date.getTime() - firstDay.getTime()) / 86400000;
+  const weekNumber = Math.ceil(
+    (pastDays + firstDay.getDay() + 1) / 7
+  );
 
-    // 📊 consistency
-    const totalDays =
-      Math.floor(
-        (today.getTime() - createdDate.getTime()) /
-          (1000 * 60 * 60 * 24)
-      ) + 1;
+  return `${date.getFullYear()}-${weekNumber}`;
+};
 
-    const doneDaysSet = new Set(
-      completions
-        .filter(
-          (c) =>
-            c.habitId === habit.id &&
-            c.status === HABIT_STATUS.COMPLETED &&
-            c.date >= habitStartDate &&
-            c.date <= todayStr
-        )
-        .map((c) => c.date)
-    );
+export const buildHabitStats = (
+  habit: Habit,
+  completions: Completion[]
+) => {
+  if (!habit) return null;
 
-    const consistency = totalDays
-      ? Math.round((doneDaysSet.size / totalDays) * 100)
-      : 0;
+  const createdDate = new Date(`${habit.startDate}T00:00:00`);
+  if (isNaN(createdDate.getTime())) return null;
 
-    // 📅 week
-    const habitCompletions = completions.filter(
-      (c) => c.habitId === habit.id
-    );
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    const completionMap = new Map<string, HabitStatus>();
+  const todayStr = formatDate(today);
+  const startStr = formatDate(createdDate);
 
-    for (const c of habitCompletions) {
-      completionMap.set(c.date, c.status);
+  const habitCompletions = completions.filter(
+    (completion) => completion.habitId === habit.id
+  );
+
+  const completionMap = new Map<string, HabitStatus>();
+
+  const calendar: CalendarSets = {
+    completed: new Set<string>(),
+    skipped: new Set<string>(),
+    failed: new Set<string>(),
+  };
+
+  for (const completion of habitCompletions) {
+    if (completion.value !== null) continue;
+
+    if (completion.status === HABIT_STATUS.SKIPPED) {
+      completionMap.set(completion.date, completion.status);
+      calendar.skipped.add(completion.date);
     }
 
-    const last7Days = [...Array(7)].map((_, i) => {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      return formatDate(d);
-    });
+    if (completion.status === HABIT_STATUS.FAILED) {
+      completionMap.set(completion.date, completion.status);
+      calendar.failed.add(completion.date);
+    }
+  }
 
-    const weekDone = habitCompletions.filter(
-      (c) =>
-        last7Days.includes(c.date) &&
-        c.status === HABIT_STATUS.COMPLETED &&
-        c.date <= todayStr
-    ).length;
+  for (const date of getDates(createdDate, today)) {
+    const dateStr = formatDate(date);
 
-    // ⏱️ last done
-    const lastDone = [...habitCompletions]
-      .filter((c) => c.status === HABIT_STATUS.COMPLETED && c.date <= todayStr)
-      .sort((a, b) => b.date.localeCompare(a.date))[0];
+    if (
+      calendar.skipped.has(dateStr) ||
+      calendar.failed.has(dateStr)
+    ) {
+      continue;
+    }
 
-    const lastDoneText = lastDone
-      ? formatDisplayDate(lastDone.date)
-      : "Never";
+    if (
+      isHabitCompletedForDate(
+        habit,
+        habitCompletions,
+        dateStr
+      )
+    ) {
+      completionMap.set(dateStr, HABIT_STATUS.COMPLETED);
+      calendar.completed.add(dateStr);
+    }
+  }
 
-    // 🧠 insight
-    const insight =
+  const {
+    currentStreak,
+    bestStreak,
+    timeline: streakTimeline,
+  } = getHabitPeriodStreaks(
+    habit,
+    habitCompletions,
+    todayStr
+  );
+
+  const totalDays =
+    Math.floor(
+      (today.getTime() - createdDate.getTime()) /
+        (1000 * 60 * 60 * 24)
+    ) + 1;
+
+  const doneDays = new Set(
+    [...calendar.completed].filter(
+      (date) =>
+        date >= startStr &&
+        date <= todayStr
+    )
+  );
+
+  const consistency = totalDays
+    ? Math.round((doneDays.size / totalDays) * 100)
+    : 0;
+
+  const lastDone = [...doneDays].sort().at(-1);
+
+  const stats = {
+    consistency,
+    currentStreak,
+    bestStreak,
+    weekDone: doneDays.size,
+    lastDoneText: lastDone
+      ? formatDisplayDate(lastDone)
+      : "Never",
+    insight:
       consistency > 80
-        ? "You're doing great 🔥"
+        ? "You're doing great"
         : consistency > 50
         ? "You're consistent, but can improve"
-        : "Needs attention ⚠️";
+        : "Needs attention",
+    habitStartDate: startStr,
+  };
 
-    return {
-      consistency,
+  const getDateValue = (date: string) => {
+    if (
+      calendar.skipped.has(date) ||
+      calendar.failed.has(date)
+    ) {
+      return 0;
+    }
+
+    return habitCompletions.reduce((total, completion) => {
+      if (completion.date !== date) return total;
+
+      if (completion.value !== null) {
+        return total + Number(completion.value);
+      }
+
+      if (completion.status === HABIT_STATUS.COMPLETED) {
+        return total + habit.targetValue;
+      }
+
+      return total;
+    }, 0);
+  };
+
+  const getRangeValue = (dates: Date[]) => {
+    return dates.reduce((total, date) => {
+      return total + getDateValue(formatDate(date));
+    }, 0);
+  };
+
+  const getRangeTarget = (dates: Date[]) => {
+    if (!dates.length) return habit.targetValue;
+
+    if (habit.frequency === "day") {
+      return habit.targetValue * dates.length;
+    }
+
+    if (habit.frequency === "week") {
+      const weeks = new Set(
+        dates.map((date) => getWeekKey(date))
+      );
+
+      return habit.targetValue * weeks.size;
+    }
+
+    if (habit.frequency === "month") {
+      const months = new Set(
+        dates.map((date) => formatDate(date).slice(0, 7))
+      );
+
+      return habit.targetValue * months.size;
+    }
+
+    const years = new Set(
+      dates.map((date) => date.getFullYear())
+    );
+
+    return habit.targetValue * years.size;
+  };
+
+  const dayChart = (() => {
+    const end = today;
+    const start = new Date(today);
+    start.setDate(today.getDate() - 29);
+
+    return getDates(start, end).map((date) => {
+      const key = formatDate(date);
+      const value = getDateValue(key);
+
+      return {
+        label: date.getDate().toString(),
+        value,
+        target: habit.targetValue,
+      };
+    });
+  })();
+
+  const weekChart = (() => {
+    const end = today;
+    const start = new Date(today);
+    start.setDate(today.getDate() - 7 * 7);
+
+    const weeks: Date[][] = [];
+    let bucket: Date[] = [];
+
+    getDates(start, end).forEach((date) => {
+      bucket.push(date);
+
+      if (bucket.length === 7) {
+        weeks.push(bucket);
+        bucket = [];
+      }
+    });
+
+    if (bucket.length) weeks.push(bucket);
+
+    return weeks.map((week, index) => ({
+      label: `W${index + 1}`,
+      value: getRangeValue(week),
+      target: getRangeTarget(week),
+    }));
+  })();
+
+  const monthChart = (() => {
+    const map = new Map<string, Date[]>();
+
+    getDates(createdDate, today).forEach((date) => {
+      const monthKey = formatDate(date).slice(0, 7);
+
+      if (!map.has(monthKey)) map.set(monthKey, []);
+      map.get(monthKey)!.push(date);
+    });
+
+    return Array.from(map.entries()).map(([month, dates]) => ({
+      label: month,
+      value: getRangeValue(dates),
+      target: getRangeTarget(dates),
+    }));
+  })();
+
+  const yearChart = (() => {
+    const map = new Map<string, Date[]>();
+
+    getDates(createdDate, today).forEach((date) => {
+      const yearKey = date.getFullYear().toString();
+
+      if (!map.has(yearKey)) map.set(yearKey, []);
+      map.get(yearKey)!.push(date);
+    });
+
+    return Array.from(map.entries()).map(([year, dates]) => ({
+      label: year,
+      value: getRangeValue(dates),
+      target: getRangeTarget(dates),
+    }));
+  })();
+
+  return {
+    stats,
+    calendar: {
+      completionMap,
+      sets: calendar,
+    },
+    streaks: {
       currentStreak,
       bestStreak,
-      weekDone,
-      lastDoneText,
-      insight,
-      habitStartDate,
-      completionMap,
-    };
-}
+      timeline: streakTimeline,
+    },
+    charts: {
+      day: dayChart,
+      week: weekChart,
+      month: monthChart,
+      year: yearChart,
+    },
+  };
+};

@@ -1,6 +1,5 @@
-
-import * as Icons from "lucide-react";
-import { SUGGESTED_HABITS } from "@/lib/constants";
+import { ICON_MAP } from "@/lib/habit-icons";
+import { SUGGESTED_HABITS } from "@/lib/habit-icons";
 
 import {
   Command,
@@ -19,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import React from "react";
 import { HabitIconPicker } from "./habit-icon-picker";
+import { Search } from "lucide-react";
 
 
 type Props = { 
@@ -66,11 +66,15 @@ export const HabitNamePicker = ({
               className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-full w-full bg-transparent p-0 shadow-none text-base text-sm dark:bg-transparent" 
               onClick={() => setOpen(true)}
             />
-            <Icons.Search className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <Search className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
           </div>
         </PopoverTrigger>
         
-        <PopoverContent className="w-(--radix-popover-trigger-width) p-0" align="start">
+        <PopoverContent 
+          className="w-(--radix-popover-trigger-width) p-0" 
+          align="start"
+          onWheel={(e) => e.stopPropagation()}
+        >
           <Command>
             <CommandList>
               <CommandEmpty className="p-2 text-xs text-muted-foreground">
@@ -80,7 +84,7 @@ export const HabitNamePicker = ({
                 <React.Fragment key={group.label}>
                   <CommandGroup heading={group.label}>
                     {group.habits.map((habit) => {
-                      const SuggestionIcon = (Icons[habit.icon] as React.ElementType) || Icons.Plus;
+                      const SuggestionIcon = (ICON_MAP[habit.icon]) || ICON_MAP.Plus;
                       return (
                         <CommandItem
                           key={habit.name}

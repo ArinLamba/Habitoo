@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { formatDate } from "@/lib/date";
-import { Completion, Habit, HABIT_STATUS } from "@/lib/types";
+import { Completion, Habit } from "@/lib/types";
+import { isHabitCompletedForDate } from "@/lib/habits/progress";
 
 import { useDateStore } from "@/store/use-date-store";
 
@@ -30,6 +31,7 @@ export const CircularProgress = ({
 
   const activeHabits = useMemo(() => {
     return habits.filter((habit) => {
+      if (habit.lifecycle !== "active") return false;
       if (!habit || !habit.startDate) return false;
 
       const created = normalize(new Date(habit.startDate));
@@ -44,12 +46,15 @@ export const CircularProgress = ({
   }, [activeHabits]);
 
   const completed = useMemo(() => {
-    return completions.filter(c =>
-      c.status === HABIT_STATUS.COMPLETED &&
-      c.date === selectedDateStr &&
-      activeIds.has(c.habitId)
+    return activeHabits.filter((habit) =>
+      activeIds.has(habit.id) &&
+      isHabitCompletedForDate(
+        habit,
+        completions,
+        selectedDateStr
+      )
     ).length;
-  }, [completions, selectedDateStr, activeIds]);
+  }, [activeHabits, completions, selectedDateStr, activeIds]);
 
   const total = activeHabits.length;
 
@@ -59,8 +64,8 @@ export const CircularProgress = ({
       : 0;
   }, [completed, total]);
 
-  const radius = 70;
-  const stroke = 7;
+  const radius =60;
+  const stroke = 6;
   const normalizedRadius = radius - stroke / 2;
 
   const circumference = 2 * Math.PI * normalizedRadius;
@@ -80,15 +85,6 @@ export const CircularProgress = ({
     return () => clearTimeout(timeout);
   }, [percentage]);
 
-  // Place this right before the "return (" block
-  if (total === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center p-6 text-center border-2 border-dashed rounded-xl">
-        <p className="text-sm text-muted-foreground">No active habits for {day} {monthName}</p>
-        <p className="text-xs text-muted-foreground mt-1">Create a habit to start tracking!</p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center justify-center ">
@@ -97,7 +93,7 @@ export const CircularProgress = ({
       <div className="flex  items-center gap-5 ">
         
         {/* Circle */}
-        <div className="relative flex items-center justify-center w-40 h-40 mt-2">
+        <div className="relative flex items-center justify-center  my-2 bg-amber-30">
           <svg height={radius * 2} width={radius * 2}>
             <circle
               stroke="currentColor"
@@ -143,7 +139,7 @@ export const CircularProgress = ({
             Completed
           </span>
 
-          <span className={`text-xl font-bold `} style={{ color }}>
+          <span className={`text-lg font-bold `} style={{ color }}>
             {completed} / {total}
           </span>
 
@@ -151,7 +147,7 @@ export const CircularProgress = ({
             habits today
           </span>
           <p className="text-sm text-muted-foreground">
-            {total - completed} left
+            {Math.max(0, total - completed)} left
           </p>
 
           <p className="text-xs text-muted-foreground">

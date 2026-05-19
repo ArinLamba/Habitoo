@@ -7,13 +7,13 @@ import { ArrowRight, Check, X } from "lucide-react";
 import { AddHabitInput } from "./add-habit-input";
 
 type Props = {
-  completionMap: Map<string, HabitStatus>;
+  statusMap: Map<string, HabitStatus>;
 };
-export const BottomActionBar = ({ completionMap }: Props) => {
+export const BottomActionBar = ({ statusMap }: Props) => {
   const { selectedCell } = useSelectedCellStore();
   const habitId = selectedCell?.habitId;
   const date = selectedCell?.date;
-  const { toggle } = useHabitActions({ completionMap });
+  const { toggle } = useHabitActions({ statusMap });
 
 
   const isDisabled = !habitId || !date;
@@ -25,10 +25,10 @@ export const BottomActionBar = ({ completionMap }: Props) => {
   };
 
   return (
-    <div className="flex rounded-0 border border-t-0 dark:border-white/10 border-black/10  dark:bg-zinc-900 bg-white pl-2">
+    <div className="flex rounded-0 border border-t-0 dark:border-white/10 border-black/10  dark:bg-zinc-900 bg-white">
       <AddHabitInput />
 
-      <div className="flex lg:space-x- space-x- text-xs bg-amer-800">
+      <div className="flex  text-xs bg-amer-800">
         <button
           disabled={isDisabled}
           onClick={() => handleClick(HABIT_STATUS.COMPLETED)}
