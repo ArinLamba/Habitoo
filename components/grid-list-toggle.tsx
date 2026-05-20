@@ -5,15 +5,15 @@ import { Button } from "./ui/button";
 
 import { Grid, List } from "lucide-react";
 import { ButtonGroup } from "./ui/button-group";
-import { cn } from "@/lib/utils";
+
 
 export const GridListTogle = () => {
 
   const { habitViewLayout, setHabitViewLayout } = usehabitViewLayoutStore();
 
   return (
-    <div className="flex">
-      <ButtonGroup >
+    <div className="flex  p-0.5">
+      <ButtonGroup>
         <Button 
           variant={habitViewLayout === "grid" ? "toggle" : "outline"}
           size={"sm"} 

@@ -10,6 +10,11 @@ export const formatDate = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
+export const parseLocalDate = (dateStr: string) => {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+
 export const indianFormat = (date: Date) => {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -37,7 +42,7 @@ export const getToday = () => {
 
 // ➕ add days to string date
 export const addDays = (dateStr: string, days: number) => {
-  const d = new Date(dateStr);
+  const d = parseLocalDate(dateStr);
   d.setDate(d.getDate() + days);
   return formatDate(d);
 };
@@ -59,8 +64,8 @@ export const getPrevDay = (dateStr: string) => {
 
 // 📊 difference in days
 export const diffDays = (a: string, b: string) => {
-  const d1 = new Date(a);
-  const d2 = new Date(b);
+  const d1 = parseLocalDate(a);
+  const d2 = parseLocalDate(b);
 
   const diff = d2.getTime() - d1.getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24));

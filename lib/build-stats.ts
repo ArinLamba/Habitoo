@@ -1,5 +1,5 @@
 import { Completion, Habit, HABIT_STATUS, HabitStatus } from "./types";
-import { formatDate } from "./date";
+import { formatDate, parseLocalDate } from "./date";
 import {
   getHabitPeriodStreaks,
   isHabitCompletedForDate,
@@ -50,7 +50,7 @@ export const buildStats = (
     dayCount.set(c.date, (dayCount.get(c.date) || 0) + 1);
 
     // weekday
-    const day = new Date(c.date + "T00:00:00").getDay();
+    const day = parseLocalDate(c.date).getDay();
     weekdayCount[day]++;
   });
 
@@ -122,7 +122,7 @@ export const buildStats = (
   for (const habit of habits) {
     if (!habit?.createdAt) continue;
 
-    const created = new Date(habit.startDate);
+    const created = parseLocalDate(habit.startDate);
     const today = new Date();
 
     const diff =

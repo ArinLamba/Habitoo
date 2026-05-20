@@ -8,7 +8,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
-import { AddHabitInput } from "@/app/(main)/habits/_components/add-habit-input"
+import { AddHabitInput } from "@/app/(main)/(habits-list)/habits/_components/add-habit-input"
 import { IconFolderCode } from "@tabler/icons-react"
 
 export function EmptyState() {
