@@ -49,6 +49,66 @@ const getMonthMeta = (date: Date) => ({
   month: date.getMonth(),
 });
 
+const getClickedDateProgress = (
+  habit: Habit,
+  completions: Completion[],
+  date: string
+) => {
+  const current = completions.reduce((total, completion) => {
+    if (
+      completion.habitId !== habit.id ||
+      completion.date !== date
+    ) {
+      return total;
+    }
+
+    if (completion.value !== null) {
+      return total + Number(completion.value);
+    }
+
+    if (completion.status === HABIT_STATUS.COMPLETED) {
+      return total + habit.targetValue;
+    }
+
+    return total;
+  }, 0);
+
+  return {
+    current,
+    target: habit.targetValue,
+    completed: current >= habit.targetValue,
+    percentage:
+      habit.targetValue === 0
+        ? 0
+        : Math.min(100, Math.round((current / habit.targetValue) * 100)),
+  };
+};
+
+const getDateValue = (
+  habit: Habit,
+  completions: Completion[],
+  date: string
+) => {
+  return completions.reduce((total, completion) => {
+    if (
+      completion.habitId !== habit.id ||
+      completion.date !== date
+    ) {
+      return total;
+    }
+
+    if (completion.value !== null) {
+      return total + Number(completion.value);
+    }
+
+    if (completion.status === HABIT_STATUS.COMPLETED) {
+      return total + 1;
+    }
+
+    return total;
+  }, 0);
+};
+
 function MonthGrid({
   habit,
   year,
@@ -114,12 +174,18 @@ function MonthGrid({
   };
 
   const fillRemaining = (date: string) => {
-    const progress = calculateHabitProgress(
+    const periodProgress = calculateHabitProgress(
       habit,
       completions,
       date
     );
-    const remaining = progress.target - progress.current;
+    const dayValue = getDateValue(habit, completions, date);
+    const remaining =
+      habit.frequency === "day"
+        ? periodProgress.target - periodProgress.current
+        : dayValue > 0
+        ? 0
+        : 1;
 
     selectDate(date);
 
@@ -134,7 +200,7 @@ function MonthGrid({
 
   const markStatus = (
     date: string,
-    status: HabitStatus
+    status: HabitStatus | null
   ) => {
     selectDate(date);
     toggle(habit.id, date, status);
@@ -161,16 +227,23 @@ function MonthGrid({
           }
 
           const key = formatDate(date);
-          const progress = calculateHabitProgress(
+          const dateProgress = getClickedDateProgress(
             habit,
             completions,
             key
           );
-          const isCompleted = completed.has(key);
+          const periodProgress = calculateHabitProgress(
+            habit,
+            completions,
+            key
+          );
+          const hasLoggedDate = getDateValue(habit, completions, key) > 0;
+          const isCompleted = hasLoggedDate;
+          const isPeriodComplete = periodProgress.completed;
           const isSkipped = skipped.has(key);
           const isFailed = failed.has(key);
           const isPartial =
-            progress.current > 0 &&
+            dateProgress.current > 0 &&
             !isCompleted &&
             !isSkipped &&
             !isFailed;
@@ -194,6 +267,8 @@ function MonthGrid({
                   style={
                     isCompleted
                       ? { backgroundColor: color }
+                      : isPeriodComplete
+                      ? { backgroundColor: `${color}33` }
                       : undefined
                   }
                 >
@@ -201,7 +276,7 @@ function MonthGrid({
                     <div
                       className="absolute inset-y-0 left-0 opacity-70"
                       style={{
-                        width: `${progress.percentage}%`,
+                        width: `${dateProgress.percentage}%`,
                         backgroundColor: color,
                       }}
                     />
@@ -212,6 +287,8 @@ function MonthGrid({
                       <ArrowRight size={14} color={color} />
                     ) : isFailed ? (
                       <X size={14} color="red" />
+                    ) : hasLoggedDate ? (
+                      <Check size={14} className="text-white" />
                     ) : (
                       date.getDate()
                     )}

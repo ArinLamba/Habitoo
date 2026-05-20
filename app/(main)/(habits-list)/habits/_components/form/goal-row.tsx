@@ -69,7 +69,12 @@ export const GoalRow = ({
               <SelectValue placeholder="Frequency" />
             </SelectTrigger>
 
-            <SelectContent >
+            <SelectContent
+              position="popper"
+              className="max-h-[min(280px,var(--radix-select-content-available-height))] overflow-y-auto overscroll-contain"
+              onWheelCapture={(e) => e.stopPropagation()}
+              onTouchMoveCapture={(e) => e.stopPropagation()}
+            >
               <SelectItem value="day">
                 Per Day
               </SelectItem>

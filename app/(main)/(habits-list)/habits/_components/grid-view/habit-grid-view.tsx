@@ -20,6 +20,13 @@ type Props = {
   habitStatsMap: Map<string, TempHabitStats>;
 };
 
+const frequencyLabels = {
+  day: "Daily habits",
+  week: "Weekly habits",
+  month: "Monthly habits",
+  year: "Yearly habits",
+} as const;
+
 export const HabitGridView = ({
   habits,
   completions,
@@ -35,21 +42,38 @@ export const HabitGridView = ({
   const archivedHabits = habits.filter(
     (habit) => habit.lifecycle === "archived"
   );
+  const activeByFrequency = (["day", "week", "month", "year"] as const).map(
+    (frequency) => ({
+      frequency,
+      habits: activeHabits.filter((habit) => habit.frequency === frequency),
+    })
+  );
 
   return (
     <div className="flex flex-col">
       <HabitGridHeader />
-      {activeHabits.map(habit => {
-        const stats = habitStatsMap.get(habit.id);
+      {activeByFrequency.map(({ frequency, habits }) => {
+        if (!habits.length) return null;
+
         return (
-          <HabitRow
-            key={habit.id}
-            habit={habit}
-            completions={completions}
-            statusMap={statusMap}
-            streak={stats?.currentStreak ?? 0}
-          />
-        )
+          <section key={frequency}>
+            <div className="border-b border-black/10 bg-muted/40 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:border-white/10">
+              {frequencyLabels[frequency]} ({habits.length})
+            </div>
+            {habits.map(habit => {
+              const stats = habitStatsMap.get(habit.id);
+              return (
+                <HabitRow
+                  key={habit.id}
+                  habit={habit}
+                  completions={completions}
+                  statusMap={statusMap}
+                  streak={stats?.currentStreak ?? 0}
+                />
+              )
+            })}
+          </section>
+        );
       })}
       <AddHabitInput />
       <LifecycleSection
@@ -63,5 +87,3 @@ export const HabitGridView = ({
     </div>
   );
 };
-
-

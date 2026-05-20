@@ -13,20 +13,15 @@ export const useSetHabitStatus = () => {
       setHabit(habitId, date, status),
 
     onMutate: async ({ habitId, date, status }) => {
-      // 1. Get today's date string (must match exactly what useCompletions uses)
-      const localToday = new Date().toLocaleDateString('en-CA');
-      
-      // 2. Construct the EXACT key used in useCompletions
-      const key = ["completions", localToday];
+      await queryClient.cancelQueries({ queryKey: ["completions"] });
 
-      // 3. Cancel outgoing fetches so they don't overwrite our optimistic update
-      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueriesData<Completion[]>({
+        queryKey: ["completions"],
+      });
 
-      // 4. Snapshot the previous value
-      const previous = queryClient.getQueryData(key);
-
-      // 5. Optimistically update the cache
-      queryClient.setQueryData(key,(old: Completion[] = []) => {
+      queryClient.setQueriesData<Completion[]>(
+        { queryKey: ["completions"] },
+        (old = []) => {
 
         const index = old.findIndex(
           (c) =>
@@ -60,23 +55,36 @@ export const useSetHabitStatus = () => {
         }
 
         // INSERT
-        return [...old,{ habitId, date, status },];
-      }
-    );
+        return [
+          ...old,
+          {
+            id: `optimistic-${habitId}-${date}-${Date.now()}`,
+            habitId,
+            date,
+            status,
+            value: null,
+            note: null,
+            userId: "optimistic",
+          completedAt: new Date(),
+          } as Completion,
+        ];
+        }
+      );
 
-      return { previous, key };
+      return { previous };
     },
 
     onError: (_err, variables, context) => {
-      if (context?.key) {
-        queryClient.setQueryData(context.key, context.previous);
-      }
+      context?.previous.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
     },
 
-    onSettled: (data, error, variables, context) => {
-      if (context?.key) {
-        queryClient.invalidateQueries({ queryKey: context.key });
-      }
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["completions"],
+        refetchType: "none",
+      });
     },
   });
 };

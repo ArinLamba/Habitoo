@@ -3,7 +3,9 @@
 import { Habit, Completion, HabitStatus } from "@/lib/types";
 
 import { DailyHabitGrid } from "./daily-habit-grid";
+import { MonthlyHabitGrid } from "./monthly-habit-grid";
 import { WeeklyHabitGrid } from "./weekly-habit-grid";
+import { YearlyHabitGrid } from "./yearly-habit-grid";
 
 type Props = {
   habit: Habit;
@@ -27,13 +29,29 @@ export const HabitFrequencyGrid = ({
     );
   }
 
-  if (
-    habit.frequency === "week" ||
-    habit.frequency === "month" ||
-    habit.frequency === "year"
-  ) {
+  if (habit.frequency === "week") {
     return (
       <WeeklyHabitGrid
+        habit={habit}
+        completions={completions}
+        statusMap={statusMap}
+      />
+    );
+  }
+
+  if (habit.frequency === "month") {
+    return (
+      <MonthlyHabitGrid
+        habit={habit}
+        completions={completions}
+        statusMap={statusMap}
+      />
+    );
+  }
+
+  if (habit.frequency === "year") {
+    return (
+      <YearlyHabitGrid
         habit={habit}
         completions={completions}
         statusMap={statusMap}

@@ -3,20 +3,33 @@ import { Completion, Habit, HabitStats } from "@/lib/types";
 
 import { StreakCard } from "./streak-card";
 import { StatsCards } from "./stats-cards";
-import { HabitHeader } from "./habit-header";
+
 import { HabitCalendar } from "./habit-calendar";
 import { DashboardCard } from "./dashboard-card";
 import { StreakTimeline } from "./streak-timeline";
 import { AnalyticsChart } from "./analytics-chart";
+import { Heatmap } from "@/components/heatmap";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 type Props = {
   habit: Habit;
   analytics: HabitStats;
   completions: Completion[];
+  heatmapCompletions: Completion[];
 }
 
 
-export const HabitOverview = ({ habit, analytics, completions }: Props) => {
+export const HabitOverview = ({
+  habit,
+  analytics,
+  completions,
+  heatmapCompletions,
+}: Props) => {
 
   if(!analytics) return null;
 
@@ -30,6 +43,7 @@ export const HabitOverview = ({ habit, analytics, completions }: Props) => {
           <DashboardCard className="p-0 lg:w-1/3 max-w-full">
             <StreakCard
               frequency={habit.frequency}
+              color={habit.color!}
               currentStreak={analytics.streaks.currentStreak}
               calendar={analytics.calendar.sets}
             />
@@ -40,13 +54,41 @@ export const HabitOverview = ({ habit, analytics, completions }: Props) => {
               habit={habit}
               analytics={analytics}
             />
-            <DashboardCard className="w-full">
-              <HabitCalendar 
-                habit={habit}
-                color={habit.color!}
-                calendar={analytics.calendar.sets}
-                completions={completions}
-                />
+            <DashboardCard className="w-full overflow-hidden">
+              <Tabs defaultValue="calendar" className="gap-2">
+                <div className="flex items-center justify-between px-1">
+                  <p className="text-sm font-semibold">
+                    History
+                  </p>
+                  <TabsList>
+                    <TabsTrigger value="calendar">
+                      Calendar
+                    </TabsTrigger>
+                    <TabsTrigger value="heatmap">
+                      Heatmap
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                <TabsContent value="calendar">
+                  <HabitCalendar 
+                    habit={habit}
+                    color={habit.color!}
+                    calendar={analytics.calendar.sets}
+                    completions={completions}
+                  />
+                </TabsContent>
+
+                <TabsContent value="heatmap" className="overflow-x-auto">
+                  <Heatmap
+                    habits={[habit]}
+                    habit={habit}
+                    completions={heatmapCompletions}
+                    days={365}
+                    title="Habit heatmap (Last 1 year)"
+                  />
+                </TabsContent>
+              </Tabs>
             </DashboardCard>
           </div>
 
@@ -67,6 +109,7 @@ export const HabitOverview = ({ habit, analytics, completions }: Props) => {
           <DashboardCard className="col-span-6 p-0 w-full">
             <AnalyticsChart 
               color={habit.color!}
+              frequency={habit.frequency}
               charts={analytics.charts} 
             />
           </DashboardCard>

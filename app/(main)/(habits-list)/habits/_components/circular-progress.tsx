@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 
-import { formatDate } from "@/lib/date";
+import { formatDate, parseLocalDate } from "@/lib/date";
 import { Completion, Habit } from "@/lib/types";
 import { isHabitCompletedForDate } from "@/lib/habits/progress";
 
@@ -34,7 +34,7 @@ export const CircularProgress = ({
       if (habit.lifecycle !== "active") return false;
       if (!habit || !habit.startDate) return false;
 
-      const created = normalize(new Date(habit.startDate));
+      const created = normalize(parseLocalDate(habit.startDate));
       const current = normalize(currentDate);
 
       return created <= current;
@@ -87,17 +87,24 @@ export const CircularProgress = ({
 
 
   return (
-    <div className="flex flex-col items-center justify-center ">
-      <p className="text-sm text-muted-foreground p-2">Progress {day} {monthName} {year}</p>
+    <section className="rounded-md border border-black/10 bg-zinc-50/80 p-4 shadow-sm dark:border-white/10 dark:bg-zinc-900/70">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Daily progress
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {day} {monthName} {year}
+        </p>
+      </div>
 
-      <div className="flex  items-center gap-5 ">
+      <div className="mt-4 flex items-center gap-5">
         
         {/* Circle */}
-        <div className="relative flex items-center justify-center  my-2 bg-amber-30">
+        <div className="relative my-2 flex items-center justify-center">
           <svg height={radius * 2} width={radius * 2}>
             <circle
               stroke="currentColor"
-              className="dark:text-gray-700 text-gray-500"
+              className="text-zinc-200 dark:text-zinc-800"
               fill="transparent"
               strokeWidth={stroke}
               r={normalizedRadius}
@@ -131,11 +138,11 @@ export const CircularProgress = ({
           </div>
         </div>
         
-        <div className="w-px h-20 border" />
+        <div className="h-20 w-px bg-black/10 dark:bg-white/10" />
 
         {/* Right side text */}
-        <div className="flex flex-col">
-          <span className="text-sm text-muted-foreground">
+        <div className="flex min-w-0 flex-col">
+          <span className="text-xs font-medium text-muted-foreground">
             Completed
           </span>
 
@@ -146,7 +153,7 @@ export const CircularProgress = ({
           <span className="text-xs text-muted-foreground">
             habits today
           </span>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground">
             {Math.max(0, total - completed)} left
           </p>
 
@@ -156,7 +163,7 @@ export const CircularProgress = ({
         </div>
 
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -166,10 +173,10 @@ const getColor = (percentage: number) => {
 };
 
 const getMessage = (percentage: number) => {
-  if (percentage === 100) return "All done 🎉";
-  if (percentage > 70) return "Almost there 🔥";
-  if (percentage > 30) return "Keep going 💪";
-  return "Let’s get started 🚀";
+  if (percentage === 100) return "All done";
+  if (percentage > 70) return "Almost there";
+  if (percentage > 30) return "Keep going";
+  return "Let's get started";
 };
 
 const normalize = (d: Date) => {

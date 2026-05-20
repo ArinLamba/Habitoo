@@ -12,20 +12,29 @@ import { useDateStore } from "@/store/use-date-store";
 import { useStats } from "@/hooks/use-stats";
 
 import { Completion, Habit } from "@/lib/types";
-import { indianFormat } from "@/lib/date";
+import { indianFormat, parseLocalDate } from "@/lib/date";
 import { useMemo } from "react";
+import { calculateHabitProgress } from "@/lib/habits/progress";
 
 type Props = {
   habits: Habit[];
   completions: Completion[];
+  days?: number;
+  habit?: Habit;
+  title?: string;
 };
 
 export const Heatmap = ({
   habits,
   completions,
+  days = 365,
+  habit,
+  title,
 }: Props) => {
 
   const setCurrentDate  = useDateStore(state => state.setCurrentDate);
+  const columnClass = "w-3 lg:w-2.5";
+  const cellClass = "h-3 w-3 lg:h-2.5 lg:w-2.5";
 
   const activeHabits = useMemo(
     () =>
@@ -38,7 +47,21 @@ export const Heatmap = ({
   const stats = useStats(activeHabits, completions);
 
   const data = stats.dayCount;
-  const weeks = generateHeatmapGrid(90);
+  const weeks = useMemo(() => generateHeatmapGrid(days), [days]);
+  const habitCompletionMap = useMemo(() => {
+    if (!habit) return null;
+
+    const map = new Map<string, number>();
+
+    weeks.flat().forEach((date) => {
+      map.set(
+        date,
+        calculateHabitProgress(habit, completions, date).percentage
+      );
+    });
+
+    return map;
+  }, [completions, habit, weeks]);
 
   const activeHabitCountMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -46,7 +69,7 @@ export const Heatmap = ({
     weeks.flat().forEach((date) => {
       const activeForDate = getActiveHabits(
         activeHabits,
-        new Date(date)
+        parseLocalDate(date)
       );
 
       map.set(date, activeForDate.length);
@@ -56,33 +79,33 @@ export const Heatmap = ({
   }, [weeks, activeHabits]);
 
   return (
-    <div className="py-1 dark:bg-zinc-900 inline-block mx-auto">
+    <div className="mx-auto inline-block py-1">
       
       {/* Title */}
       <p className="text-sm text-muted-foreground mb-3">
-        📊 Consistency (Last 90 days)
+        {title ?? `Consistency (Last ${days} days)`}
       </p>
 
       {/* Month Labels */}
       <div className="flex gap-[5px] mb-1 text-[10px] text-muted-foreground">
-        <div className="w-5" /> {/* space for day labels */}
+        <div className="w-5 shrink-0" /> {/* space for day labels */}
 
         {weeks.map((week, i) => {
-          const currentMonth = new Date(week[0]).getMonth();
+          const currentMonth = parseLocalDate(week[0]).getMonth();
           const prevMonth =
-            i > 0 ? new Date(weeks[i - 1][0]).getMonth() : null;
+            i > 0 ? parseLocalDate(weeks[i - 1][0]).getMonth() : null;
 
           const isNewMonth = currentMonth !== prevMonth;
 
           return (
             <div
               key={i}
-              className={`w-[10px] text-center ${
-                isNewMonth ? "ml-[11px] lg:ml-[2.5px] font-medium" : ""
+              className={`${columnClass} shrink-0 text-left ${
+                isNewMonth ? "font-medium" : ""
               }`}
             >
               {isNewMonth
-                ? new Date(week[0]).toLocaleString("default", {
+                ? parseLocalDate(week[0]).toLocaleString("default", {
                     month: "short",
                   })
                 : ""}
@@ -95,37 +118,33 @@ export const Heatmap = ({
       <div className="flex gap-[5px]">
         
         {/* Day labels */}
-        <div className="flex flex-col gap-[px] text-[10px] text-muted-foreground ">
+        <div className="flex w-5 shrink-0 flex-col gap-[24px] text-[10px] text-muted-foreground ">
           <span>Sun</span>
-          <span>Mon</span>
-          <span>Tue</span>
+          {/* <span>Mon</span>
+          <span>Tue</span> */}
           <span>Wed</span>
-          <span>Thu</span>
-          <span>Fri</span>
+          {/* <span>Thu</span>
+          <span>Fri</span> */}
           <span>Sat</span>
         </div>
 
         {/* Weeks */}
         {weeks.map((week, i) => {
-          const currentMonth = new Date(week[0]).getMonth();
-          const prevMonth =
-            i > 0 ? new Date(weeks[i - 1][0]).getMonth() : null;
-
-          const isNewMonth = currentMonth !== prevMonth;
-
           return (
             <div
               key={i}
-              className={`flex flex-col gap-[4px] ${
-                isNewMonth ? "ml-1" : ""
-              }`}
+              className={`${columnClass} flex shrink-0 flex-col gap-[4px]`}
             >
               {week.map((date) => {
-                const count = data.get(date) || 0;
-                const parseDate = new Date(date);
+                const count = habit ? 0 : data.get(date) || 0;
+                const parseDate = parseLocalDate(date);
                 const totalHabits = activeHabitCountMap.get(date) || 0;
 
-                const percentage = totalHabits === 0 ? 0 : count / totalHabits;
+                const percentage = habitCompletionMap
+                  ? (habitCompletionMap.get(date) ?? 0) / 100
+                  : totalHabits === 0
+                  ? 0
+                  : count / totalHabits;
 
                 const color =
                   percentage === 0
@@ -144,16 +163,19 @@ export const Heatmap = ({
                   <Tooltip key={date}>
                     <TooltipTrigger asChild>
                       <div
-                        onClick={() => setCurrentDate(new Date(date))}
-                        className={`lg:w-2.25 lg:h-2.25 w-3 h-3 rounded-sm cursor-pointer transition-transform hover:scale-125 ${color}`}
+                        onClick={() => setCurrentDate(parseLocalDate(date))}
+                        className={`${cellClass} rounded-sm cursor-pointer transition-transform hover:scale-125 ${color}`}
                       />
                     </TooltipTrigger>
 
                     <TooltipContent side="top" className="text-xs px-2 py-1 rounded-md shadow-md pointer-events-none ">
-                      {totalHabits 
-                      ? <p> {count} / {totalHabits} Habits completed : {displayDate}</p>
-                      : <p> No Active Habits on {displayDate}</p>
-                      }
+                      {habit ? (
+                        <p>{Math.round(percentage * 100)}% complete : {displayDate}</p>
+                      ) : totalHabits ? (
+                        <p>{count} / {totalHabits} Habits completed : {displayDate}</p>
+                      ) : (
+                        <p>No Active Habits on {displayDate}</p>
+                      )}
                     </TooltipContent>
                   </Tooltip>
                 );

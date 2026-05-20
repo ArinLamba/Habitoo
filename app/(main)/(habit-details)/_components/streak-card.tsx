@@ -1,12 +1,14 @@
 
 import { formatDate } from "@/lib/date";
+import { getPeriodDates } from "@/lib/habits/progress";
 import { Habit } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Flame, X } from "lucide-react";
+import { Flame } from "lucide-react";
 import { SubtleGrid } from "@/components/subtle-grid";
 
 type Props = {
   frequency: Habit["frequency"];
+  color: string;
   currentStreak: number;
   calendar: {
     completed: Set<string>;
@@ -17,86 +19,188 @@ type Props = {
 
 export const StreakCard = ({
   frequency,
+  color,
   currentStreak,
   calendar,
 } : Props) => {
 
   const { title, message } = getStreakMessage(currentStreak);
+  const frequencyLabel =
+    frequency === "day"
+      ? "day"
+      : frequency === "week"
+      ? "week"
+      : frequency === "month"
+      ? "month"
+      : "year";
   
-  const last7Days = [...Array(7)].map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    return d;
-  });
+  const railItems = getRailItems(frequency, calendar);
+  const completedCount = railItems.filter((item) => item.isDone).length;
+  const startLabel = railItems[0]?.label ?? "";
+  const endLabel = railItems[railItems.length - 1]?.label ?? "";
 
   return (
-    <div className="relative flex h-full flex-col items-center justify-between py-3">
-      <SubtleGrid opacity={0.04}/>
-      <div className="absolute  left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-orange-400/10 blur-3xl" />
-      {/* Top */}
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="mb-4 rounded-full bg-orange-500/10 p-4">
-          <Flame className="h-10 w-10 fill-orange-400 text-orange-400" />
+    <div className="relative flex  h-full flex-col overflow-hidden rounded-md border border-white/10 bg-zinc-900/80 px-4 py-5">
+      <SubtleGrid opacity={0.07}/>
+      <div
+        className="absolute left-1/2 top-8 h-44 w-44 -translate-x-1/2 rounded-full blur-3xl"
+        style={{ backgroundColor: `${color}18` }}
+      />
+
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">
+        <div className="relative mb-2 h-36 w-36">
+          <Flame
+            className="absolute inset-0 h-full w-full fill-orange-300 text-orange-300 drop-shadow"
+            strokeWidth={1.5}
+          />
+          <div
+            className="absolute inset-x-0 bottom-5 text-center text-7xl font-black leading-none tracking-normal text-zinc-950"
+            style={{
+              textShadow: "0 2px 0 rgba(255,255,255,0.30)",
+            }}
+          >
+            {currentStreak}
+          </div>
         </div>
 
-        <h1 className="text-6xl font-bold tracking-tight">
-          {currentStreak}
-        </h1>
-
-        <p className="mt-1 text-sm text-zinc-400">
-          {frequency} streak
+        <p className="text-xl font-semibold leading-none text-white">
+          {frequencyLabel} streak
         </p>
 
-        <h2 className="mt-2 text-center text-sm font-medium text-zinc-300">
+        <h2 className="mt-3 max-w-[230px] text-sm font-medium text-zinc-300">
           {title}
         </h2>
 
-        <p className="mt- max-w-[220px] text-center text-sm leading-relaxed text-zinc-500">
+        <p className="mt-1 max-w-[250px] text-sm leading-snug text-zinc-500">
           {message}
         </p>
       </div>
 
-      {/* Bottom */}
-      <div className="mt-8 flex w-full items-center justify-center gap-3">
-        {last7Days.map((date) => {
-          const dateStr = formatDate(date);
-          const dayLabel = date.toLocaleDateString("en-US", {
-            weekday: "short",
-          });
-
-          const isDone = calendar.completed.has(dateStr);
-          const isSkipped = calendar.skipped.has(dateStr);
-          const isFailed = calendar.failed.has(dateStr);
-
-          const icon =
-            isSkipped ? <ArrowRight className="h-4 w-4 text-zinc-300 stroke-2.5" /> :
-            isFailed ? <X className="h-4 w-4 text-red-400 stroke-3" /> :
-            null;
-
+      <div className="relative z-10 mt-5 w-full">
+        <div className="flex items-center gap-1.5">
+        {railItems.map((item) => {
           return (
             <div
-              key={dateStr}
-              className="flex flex-col items-center gap-2"
-            >
-              <div
-                className={cn(
-                  "h-5 w-5 rounded-full transition ",
-                  isDone && "bg-orange-400",
-                  !isDone && "bg-zinc-700"
-                )}
-              >
-                {icon}
-              </div>
-
-              <span className="text-xs text-zinc-500">
-                {dayLabel}
-              </span>
-            </div>
+              key={item.key}
+              title={item.title}
+              className={cn(
+                "h-1.5 flex-1 rounded-full bg-zinc-700 transition",
+                item.isDone && "bg-orange-300",
+                item.isSkipped && "bg-zinc-500",
+                item.isFailed && "bg-red-400"
+              )}
+            />
           );
         })}
+        </div>
+
+        <div className="mt-2 flex items-center justify-between text-xs font-semibold text-white">
+          <span>{startLabel}</span>
+          <span>
+            {completedCount}/{railItems.length}
+          </span>
+          <span>{endLabel}</span>
+        </div>
       </div>
     </div>
   );
+};
+
+const railLengthByFrequency: Record<Habit["frequency"], number> = {
+  day: 7,
+  week: 7,
+  month: 6,
+  year: 5,
+};
+
+const getWeekNumber = (date: Date) => {
+  const firstDay = new Date(date.getFullYear(), 0, 1);
+  const pastDays =
+    (date.getTime() - firstDay.getTime()) / 86400000;
+
+  return Math.ceil((pastDays + firstDay.getDay() + 1) / 7);
+};
+
+const hasDateInRange = (
+  dates: Set<string>,
+  start: string,
+  end: string
+) => {
+  for (const date of dates) {
+    if (date >= start && date <= end) return true;
+  }
+
+  return false;
+};
+
+const getRailLabel = (
+  frequency: Habit["frequency"],
+  date: Date
+) => {
+  if (frequency === "day") {
+    return date.toLocaleDateString("en-US", { weekday: "short" });
+  }
+
+  if (frequency === "week") {
+    return `W${getWeekNumber(date)}`;
+  }
+
+  if (frequency === "month") {
+    return date.toLocaleDateString("en-US", { month: "short" });
+  }
+
+  return date.getFullYear().toString();
+};
+
+const getRailTitle = (
+  frequency: Habit["frequency"],
+  start: string,
+  end: string
+) => {
+  if (frequency === "day") return start;
+
+  return `${start} - ${end}`;
+};
+
+const getRailItems = (
+  frequency: Habit["frequency"],
+  calendar: Props["calendar"]
+) => {
+  const count = railLengthByFrequency[frequency];
+  const today = new Date();
+
+  return [...Array(count)].map((_, index) => {
+    const offset = count - 1 - index;
+    const date = new Date(today);
+
+    if (frequency === "day") {
+      date.setDate(today.getDate() - offset);
+    }
+
+    if (frequency === "week") {
+      date.setDate(today.getDate() - offset * 7);
+    }
+
+    if (frequency === "month") {
+      date.setMonth(today.getMonth() - offset);
+    }
+
+    if (frequency === "year") {
+      date.setFullYear(today.getFullYear() - offset);
+    }
+
+    const dateStr = formatDate(date);
+    const { start, end } = getPeriodDates(frequency, dateStr);
+
+    return {
+      key: `${frequency}-${start}`,
+      label: getRailLabel(frequency, date),
+      title: getRailTitle(frequency, start, end),
+      isDone: hasDateInRange(calendar.completed, start, end),
+      isSkipped: hasDateInRange(calendar.skipped, start, end),
+      isFailed: hasDateInRange(calendar.failed, start, end),
+    };
+  });
 };
 
 

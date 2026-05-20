@@ -6,20 +6,20 @@ import { useQuery } from "@tanstack/react-query";
 
 // useCompletions.ts
 
-export const useCompletions = () => {
+export const useCompletions = (range: number | "all" = 90) => {
 
   // Get the local date in YYYY-MM-DD format
   const localToday = new Date().toLocaleDateString('en-CA');
 
   return useQuery({
     // Add today's date to the queryKey so it refetches if the day changes
-    queryKey: ["completions", localToday], 
+    queryKey: ["completions", range, localToday], 
     queryFn: () => {
-      return getCompletions(90, localToday);
+      return getCompletions(range, localToday);
     },
 
-    staleTime: 1000 * 10,
-    gcTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,

@@ -14,11 +14,12 @@ import { useStats } from "@/hooks/use-stats";
 import { HabitGridView } from "./_components/grid-view/habit-grid-view";
 import { EmptyState } from "@/components/empty";
 import { Loading } from "@/components/loading";
+import { useTodayRollover } from "@/hooks/use-today-rollover";
 
 export const HabitsClient = () => {
   const { habitViewLayout } = usehabitViewLayoutStore();
 
-
+  useTodayRollover();
 
   // 🔥 SINGLE SOURCE OF TRUTH FETCHING
   const { data: habits = [], isLoading: isHabitsLoading } = useHabits();
@@ -33,7 +34,7 @@ export const HabitsClient = () => {
   return (
     <div className="h-[calc(100vh-45px)] flex flex-col">
       <div className={cn(
-          "flex-1 flex flex-col overflow-x-hidden scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-700/50 rounded-0 border rounded-t-md  border-black/10 bg-white shadow-md dark:border-white/10 dark:bg-zinc-900/70"
+          "flex-1 flex flex-col overflow-x-hidden scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-700/50 rounded-0 border rounded-t-md  border-black/15 bg-white shadow-md dark:border-white/15 dark:bg-zinc-900/70"
         )}>
           {habitViewLayout === "grid" ? ( 
           <>

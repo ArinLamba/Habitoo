@@ -44,14 +44,14 @@ export const HabitAbout = ({ habit }: Props) => {
   };
 
   return (
-    <div className="flex flex-col p-2 gap-3">
+    <div className="flex flex-col gap-3 p-3">
       <Field>
         <FieldLabel>Description</FieldLabel>
 
         <Textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="text-xs"
+          className="min-h-24 text-xs"
           placeholder="Write about your habit and what it means to you"
         />
 
@@ -76,14 +76,14 @@ export const HabitAbout = ({ habit }: Props) => {
         </div>
       </Field>
 
-      <div className="flex flex-col gap-y-2">
+      <div className="flex flex-col gap-y-2 rounded-md border border-black/10 bg-white/60 p-3 dark:border-white/10 dark:bg-zinc-950/30">
         <h1 className="text-sm font-medium tracking-tight">
           Info
         </h1>
 
         <Separator />
 
-        <div className="flex justify-between text-xs mt-2">
+        <div className="mt-2 flex justify-between gap-3 text-xs">
           <h2>Created At</h2>
           <div className="text-muted-foreground">
             <p>{createdInfo.date}</p>
@@ -93,7 +93,7 @@ export const HabitAbout = ({ habit }: Props) => {
 
         <Separator />
 
-        <div className="flex justify-between text-xs mt-2">
+        <div className="mt-2 flex justify-between gap-3 text-xs">
           <h2>Started At</h2>
           <div className="text-muted-foreground">
             <p>{startedInfo.date}</p>
@@ -102,7 +102,7 @@ export const HabitAbout = ({ habit }: Props) => {
         </div>
         
         <Separator />
-        <div className="flex justify-between text-xs mt-2">
+        <div className="mt-2 flex justify-between gap-3 text-xs">
           <h2>Updated At</h2>
           <div className="text-muted-foreground">
             <p>{updatedInfo.date} • {updatedInfo.time}</p>

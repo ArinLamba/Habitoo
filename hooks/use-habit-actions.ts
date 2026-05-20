@@ -11,7 +11,7 @@ export const useHabitActions = ({ statusMap }: Params) => {
   const toggle = (
     habitId: string,
     date: string,
-    newStatus: HabitStatus
+    newStatus: HabitStatus | null
   ) => {
     const currentStatus =
       statusMap?.get(`${habitId}-${date}`) ?? null;

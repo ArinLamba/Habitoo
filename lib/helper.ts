@@ -1,4 +1,4 @@
-import { formatDate, normalize } from "@/lib/date";
+import { formatDate, normalize, parseLocalDate } from "@/lib/date";
 import { Habit, Completion, HABIT_STATUS } from "@/lib/types";
 
 export const getDaysInMonth = (date: Date) => {
@@ -90,9 +90,9 @@ export const getActiveHabits = (
 
   return habits.filter((habit) => {
     if (habit.lifecycle !== "active") return false;
-    if (!habit?.createdAt) return false;
+    if (!habit?.startDate) return false;
 
-    const created = normalize(new Date(habit.createdAt));
+    const created = normalize(parseLocalDate(habit.startDate));
 
     return created <= normalizedCurrent;
   });
@@ -127,7 +127,7 @@ export const buildCalendarDays = (
   startDate: string,
   months = 2
 ) => {
-  const start = new Date(startDate);
+  const start = parseLocalDate(startDate);
   const today = new Date();
 
   const days: Date[] = [];

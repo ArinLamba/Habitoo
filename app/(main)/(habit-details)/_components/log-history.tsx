@@ -36,7 +36,7 @@ export const LogHistory = ({
       {Object.entries(groupedLogs).map(([date, logs]) => (
         <div key={date}>
           
-          <div className=" px-4 py-2 text-xs text-muted-foreground font-normal border-b">
+          <div className="border-b border-black/10 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:border-white/10">
             {formatDisplayDate(date)}
           </div>
 
@@ -44,9 +44,9 @@ export const LogHistory = ({
             {logs.map((log) => (
               <div
                 key={log.id}
-                className="flex items-center justify-between px-4 py-2 text-sm bg-muted-foreground/5"
+                className="flex items-center justify-between border-b border-black/5 bg-white/60 px-3 py-2 text-sm last:border-b-0 dark:border-white/5 dark:bg-zinc-950/30"
               >
-                <div>
+                <div className="font-medium">
                   +{log.value} {unit}
                 </div>
 
@@ -62,36 +62,32 @@ export const LogHistory = ({
   );
 };
 
+const displayDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
+const timeFormatter = new Intl.DateTimeFormat("en-IN", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+});
+
 const formatLogTime = (date: string | Date) => {
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  }).format(new Date(date));
+  return timeFormatter.format(new Date(date));
 };
 
 const formatDisplayDate = (dateStr: string) => {
-  const d = new Date(dateStr + "T00:00:00");
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const d = new Date(year, month - 1, day);
 
   const today = new Date();
-
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
 
-  const formattedToday = formatDate(today);
-  const formattedYesterday = formatDate(yesterday);
+  if (dateStr === formatDate(today)) return "Today";
+  if (dateStr === formatDate(yesterday)) return "Yesterday";
 
-  if (dateStr === formattedToday) {
-    return "Today";
-  }
-
-  if (dateStr === formattedYesterday) {
-    return "Yesterday";
-  }
-
-  return d.toLocaleDateString("default", {
-    day: "numeric",
-    month: "short",
-    year: "numeric"
-  });
+  return displayDateFormatter.format(d);
 };

@@ -6,9 +6,9 @@ export const DetailPanelWrapper = ({
   children,
 }: Props) => {
   return (
-    <div className="hidden lg:flex fixed  right-2 top-2 h-full  w-[260px] flex-col gap-y-4 border dark:border-white/10 border-black/10 bg-white dark:bg-zinc-900 shadow-md rounded-md overflow-y-auto"
+    <aside className="hidden lg:flex fixed right-2 top-2 h-[calc(100vh-16px)] w-[268px] flex-col overflow-y-auto rounded-md border border-black/10 bg-white/95 p-3 shadow-sm backdrop-blur scrollbar scrollbar-w-1.5 scrollbar-thumb-zinc-300 dark:border-white/10 dark:bg-zinc-950/95 dark:scrollbar-thumb-zinc-700"
     >
       {children}
-    </div>
+    </aside>
   );
 };

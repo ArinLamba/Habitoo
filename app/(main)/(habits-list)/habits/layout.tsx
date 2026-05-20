@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const MainLayout = ({ children }: Props) => {
+const HabitListLayout = ({ children }: Props) => {
 
   return (
     <>
@@ -20,4 +20,4 @@ const MainLayout = ({ children }: Props) => {
   )
 }
 
-export default MainLayout;
+export default HabitListLayout;

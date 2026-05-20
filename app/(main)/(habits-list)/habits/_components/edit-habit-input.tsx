@@ -102,14 +102,14 @@ export const EditHabitInput = ({ habit, children }: Props) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-125 overflow-hidden">
+      <DialogContent className="max-h-[90vh] overflow-hidden sm:max-w-125">
         <DialogHeader>
         <DialogTitle>Edit Habit</DialogTitle>
         <DialogDescription>
           Change the Attributes
         </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col w-full">
+        <div className="min-h-0 w-full overflow-y-auto overscroll-contain">
           <form
             id="habit-form"
             onSubmit={handleSubmit(onSubmit)}

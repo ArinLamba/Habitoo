@@ -236,8 +236,6 @@ export const WeeklyHabitGrid = ({
                         unit={habit.unit!}
                         setSelectedCell={setSelectedCell}
                         fillRemaining={() => {
-                          if (isCompleted) return;
-
                           addLog({
                             habitId: habit.id,
                             date,
@@ -245,8 +243,6 @@ export const WeeklyHabitGrid = ({
                           });
                         }}
                         addValue={(value) => {
-                          if (isCompleted) return;
-
                           addLog({
                             habitId: habit.id,
                             date,

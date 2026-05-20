@@ -135,7 +135,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
           </DialogHeader>
 
           {/* SCROLLABLE CONTENT */}
-          <div className="flex-1 px-6 py-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-4">
             <form
               id="habit-form"
               onSubmit={handleSubmit(onSubmit)}

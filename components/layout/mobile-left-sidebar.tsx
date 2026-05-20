@@ -16,7 +16,7 @@ export const MobileLeftSidebar = () => {
 				<DialogTitle />
 			</SheetTrigger>
 			<SheetContent className="p-0 z-100 overflow-visible" side="left">
-				<Sidebar className="h-full"/>
+				<Sidebar className="h-full w-full border-r-0"/>
 			</SheetContent>
 		</Sheet>
 	)

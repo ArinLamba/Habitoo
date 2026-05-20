@@ -76,7 +76,7 @@ export const buildStreakTimeline = (
   };
 
   for (const completion of habitCompletions) {
-    const currentDate = new Date(completion.date);
+    const currentDate = new Date(`${completion.date}T00:00:00`);
 
     // ❌ FAILED → break streak
     if (completion.status === HABIT_STATUS.FAILED) {

@@ -2,7 +2,6 @@
 import { LogHistory } from "./log-history";
 import { HabitDetailsHeader } from "./habit-detail-header";
 
-import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
 import { Completion, Habit } from "@/lib/types";
@@ -22,13 +21,12 @@ export const HabitDetailsPanel = ({
   if(!habit.unit) return null;
 
   return (
-    <div className="">
+    <section className="flex flex-col gap-3">
       <HabitDetailsHeader
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
       />
-      <Separator />
-      <div>
+      <div className="overflow-hidden rounded-md border border-black/10 bg-zinc-50/80 dark:border-white/10 dark:bg-zinc-900/70">
         {selectedTab === "LogHistory" && (
           <LogHistory logs={logs} unit={habit.unit}/>
         )}
@@ -41,6 +39,6 @@ export const HabitDetailsPanel = ({
           <HabitAbout key={habit.id} habit={habit} />
         )}
       </div>
-    </div>
+    </section>
   );
 };

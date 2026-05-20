@@ -33,15 +33,18 @@ const HabitPage = async ({ params, searchParams  }: Props) => {
   const habitData = getHabitById(habitId);
   const logsData = getHabitLogs(habitId);
   const completionsData = getCompletionsByHabitId(habitId, range);
+  const heatmapCompletionsData = getCompletionsByHabitId(habitId, 365);
   
   const [
     habit,
     completions,
     logs,
+    heatmapCompletions,
   ] = await Promise.all([
     habitData,
     completionsData,
-    logsData
+    logsData,
+    heatmapCompletionsData,
   ]);
 
   if(!habit) return null;
@@ -60,6 +63,7 @@ const HabitPage = async ({ params, searchParams  }: Props) => {
           habit={habit} 
           analytics={analytics}
           completions={completions}
+          heatmapCompletions={heatmapCompletions}
         />
       </FeedWrapper>
 

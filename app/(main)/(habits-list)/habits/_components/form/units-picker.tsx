@@ -35,15 +35,17 @@ export function UnitPicker({ value, onChange }: { value: string, onChange: (val:
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[250px] p-0"
-        onWheel={(e) => e.stopPropagation()}
+      <PopoverContent
+        className="max-h-[min(360px,var(--radix-popover-content-available-height))] w-[250px] overflow-y-auto overscroll-contain p-0 touch-pan-y"
+        onWheelCapture={(e) => e.stopPropagation()}
+        onTouchMoveCapture={(e) => e.stopPropagation()}
       >
         <Command>
           <CommandInput 
             placeholder="Search or add unit..." 
             onValueChange={setSearchValue}
           />
-          <CommandList>
+          <CommandList className="max-h-[300px] overflow-y-auto overscroll-contain touch-pan-y">
             <CommandEmpty className="p-1">
                <Button 
                 variant="ghost" 

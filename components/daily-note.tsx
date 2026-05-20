@@ -1,56 +1,68 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useDateStore } from "@/store/use-date-store";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useNote } from "@/hooks/queries/use-note";
 import { formatDate } from "@/lib/date";
-import { getNoteByDate } from "@/db/queries";
 import { upsertNote } from "@/server/actions/add-note";
+import { useDateStore } from "@/store/use-date-store";
 
 export const DailyNote = () => {
   const { currentDate } = useDateStore();
   const dateStr = formatDate(currentDate);
+  const { data: saved } = useNote(dateStr);
 
-  const [note, setNote] = useState("");
-  const [highlight, setHighlight] = useState("");
+  return (
+    <DailyNoteEditor
+      key={`${dateStr}-${saved?.id ?? "empty"}`}
+      dateStr={dateStr}
+      initialNote={saved?.note || ""}
+      initialHighlight={saved?.highlight || ""}
+      saved={saved}
+    />
+  );
+};
 
-  const [savedNote, setSavedNote] = useState("");
-  const [savedHighlight, setSavedHighlight] = useState("");
+type DailyNoteEditorProps = {
+  dateStr: string;
+  initialNote: string;
+  initialHighlight: string;
+  saved: unknown;
+};
 
+const DailyNoteEditor = ({
+  dateStr,
+  initialNote,
+  initialHighlight,
+  saved,
+}: DailyNoteEditorProps) => {
+  const queryClient = useQueryClient();
+  const note = initialNote;
+  const [highlight, setHighlight] = useState(initialHighlight);
+  const [savedNote, setSavedNote] = useState(initialNote);
+  const [savedHighlight, setSavedHighlight] = useState(initialHighlight);
   const [loading, setLoading] = useState(false);
 
   const isDirty =
     note !== savedNote || highlight !== savedHighlight;
 
-  // 🔥 Load note when date changes
-  useEffect(() => {
-    const load = async () => {
-      const res = await getNoteByDate(dateStr);
-
-      // const n = res?.note || "";
-      const h = res?.highlight || "";
-
-      // setNote(n);
-      setHighlight(h);
-
-      // setSavedNote(n);
-      setSavedHighlight(h);
-    };
-
-    load();
-  }, [dateStr]);
-
-  // 🔥 Save manually
   const handleSave = async () => {
     setLoading(true);
 
     try {
       await upsertNote(dateStr, note, highlight);
 
-      // setSavedNote(note);
+      setSavedNote(note);
       setSavedHighlight(highlight);
+      queryClient.setQueryData(["note", dateStr], {
+        ...(typeof saved === "object" && saved ? saved : {}),
+        date: dateStr,
+        note,
+        highlight,
+      });
     } finally {
       setLoading(false);
     }
@@ -58,27 +70,16 @@ export const DailyNote = () => {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground mt-4 mb-1">
-        ✨ Highlight
+      <p className="mt-4 mb-1 text-sm text-muted-foreground">
+        Highlight
       </p>
 
       <Textarea
         value={highlight}
         onChange={(e) => setHighlight(e.target.value)}
         placeholder="Best moment of your day..."
-        className="w-full p-2 rounded-md bg-background border text-sm shadow-sm"
+        className="w-full rounded-md border bg-background p-2 text-sm shadow-sm"
       />
-
-      {/* <p className="text-sm text-muted-foreground mb-2">
-        📝 Reflection ({dateStr})
-      </p>
-
-      <Textarea
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-        placeholder="Reflect on Your Day ..."
-        className="min-h-[120px] w-full rounded-md bg-background border text-sm shadow-sm"
-      /> */}
 
       <Button
         onClick={handleSave}
@@ -93,7 +94,7 @@ export const DailyNote = () => {
         </p>
       )}
 
-      <div className="border-b dark:border-white/20 border-black/20" />
+      <div className="border-b border-black/20 dark:border-white/20" />
     </div>
   );
 };

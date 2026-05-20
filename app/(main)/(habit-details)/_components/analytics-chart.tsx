@@ -35,6 +35,7 @@ type ChartPoint = {
 
 type Props = {
   color: string;
+  frequency: ChartKey;
   charts: Record<ChartKey, ChartPoint[]>;
 };
 
@@ -45,9 +46,9 @@ const chartMeta: Record<ChartKey, { label: string }> = {
   year: { label: "Year" },
 };
 
-export function AnalyticsChart({ color, charts }: Props) {
+export function AnalyticsChart({ color, frequency, charts }: Props) {
   const [activeChart, setActiveChart] =
-    React.useState<ChartKey>("week");
+    React.useState<ChartKey>(frequency === "day" ? "week" : frequency);
 
   const data = charts?.[activeChart] ?? [];
 
