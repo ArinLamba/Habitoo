@@ -79,10 +79,10 @@ export const Heatmap = ({
   }, [weeks, activeHabits]);
 
   return (
-    <div className="mx-auto inline-block py-1">
+    <div className="mx-auto inline-block">
       
       {/* Title */}
-      <p className="text-sm text-muted-foreground mb-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3 ">
         {title ?? `Consistency (Last ${days} days)`}
       </p>
 

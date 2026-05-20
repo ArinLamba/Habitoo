@@ -111,7 +111,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
           <button
             className={
               variant === "icon"
-                ? "flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                ? "flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/20"
                 : "flex items-center gap-2 font-semibold text-blue-700 dark:text-indigo-400"
             }
             aria-label="Add habit"

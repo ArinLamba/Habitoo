@@ -104,7 +104,7 @@ export const HabitCard = ({
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-full"
                     style={{
-                      backgroundColor: `${habit.color}1A`,
+                      backgroundColor: `${habit.color}20`,
                     }}
                   >
                     <IconComponent color={habit.color!} size={22} />
@@ -145,8 +145,8 @@ export const HabitCard = ({
                 }}
                 className="h-8 rounded-full px-3 text-xs"
               >
-                <Plus className="h-3.5 w-3.5" />
-                +1 {unit}
+                {/* <Plus className="h-3.5 w-3.5" size={15}/> */}
+                + 1 {unit}
               </Button>
 
               <Button

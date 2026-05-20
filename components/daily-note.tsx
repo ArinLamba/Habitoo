@@ -70,7 +70,7 @@ const DailyNoteEditor = ({
 
   return (
     <div className="space-y-4">
-      <p className="mt-4 mb-1 text-sm text-muted-foreground">
+      <p className=" mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         Highlight
       </p>
 

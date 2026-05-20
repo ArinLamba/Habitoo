@@ -17,17 +17,20 @@ export const HabitGridHeader = () => {
     useDateStore();
 
   return (
-    <div className="flex items-stretch border-b border-black/10 dark:border-white/10 h-12">
+    <div className="sticky top-0 z-20 flex h-12 items-stretch border-b border-black/10 bg-zinc-50/95 backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
 
       {/* LEFT */}
-      <div className="min-w-[250px] flex items-center justify-between pl-3">
-        <div className="flex gap-x-2">
+      <div className="flex min-w-[250px] items-center justify-between pl-3 pr-1">
+        <div className="flex flex-col">
           <h2 className="text-sm font-semibold tracking-tight">
             All Habits
           </h2>
+          <p className="text-[11px] text-muted-foreground">
+            Select a day to inspect progress
+          </p>
         </div>
 
-        <Button variant="ghost">
+        <Button variant="ghost" size="icon-sm">
           <TextAlignEnd size={18} />
         </Button>
       </div>
@@ -67,9 +70,9 @@ export const HabitGridHeader = () => {
                     setCurrentDate(date)
                   }
                   className={cn(
-                    "h-full w-full flex flex-col items-center justify-center border- border-black/10 dark:border-white/10 cursor-default transition-colors",
+                    "flex h-full w-full cursor-default flex-col items-center justify-center rounded-sm transition-colors hover:bg-black/5 dark:hover:bg-white/5",
                     isSelected &&
-                      "dark:bg-white/10 bg-black/10"
+                      "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                   )}
                 >
                   <p
@@ -98,7 +101,7 @@ export const HabitGridHeader = () => {
         </div>
 
         {/* STREAK */}
-        <div className="w-14 shrink-0 flex items-center justify-center border-l border-black/10 dark:border-white/10">
+        <div className="flex w-14 shrink-0 items-center justify-center border-l border-black/10 dark:border-white/10">
           <Flame
             size={18}
             fill="orange"

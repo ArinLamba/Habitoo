@@ -30,8 +30,8 @@ export const HabitPerformance = ({
       </div>
 
       <div className="grid gap-3">
-        {data.map((habit) => (
-          <div key={`${habit.name}-${habit.percentage}`}>
+        {data.map((habit, index) => (
+          <div key={`${habit.name}-${index}`}>
             <div className="mb-1 flex justify-between text-sm">
               <span className="font-medium">{habit.name}</span>
               <span className="text-muted-foreground">

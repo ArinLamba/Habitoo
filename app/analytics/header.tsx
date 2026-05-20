@@ -4,20 +4,18 @@ import Link from "next/link";
 
 export const Header = () => {
   return (
-    <nav className="xl:hidden flex h-[35px] items-center justify-between dark:bg-mauve-900  border-b-gray-300 dark:border-b-gray-800  border-b shadow-xs fixed top-0 w-full z-50">
+    <nav className="fixed top-0 z-50 flex h-[40px] w-full items-center justify-between border-b border-black/10 bg-white/95 px-1 shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-950/95 xl:hidden">
 
       {/* LEFT */}
       <MobileLeftSidebar />
 
       {/* CENTER */}
       <Link href="/habits">
-        <div className=" flex items-center gap-x-3  ">
-          <Image src="/logo.svg" height={30} width={30} alt="logo" />
-          <h1 className="text-md  whitespace-nowrap">
-            <p className="font-light italic ">
-              HABIT  <span className="font-bold not-italic p-1 font">TRACKER</span>
-            </p>
-          </h1>
+        <div className="flex items-center gap-x-2">
+          <Image src="/logo.svg" height={24} width={24} alt="logo" />
+          <p className="text-sm font-semibold tracking-tight">
+            Habitoo
+          </p>
         </div>
       </Link>
       

@@ -87,7 +87,7 @@ export const CircularProgress = ({
 
 
   return (
-    <section className="rounded-md border border-black/10 bg-zinc-50/80 p-4 shadow-sm dark:border-white/10 dark:bg-zinc-900/70">
+    <section className="rounded-md border border-black/10 bg-zinc-50/80 p-4 shadow-sm dark:border-white/10 dark:bg-zinc-900/80">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Daily progress

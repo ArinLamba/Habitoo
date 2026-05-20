@@ -31,20 +31,23 @@ export const HabitRow = memo(({
   const IconComponent = (ICON_MAP[habit.icon as HabitIconName] ) || ICON_MAP.QuestionMark;
 
   return (
-    <div className="flex items-stretch border-b border-black/10 dark:border-white/10 ">
+    <div className="flex items-stretch border-b border-black/10 transition-colors hover:bg-zinc-50/70 dark:border-white/10 dark:hover:bg-white/[0.03]">
 
       {/* LEFT */}
-      <div className="w-[250px] ">
-        <div className="flex w-[250px] ">
-          <Link href={`habits/${habit.id}`} className="flex flex-1 items-center justify-center pl-3 gap-x-2 hover:scale-105 transition-transform">
-            <div className="shrink-0">
+      <div className="w-[250px]">
+        <div className="flex w-[250px]">
+          <Link href={`habits/${habit.id}`} className="flex flex-1 items-center gap-x-2 px-3 transition-colors hover:text-emerald-600">
+            <div
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
+              style={{ backgroundColor: `${habit.color}18` }}
+            >
               <IconComponent
-                size={20}
+                size={17}
                 color={habit.color!}
                 />
             </div>
 
-            <div className="truncate text-sm font-medium w-full">
+            <div className="w-full truncate text-sm font-medium">
               {habit.name}
             </div>
             {/* Progress Area */}
@@ -55,7 +58,7 @@ export const HabitRow = memo(({
       </div>
 
       {/* DIVIDER */}
-      <div className="w-0.5 bg-black/10 dark:bg-white/10" />
+      <div className="w-px bg-black/10 dark:bg-white/10" />
       
       {/* RIGHT */}
       <div className="flex flex-1 min-w-0 overflow-hidden">
@@ -69,7 +72,7 @@ export const HabitRow = memo(({
         />
         {/* STREAK */}
 
-        <div className="w-14 shrink-0 flex items-center justify-center border-l border-black/10 dark:border-white/10 text-amber-600 text-sm font-semibold">
+        <div className="flex w-14 shrink-0 items-center justify-center border-l border-black/10 text-sm font-semibold text-amber-600 dark:border-white/10">
           <div className="flex items-center gap-x-1">
             <Flame
               size={16}

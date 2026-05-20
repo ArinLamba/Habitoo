@@ -10,7 +10,7 @@ import { StickyWrapperClient } from "./sticky-wrapper-client";
 
 export const MobileHeader = () => {
   return (
-    <nav className=" h-[35px] flex items-center justify-between dark:bg-mauve-900  border-b-gray-300 dark:border-b-gray-800  border-b shadow-xs fixed top-0 w-full z-50">
+    <nav className="fixed top-0 z-50 flex h-[40px] w-full items-center justify-between border-b border-black/10 bg-white/95 px-1 shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
 
       {/* LEFT */}
       <MobileLeftSidebar />
@@ -21,7 +21,7 @@ export const MobileHeader = () => {
       </div>
 
       {/* RIGHT */}
-      <div className="pr-2 flex items-center  gap-2">
+      <div className="flex items-center gap-2 pr-2">
         <UserButton />
         <MobileRightSidebar>
           <StickyWrapperClient />

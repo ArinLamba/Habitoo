@@ -20,7 +20,7 @@ export const LifecycleSection = ({
   if (!habits.length) return null;
   return (
     <Collapsible className="border-b border-black/10 dark:border-white/10">
-      <CollapsibleTrigger className="flex h-9 w-full items-center justify-between px-3 text-xs font-semibold text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
+      <CollapsibleTrigger className="flex uppercase h-9 w-full items-center justify-between px-3 text-xs font-semibold text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
         <span>
           {title} ({habits.length})
         </span>

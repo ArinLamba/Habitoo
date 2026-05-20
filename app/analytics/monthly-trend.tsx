@@ -179,7 +179,7 @@ export const MonthlyTrend = ({
             strokeWidth={2}
             fill="url(#monthlyTrendFill)"
             dot={false}
-            activeDot={{ r: 4 }}
+            activeDot={{ r: 4, }}
           />
         </AreaChart>
       </ChartContainer>

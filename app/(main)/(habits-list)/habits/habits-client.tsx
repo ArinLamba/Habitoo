@@ -32,9 +32,10 @@ export const HabitsClient = () => {
   const isLoading = isHabitsLoading || isCompletionLoading;
   
   return (
-    <div className="h-[calc(100vh-45px)] flex flex-col">
+    <div className="flex h-[calc(100vh-45px)] flex-col gap-2">
       <div className={cn(
-          "flex-1 flex flex-col overflow-x-hidden scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-700/50 rounded-0 border rounded-t-md  border-black/15 bg-white shadow-md dark:border-white/15 dark:bg-zinc-900/70"
+          "flex flex-1 flex-col overflow-x-hidden rounded-md bg-white/95 shadow-sm backdrop-blur scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-300 dark:bg-zinc-950/80 dark:scrollbar-thumb-zinc-700",
+          habitViewLayout === "grid" && "border border-black/10 dark:border-white/10"
         )}>
           {habitViewLayout === "grid" ? ( 
           <>
@@ -59,7 +60,10 @@ export const HabitsClient = () => {
           }
         {/* BOTTOM BAR */}
       </div>
-      <BottomActionBar statusMap={statusMap} />
+      {habitViewLayout === "grid" && (
+        <BottomActionBar statusMap={statusMap} />
+      )}
+      
     </div>
   )
 };
