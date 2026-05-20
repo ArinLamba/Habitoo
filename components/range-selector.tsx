@@ -39,11 +39,11 @@ export const RangeSelect = () => {
       }}
       
     >
-      <SelectTrigger className="w-[140px] border-0  rounded-none dark:bg-zinc-900">
+      <SelectTrigger className="w-[120px] border-0  rounded-none dark:bg-zinc-900">
         <SelectValue  />
       </SelectTrigger>
 
-      <SelectContent>
+      <SelectContent >
         {options.map((opt) => (
           <SelectItem key={opt.value} value={opt.value}>
             {opt.label}

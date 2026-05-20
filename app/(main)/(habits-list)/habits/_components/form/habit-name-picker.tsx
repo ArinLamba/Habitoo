@@ -71,12 +71,13 @@ export const HabitNamePicker = ({
         </PopoverTrigger>
         
         <PopoverContent 
-          className="w-(--radix-popover-trigger-width) p-0" 
+          className="w-(--radix-popover-trigger-width) max-h-[300px] overflow-y-auto p-0 touch-pan-y" 
           align="start"
+          sideOffset={6}
           onWheel={(e) => e.stopPropagation()}
         >
           <Command>
-            <CommandList>
+            <CommandList className="max-h-[300px] overflow-y-auto overscroll-contain">
               <CommandEmpty className="p-2 text-xs text-muted-foreground">
                 Press enter to use &quot;{value}&quot;
               </CommandEmpty>

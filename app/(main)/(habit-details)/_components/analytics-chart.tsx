@@ -54,8 +54,8 @@ export function AnalyticsChart({ color, charts }: Props) {
   return (
     <Card className="p-0">
       {/* HEADER */}
-      <CardHeader className="flex flex-col items-stretch border-b p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-0">
+      <CardHeader className="flex  items-stretch p-0 flex-row">
+        <div className="flex flex-1 flex-col justify-center gap- px-6 pt-4 pb-0">
           <CardTitle>Habit Consistency</CardTitle>
           <CardDescription>
             Track your progress across time ranges
@@ -74,7 +74,7 @@ export function AnalyticsChart({ color, charts }: Props) {
                 data-active={isActive}
                 className="
                   flex flex-1 flex-col justify-center gap-1 
-                  border-t px-2 text-left sm:border-l sm:border-t-0
+                  border-t px-2 text-left border-l
                   data-[active=true]:bg-muted/50
                 "
               >
@@ -88,7 +88,7 @@ export function AnalyticsChart({ color, charts }: Props) {
       </CardHeader>
 
       {/* CHART */}
-      <CardContent className="px-2 sm:p-6">
+      <CardContent className="px-2 p-3">
         <ChartContainer
           config={{
             value: { label: "Progress" },

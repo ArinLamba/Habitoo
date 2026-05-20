@@ -12,11 +12,11 @@ export const MobileLeftSidebar = () => {
 	return (
 		<Sheet >
 			<SheetTrigger>
-				<Menu className="dark:text-white block lg:hidden" size={18}/>
+				<Menu className="dark:text-white block xl:hidden w-auto px-2" size={16}/>
 				<DialogTitle />
 			</SheetTrigger>
 			<SheetContent className="p-0 z-100 overflow-visible" side="left">
-				<Sidebar />
+				<Sidebar className="h-full"/>
 			</SheetContent>
 		</Sheet>
 	)

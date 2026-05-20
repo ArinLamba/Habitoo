@@ -1,41 +1,46 @@
 "use client";
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Folders, ChartNoAxesColumn } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const ICONS = {
+  Folders,
+  ChartNoAxesColumn,
+};
+
+type IconName = keyof typeof ICONS;
 
 type Props = {
   label: string;
-  iconSrc: string;
+  icon: IconName;
   href: string;
 };
 
-
-export const SidebarItem = ({
-  label,
-  iconSrc,
-  href,
-}: Props) => {
+export const SidebarItem = ({ label, icon, href }: Props) => {
   const pathname = usePathname();
   const active = pathname === href;
+
+  const Icon = ICONS[icon];
 
   return (
     <Button
       variant={active ? "sidebarOutline" : "sidebar"}
-      className="justify-start h-10 "
+      className={cn(
+        "h-10 justify-start gap-x-3",
+        active
+          ? "text-blue-600 dark:text-blue-400"
+          : "text-muted-foreground hover:text-foreground"
+      )}
       asChild
     >
       <Link href={href}>
-        <Image
-          src={iconSrc}
-          alt={label}
-          className="mr-5 "
-          height={24}
-          width={24}
-        />
-        {label}
+        <Icon className="h-5 w-5" />
+        <span>{label}</span>
       </Link>
     </Button>
-    
   );
 };

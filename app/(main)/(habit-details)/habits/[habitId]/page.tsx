@@ -2,13 +2,14 @@ import { FeedWrapper } from "@/components/layout/feed-wrapper";
 
 import { getCompletionsByHabitId, getHabitById, getHabitLogs } from "@/db/queries";
 
-import { HabitOverview } from "./_components/habit-overview";
+import { HabitOverview } from "../../_components/habit-overview";
 import { buildHabitStats } from "@/lib/build-habit-stats";
 
 
-import { HabitDetailsPanel } from "./_components/habit-detail-panel";
+import { HabitDetailsPanel } from "../../_components/habit-detail-panel";
 
 import { DetailPanelWrapper } from "@/components/layout/detail-panel-wrapper";
+import { HabitHeader } from "../../_components/habit-header";
 
 type Props = {
   params: {
@@ -49,7 +50,11 @@ const HabitPage = async ({ params, searchParams  }: Props) => {
   if(!analytics) return null;
 
   return (
-    <div className="">
+    <div className="space-y-2">
+      <HabitHeader 
+        habit={habit} 
+        logs={logs}
+      />
       <FeedWrapper>
         <HabitOverview 
           habit={habit} 

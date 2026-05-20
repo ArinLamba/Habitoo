@@ -22,13 +22,12 @@ export const HabitOverview = ({ habit, analytics, completions }: Props) => {
 
   return (
     <div className="space-y-3 w-full bg-ambr-600">
-      <HabitHeader habit={habit}/>
 
       <div className=" flex flex-col gap-2 w-full">
         {/* TOP SECTION */}
-        <div className="flex flex-col lg:flex-row justify-center w-full gap-2">
+        <div className="flex flex-col md:flex-row justify-center w-full gap-2">
 
-          <DashboardCard className="p-0 lg:w-1/3 w-full">
+          <DashboardCard className="p-0 lg:w-1/3 max-w-full">
             <StreakCard
               frequency={habit.frequency}
               currentStreak={analytics.streaks.currentStreak}
@@ -55,7 +54,7 @@ export const HabitOverview = ({ habit, analytics, completions }: Props) => {
 
         {/* BOTTOM SECTION */}
 
-        <div className="flex flex-col lg:flex-row w-full bg-aber-300 gap-2">
+        <div className="flex flex-col md:flex-row w-full bg-aber-300 gap-2">
 
           <DashboardCard className="w-full">
             <StreakTimeline 

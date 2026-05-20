@@ -7,9 +7,9 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { HabitNamePicker } from "@/app/(main)/habits/_components/form/habit-name-picker";
-import { GoalRow } from "@/app/(main)/habits/_components/form/goal-row";
-import { SettingRow } from "@/app/(main)/habits/_components/form/setting-row";
+import { HabitNamePicker } from "@/app/(main)/(habits-list)/habits/_components/form/habit-name-picker";
+import { GoalRow } from "@/app/(main)/(habits-list)/habits/_components/form/goal-row";
+import { SettingRow } from "@/app/(main)/(habits-list)/habits/_components/form/setting-row";
 import { Input } from "@/components/ui/input";
 import { Field, FieldError } from "@/components/ui/field";
 

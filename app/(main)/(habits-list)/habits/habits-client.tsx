@@ -14,12 +14,10 @@ import { useStats } from "@/hooks/use-stats";
 import { HabitGridView } from "./_components/grid-view/habit-grid-view";
 import { EmptyState } from "@/components/empty";
 import { Loading } from "@/components/loading";
-import { useIsMobile } from "@/hooks/use-is-mobile";
-
 
 export const HabitsClient = () => {
   const { habitViewLayout } = usehabitViewLayoutStore();
-  const isMobile = useIsMobile();
+
 
 
   // 🔥 SINGLE SOURCE OF TRUTH FETCHING
@@ -31,55 +29,13 @@ export const HabitsClient = () => {
   const { statusMap, habitStatsMap } = useStats(activeHabits, completions);
   const habitsLength = habits.length;
   const isLoading = isHabitsLoading || isCompletionLoading;
-  // const perfectDaysSet = useMemo(() => {
-  //   const map = new Map<string, Set<string>>();
-
-  //   // build date → completed habitIds
-  //   completions.forEach((c) => {
-  //     if (c.status !== HABIT_STATUS.COMPLETED) return;
-
-  //     if (!map.has(c.date)) {
-  //       map.set(c.date, new Set());
-  //     }
-
-  //     map.get(c.date)!.add(c.habitId);
-  //   });
-
-  //   const result = new Set<string>();
-
-  //   map.forEach((completedSet, date) => {
-  //     const d = new Date(date);
-  //     d.setHours(0, 0, 0, 0);
-
-  //     const activeHabits = habits.filter((h) => {
-  //       if (!h.createdAt) return false;
-
-  //       const created = new Date(h.createdAt);
-  //       created.setHours(0, 0, 0, 0);
-
-  //       return created <= d;
-  //     });
-
-  //     if (activeHabits.length === 0) return;
-
-  //     const allDone = activeHabits.every((h) =>
-  //       completedSet.has(h.id)
-  //     );
-
-  //     if (allDone) {
-  //       result.add(date);
-  //     }
-  //   });
-
-  //   return result;
-  // }, [completions, habits]);
   
   return (
-    <div className="h-[calc(100vh-65px)] flex flex-col">
+    <div className="h-[calc(100vh-45px)] flex flex-col">
       <div className={cn(
           "flex-1 flex flex-col overflow-x-hidden scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-700/50 rounded-0 border rounded-t-md  border-black/10 bg-white shadow-md dark:border-white/10 dark:bg-zinc-900/70"
         )}>
-          {habitViewLayout === "grid" && !isMobile ? ( 
+          {habitViewLayout === "grid" ? ( 
           <>
             {isLoading ? (
                <Loading /> 

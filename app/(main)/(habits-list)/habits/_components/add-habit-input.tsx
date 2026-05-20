@@ -29,9 +29,9 @@ import {
   FieldError,
 } from "@/components/ui/field";
 
-import { HabitNamePicker } from "@/app/(main)/habits/_components/form/habit-name-picker";
-import { GoalRow } from "@/app/(main)/habits/_components/form/goal-row";
-import { SettingRow } from "@/app/(main)/habits/_components/form/setting-row";
+import { HabitNamePicker } from "@/app/(main)/(habits-list)/habits/_components/form/habit-name-picker";
+import { GoalRow } from "@/app/(main)/(habits-list)/habits/_components/form/goal-row";
+import { SettingRow } from "@/app/(main)/(habits-list)/habits/_components/form/setting-row";
 
 import {
   formSchema,
@@ -116,7 +116,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
             }
             aria-label="Add habit"
           >
-            <Plus size={variant === "icon" ? 32 : 18} />
+            <Plus size={variant === "icon" ? 28 : 18} />
             {variant === "row" && <p>Add Habit</p>}
           </button>
         </DialogTrigger>

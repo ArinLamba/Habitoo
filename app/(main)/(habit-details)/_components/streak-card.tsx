@@ -57,7 +57,7 @@ export const StreakCard = ({
       </div>
 
       {/* Bottom */}
-      <div className="mt-8 flex gap-3">
+      <div className="mt-8 flex w-full items-center justify-center gap-3">
         {last7Days.map((date) => {
           const dateStr = formatDate(date);
           const dayLabel = date.toLocaleDateString("en-US", {
@@ -80,7 +80,7 @@ export const StreakCard = ({
             >
               <div
                 className={cn(
-                  "h-5 w-5 rounded-full transition flex items-center justify-center ",
+                  "h-5 w-5 rounded-full transition ",
                   isDone && "bg-orange-400",
                   !isDone && "bg-zinc-700"
                 )}

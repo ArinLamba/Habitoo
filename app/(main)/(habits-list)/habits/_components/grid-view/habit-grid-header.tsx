@@ -21,9 +21,11 @@ export const HabitGridHeader = () => {
 
       {/* LEFT */}
       <div className="min-w-[250px] flex items-center justify-between pl-3">
-        <h2 className="text-sm font-semibold tracking-tight">
-          All Habits
-        </h2>
+        <div className="flex gap-x-2">
+          <h2 className="text-sm font-semibold tracking-tight">
+            All Habits
+          </h2>
+        </div>
 
         <Button variant="ghost">
           <TextAlignEnd size={18} />

@@ -11,7 +11,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+
 import { formatDate } from "@/lib/date";
 import { calculateHabitProgress } from "@/lib/habits/progress";
 import { Habit, HabitStatus, Completion } from "@/lib/types";

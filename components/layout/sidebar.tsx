@@ -16,15 +16,15 @@ export const Sidebar = ({ className }: Props) => {
   // const { isSignedIn } = useAuth();
 
   return (
-    <div className={cn("flex h-full w-[240px] md:fixed left-0 top-0 px-4 lg:pt-[65px] flex-col dark:bg-zinc-900 bordr border-r ",
+    <div className={cn("flex  w-[240px] md:fixed left-0 px-4 pt-2 flex-col dark:bg-zinc-900/60 bordr border-r border-t rounded-md",
     className,
     )}>
 
       <Link href="/habits">
-        <div className="pt-8 pl- pb-7 flex items-center gap-x-3 lg:hidden">
+        <div className="  pb-7 flex items-center gap-x-3  ">
           <Image src="/logo.svg" height={30} width={30} alt="logo" />
-          <h1 className="text-lg  whitespace-nowrap">
-            <p className="font-lightt italic ">
+          <h1 className="text-md  whitespace-nowrap">
+            <p className="font-light italic ">
               HABIT  <span className="font-bold not-italic p-1 font">TRACKER</span>
             </p>
           </h1>
@@ -34,15 +34,16 @@ export const Sidebar = ({ className }: Props) => {
         <SidebarItem 
           label="Habits" 
           href="/habits"
-          iconSrc="/habits.svg" 
+          icon="Folders"
         />
+
         <SidebarItem 
-          label="Anlaytics" 
+          label="Analytics" 
           href="/analytics"
-          iconSrc="/plan.svg" 
+          icon="ChartNoAxesColumn"
         />
       </div>
-      <div className="p-4">   
+      <div className="p-4"> 
         <ModeToggle />
       </div>
     </div>

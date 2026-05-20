@@ -3,7 +3,7 @@
 import { useHabits } from "@/hooks/queries/use-habits";
 import { useCompletions } from "@/hooks/queries/use-completions";
 
-import { CircularProgress } from "@/app/(main)/habits/_components/circular-progress";
+import { CircularProgress } from "@/app/(main)/(habits-list)/habits/_components/circular-progress";
 import { Separator } from "../ui/separator";
 
 import { Heatmap } from "../heatmap";

@@ -22,7 +22,7 @@ export const HabitDetailsPanel = ({
   if(!habit.unit) return null;
 
   return (
-    <div>
+    <div className="">
       <HabitDetailsHeader
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}

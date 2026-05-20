@@ -141,7 +141,7 @@ function MonthGrid({
   };
 
   return (
-    <div className="space-y-1">
+    <div className="flex-1 min-w-0 space-y-1">
       <div className="text-[12px] text-zinc-400 text-center mb-1">
         {start.toLocaleString("default", { month: "short" })}
       </div>
@@ -157,7 +157,7 @@ function MonthGrid({
       <div className="grid grid-cols-7">
         {days.map((date, index) => {
           if (!date) {
-            return <div key={`empty-${index}`} className="h-7 w-7 lg:w-13 my-px" />;
+            return <div key={`empty-${index}`} className="h-8 w-full my-px" />;
           }
 
           const key = formatDate(date);
@@ -186,7 +186,7 @@ function MonthGrid({
                   disabled={isDisabled}
                   onClick={() => fillRemaining(key)}
                   className={cn(
-                    "relative h-7 w-7 lg:w-13 my-px overflow-hidden flex items-center justify-center lg:text-[10px] text-[8px] transition",
+                    "relative h-8 w-full my-px overflow-hidden flex items-center justify-center lg:text-[10px] text-[10px] transition",
                     "border border-transparent hover:border-black/10 dark:hover:border-white/10",
                     isDisabled && "opacity-20 cursor-not-allowed",
                     isToday && "rounded-r-lg"
@@ -330,7 +330,7 @@ export const HabitCalendar = ({
         </Button>
       </div>
 
-      <div className="flex gap-4 items-start justify-center">
+      <div className="flex gap-4 w-full items-start">
         <MonthGrid
           {...getMonthMeta(previous)}
           habit={habit}

@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 
 import { Grid, List } from "lucide-react";
 import { ButtonGroup } from "./ui/button-group";
-import { cn } from "@/lib/utils";
+
 
 export const GridListTogle = () => {
 
