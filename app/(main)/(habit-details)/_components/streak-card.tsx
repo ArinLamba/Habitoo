@@ -4,7 +4,7 @@ import { getPeriodDates } from "@/lib/habits/progress";
 import { Habit } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Flame } from "lucide-react";
-import { SubtleGrid } from "@/components/subtle-grid";
+import { SubtleGrid } from "@/app/(main)/(habit-details)/_components/subtle-grid";
 
 type Props = {
   frequency: Habit["frequency"];
@@ -40,11 +40,11 @@ export const StreakCard = ({
   const endLabel = railItems[railItems.length - 1]?.label ?? "";
 
   return (
-    <div className="relative flex  h-full flex-col overflow-hidden rounded-md border border-white/10 bg-zinc-900/80 px-4 py-5">
-      <SubtleGrid opacity={0.07}/>
+    <div className="relative flex  h-full flex-col overflow-hidden rounded-md border border-white/10 dark:bg-zinc-900 px-4 py-5 bg-white">
+      <SubtleGrid />
       <div
-        className="absolute left-1/2 top-8 h-44 w-44 -translate-x-1/2 rounded-full blur-3xl"
-        style={{ backgroundColor: `${color}18` }}
+        className="absolute left-1/2 top-8 h-44 w-44 -translate-x-1/2 rounded-full blur-3xl bg-amber-500/10"
+        // style={{ backgroundColor: `${color}20` }}
       />
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">
@@ -54,7 +54,7 @@ export const StreakCard = ({
             strokeWidth={1.5}
           />
           <div
-            className="absolute inset-x-0 bottom-5 text-center text-7xl font-black leading-none tracking-normal text-zinc-950"
+            className="absolute inset-x-0 bottom-1 text-center  text-7xl font-black leading-none tracking-normal text-zinc-950"
             style={{
               textShadow: "0 2px 0 rgba(255,255,255,0.30)",
             }}

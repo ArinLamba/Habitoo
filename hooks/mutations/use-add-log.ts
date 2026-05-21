@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 import { addHabitLog } from "@/server/actions/add-log";
 import { Completion } from "@/lib/types";
@@ -6,6 +7,7 @@ import { Completion } from "@/lib/types";
 export const useAddLog = () => {
 
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
 
@@ -60,6 +62,7 @@ export const useAddLog = () => {
         queryKey: ["completions"],
         refetchType: "none",
       });
+      router.refresh();
     },
   });
 };

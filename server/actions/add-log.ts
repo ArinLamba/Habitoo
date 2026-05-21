@@ -21,6 +21,7 @@ export const addHabitLog = async ({
   if (!userId) {
     throw new Error("Unauthorized");
   }
+  if(value === 0) return;
 
   return createHabitLog({
     habitId,

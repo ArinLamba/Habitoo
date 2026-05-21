@@ -36,7 +36,7 @@ export const GoalRow = ({
             onChange={(e) => field.onChange(e.target.valueAsNumber)}
             type="number"
             placeholder="1"
-            className=""
+            className="w-full"
           />
         )}
       />
