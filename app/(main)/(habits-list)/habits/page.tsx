@@ -2,7 +2,7 @@
 import { FeedWrapper } from "@/components/layout/feed-wrapper";
 import { StickyWrapper } from "@/components/layout/sticky-wrapper";
 
-import { HabitsClient } from "./habits-client";
+import { HabitsClient } from "./_components/habits-client";
 
 import { StickyWrapperClient } from "@/components/layout/sticky-wrapper-client";
 

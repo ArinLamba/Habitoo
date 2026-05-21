@@ -42,6 +42,39 @@ const getWeekKey = (date: Date) => {
   return `${date.getFullYear()}-${weekNumber}`;
 };
 
+const parseDate = (date: string) => new Date(`${date}T00:00:00`);
+
+const clampRange = (
+  start: string,
+  end: string,
+  min: string,
+  max: string
+) => {
+  const clampedStart = start < min ? min : start;
+  const clampedEnd = end > max ? max : end;
+
+  if (clampedStart > clampedEnd) return [];
+
+  return getDates(parseDate(clampedStart), parseDate(clampedEnd));
+};
+
+const getPeriodKey = (
+  frequency: Habit["frequency"],
+  date: Date
+) => {
+  if (frequency === "day") return formatDate(date);
+  if (frequency === "week") return getWeekKey(date);
+  if (frequency === "month") return formatDate(date).slice(0, 7);
+
+  return date.getFullYear().toString();
+};
+
+const getMonthLabel = (date: Date) =>
+  date.toLocaleDateString("en-US", {
+    month: "short",
+    year: "2-digit",
+  });
+
 export const buildHabitStats = (
   habit: Habit,
   completions: Completion[]
@@ -115,31 +148,33 @@ export const buildHabitStats = (
     todayStr
   );
 
-  const totalDays =
-    Math.floor(
-      (today.getTime() - createdDate.getTime()) /
-        (1000 * 60 * 60 * 24)
-    ) + 1;
-
-  const doneDays = new Set(
-    [...calendar.completed].filter(
-      (date) =>
-        date >= startStr &&
-        date <= todayStr
+  const elapsedPeriodCount = new Set(
+    getDates(createdDate, today).map((date) =>
+      getPeriodKey(habit.frequency, date)
     )
+  ).size;
+
+  const donePeriods = new Set(
+    [...calendar.completed]
+      .filter((date) => date >= startStr && date <= todayStr)
+      .map((date) => getPeriodKey(habit.frequency, parseDate(date)))
   );
 
-  const consistency = totalDays
-    ? Math.round((doneDays.size / totalDays) * 100)
+  const consistency = elapsedPeriodCount
+    ? Math.round((donePeriods.size / elapsedPeriodCount) * 100)
     : 0;
 
-  const lastDone = [...doneDays].sort().at(-1);
+  const lastDone = [...calendar.completed]
+    .filter((date) => date >= startStr && date <= todayStr)
+    .sort()
+    .at(-1);
 
   const stats = {
     consistency,
     currentStreak,
     bestStreak,
-    weekDone: doneDays.size,
+    completedCount: donePeriods.size,
+    weekDone: donePeriods.size,
     lastDoneText: lastDone
       ? formatDisplayDate(lastDone)
       : "Never",
@@ -168,7 +203,7 @@ export const buildHabitStats = (
       }
 
       if (completion.status === HABIT_STATUS.COMPLETED) {
-        return total + habit.targetValue;
+        return total + 1;
       }
 
       return total;
@@ -182,33 +217,17 @@ export const buildHabitStats = (
   };
 
   const getRangeTarget = (dates: Date[]) => {
-    if (!dates.length) return habit.targetValue;
+    if (!dates.length) return 0;
 
     if (habit.frequency === "day") {
       return habit.targetValue * dates.length;
     }
 
-    if (habit.frequency === "week") {
-      const weeks = new Set(
-        dates.map((date) => getWeekKey(date))
-      );
-
-      return habit.targetValue * weeks.size;
-    }
-
-    if (habit.frequency === "month") {
-      const months = new Set(
-        dates.map((date) => formatDate(date).slice(0, 7))
-      );
-
-      return habit.targetValue * months.size;
-    }
-
-    const years = new Set(
-      dates.map((date) => date.getFullYear())
+    const periods = new Set(
+      dates.map((date) => getPeriodKey(habit.frequency, date))
     );
 
-    return habit.targetValue * years.size;
+    return habit.targetValue * periods.size;
   };
 
   const dayChart = (() => {
@@ -229,60 +248,88 @@ export const buildHabitStats = (
   })();
 
   const weekChart = (() => {
-    const end = today;
-    const start = new Date(today);
-    start.setDate(today.getDate() - 7 * 7);
+    return [...Array(8)].map((_, index) => {
+      const anchor = new Date(today);
+      anchor.setDate(today.getDate() - (7 - index) * 7);
 
-    const weeks: Date[][] = [];
-    let bucket: Date[] = [];
+      const weekStart = new Date(anchor);
+      weekStart.setDate(anchor.getDate() - anchor.getDay());
 
-    getDates(start, end).forEach((date) => {
-      bucket.push(date);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
 
-      if (bucket.length === 7) {
-        weeks.push(bucket);
-        bucket = [];
-      }
+      const dates = clampRange(
+        formatDate(weekStart),
+        formatDate(weekEnd),
+        startStr,
+        todayStr
+      );
+
+      return {
+        label: `W${getWeekKey(weekStart).split("-")[1]}`,
+        value: getRangeValue(dates),
+        target: getRangeTarget(dates),
+      };
     });
-
-    if (bucket.length) weeks.push(bucket);
-
-    return weeks.map((week, index) => ({
-      label: `W${index + 1}`,
-      value: getRangeValue(week),
-      target: getRangeTarget(week),
-    }));
   })();
 
   const monthChart = (() => {
-    const map = new Map<string, Date[]>();
+    const months: { label: string; dates: Date[] }[] =
+      [];
+    const cursor = new Date(
+      createdDate.getFullYear(),
+      createdDate.getMonth(),
+      1
+    );
 
-    getDates(createdDate, today).forEach((date) => {
-      const monthKey = formatDate(date).slice(0, 7);
+    while (cursor <= today) {
+      const start = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+      const end = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+      const dates = clampRange(
+        formatDate(start),
+        formatDate(end),
+        startStr,
+        todayStr
+      );
 
-      if (!map.has(monthKey)) map.set(monthKey, []);
-      map.get(monthKey)!.push(date);
-    });
+      months.push({
+        label: getMonthLabel(start),
+        dates,
+      });
 
-    return Array.from(map.entries()).map(([month, dates]) => ({
-      label: month,
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    return months.map(({ label, dates }) => ({
+      label,
       value: getRangeValue(dates),
       target: getRangeTarget(dates),
     }));
   })();
 
   const yearChart = (() => {
-    const map = new Map<string, Date[]>();
+    const years: { label: string; dates: Date[] }[] = [];
 
-    getDates(createdDate, today).forEach((date) => {
-      const yearKey = date.getFullYear().toString();
+    for (
+      let year = createdDate.getFullYear();
+      year <= today.getFullYear();
+      year++
+    ) {
+      const dates = clampRange(
+        `${year}-01-01`,
+        `${year}-12-31`,
+        startStr,
+        todayStr
+      );
 
-      if (!map.has(yearKey)) map.set(yearKey, []);
-      map.get(yearKey)!.push(date);
-    });
+      years.push({
+        label: year.toString(),
+        dates,
+      });
+    }
 
-    return Array.from(map.entries()).map(([year, dates]) => ({
-      label: year,
+    return years.map(({ label, dates }) => ({
+      label,
       value: getRangeValue(dates),
       target: getRangeTarget(dates),
     }));

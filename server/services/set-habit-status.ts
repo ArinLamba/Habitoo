@@ -5,6 +5,7 @@ import db from "@/db";
 import { habitCompletions } from "@/db/schema";
 
 import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const setHabitStatus = async (
   userId: string,
@@ -50,6 +51,8 @@ export const setHabitStatus = async (
         )
       );
 
+    revalidatePath(`/habits/${habitId}`);
+
     return null;
   }
 
@@ -59,6 +62,8 @@ export const setHabitStatus = async (
       .set({ status })
       .where(eq(habitCompletions.id, existing.id))
       .returning();
+
+    revalidatePath(`/habits/${habitId}`);
 
     return updated[0];
   }
@@ -72,6 +77,8 @@ export const setHabitStatus = async (
       status
     })
     .returning();
+
+  revalidatePath(`/habits/${habitId}`);
 
   return inserted[0];
 };

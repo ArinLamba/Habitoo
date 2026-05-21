@@ -12,28 +12,28 @@ import { DetailPanelWrapper } from "@/components/layout/detail-panel-wrapper";
 import { HabitHeader } from "../../_components/habit-header";
 
 type Props = {
-  params: {
+  params: Promise<{
     habitId: string;
-  };
+  }>;
 
-  searchParams: {
+  searchParams: Promise<{
     range?: string;
-  };
+  }>;
 };
 
 const HabitPage = async ({ params, searchParams  }: Props) => {
   const { habitId } = await params;
   const resolvedSearchParams = await searchParams;
 
-  const range =
+  const heatmapRange =
     resolvedSearchParams.range === "all"
       ? "all"
-      : Number(resolvedSearchParams.range) || 90;
+      : Number(resolvedSearchParams.range) || 365;
   
   const habitData = getHabitById(habitId);
   const logsData = getHabitLogs(habitId);
-  const completionsData = getCompletionsByHabitId(habitId, range);
-  const heatmapCompletionsData = getCompletionsByHabitId(habitId, 365);
+  const completionsData = getCompletionsByHabitId(habitId, "all");
+  const heatmapCompletionsData = getCompletionsByHabitId(habitId, heatmapRange);
   
   const [
     habit,

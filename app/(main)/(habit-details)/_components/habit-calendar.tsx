@@ -67,7 +67,7 @@ const getClickedDateProgress = (
     }
 
     if (completion.status === HABIT_STATUS.COMPLETED) {
-      return total + habit.targetValue;
+      return total + 1;
     }
 
     return total;
@@ -173,19 +173,13 @@ function MonthGrid({
     });
   };
 
-  const fillRemaining = (date: string) => {
+  const addOneUnit = (date: string) => {
     const periodProgress = calculateHabitProgress(
       habit,
       completions,
       date
     );
-    const dayValue = getDateValue(habit, completions, date);
-    const remaining =
-      habit.frequency === "day"
-        ? periodProgress.target - periodProgress.current
-        : dayValue > 0
-        ? 0
-        : 1;
+    const remaining = periodProgress.target - periodProgress.current;
 
     selectDate(date);
 
@@ -194,7 +188,7 @@ function MonthGrid({
     addLog({
       habitId: habit.id,
       date,
-      value: remaining,
+      value: Math.min(1, remaining),
     });
   };
 
@@ -257,7 +251,7 @@ function MonthGrid({
               <ContextMenuTrigger asChild>
                 <button
                   disabled={isDisabled}
-                  onClick={() => fillRemaining(key)}
+                  onClick={() => addOneUnit(key)}
                   className={cn(
                     "relative h-8 w-full my-px overflow-hidden flex items-center justify-center lg:text-[10px] text-[10px] transition",
                     "border border-transparent hover:border-black/10 dark:hover:border-white/10",
@@ -298,10 +292,10 @@ function MonthGrid({
 
               <ContextMenuContent className="w-56">
                 <ContextMenuItem
-                  onClick={() => fillRemaining(key)}
+                  onClick={() => addOneUnit(key)}
                   disabled={isDisabled}
                 >
-                  Fill Remaining
+                  Add 1 Unit
                   <ContextMenuShortcut>Alt + D</ContextMenuShortcut>
                 </ContextMenuItem>
 

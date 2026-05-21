@@ -110,7 +110,7 @@ export const HabitStackView = ({
             title="Success Today"
             count={doneHabits.length}
             variant="success"
-            defaultOpen={false}
+            
           >
             {renderHabitCards(doneHabits)}
           </HabitSection>
@@ -139,8 +139,8 @@ export const HabitStackView = ({
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 px-3 py-2 backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
         <div className="flex items-center gap-3">
-          <div className="flex flex-1 gap-2 overflow-x-auto scrollbar-none">
-            {days.map((day) => {
+          <div className="flex flex-row-reverse flex-1 gap-2 overflow-x-auto scrollbar-none">
+            {[...days].reverse().map((day) => {
               const selected =
                 formatDate(day) === formatDate(currentDate);
 

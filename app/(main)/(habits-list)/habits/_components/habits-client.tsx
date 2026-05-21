@@ -5,13 +5,13 @@ import { usehabitViewLayoutStore } from "@/store/use-habit-layout-store";
 import { useHabits } from "@/hooks/queries/use-habits";
 import { useCompletions } from "@/hooks/queries/use-completions";
 
-import { HabitStackView } from "./_components/list-view/habit-stack-view";
+import { HabitStackView } from "./list-view/habit-stack-view";
 import { cn } from "@/lib/utils";
-import { BottomActionBar } from "./_components/bottom-action-bar";
+import { BottomActionBar } from "./bottom-action-bar";
 
 import { useStats } from "@/hooks/use-stats";
 
-import { HabitGridView } from "./_components/grid-view/habit-grid-view";
+import { HabitGridView } from "./grid-view/habit-grid-view";
 import { EmptyState } from "@/components/empty";
 import { Loading } from "@/components/loading";
 import { useTodayRollover } from "@/hooks/use-today-rollover";

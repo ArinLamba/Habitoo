@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { setHabit } from "@/server/actions/set-habit";
 import { Completion, HabitStatus } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 
 // /hooks/mutations/use-toggle-completion.ts
 
 export const useSetHabitStatus = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: ({ habitId, date, status }: { habitId: string; date: string, status: HabitStatus }) =>
@@ -85,6 +87,7 @@ export const useSetHabitStatus = () => {
         queryKey: ["completions"],
         refetchType: "none",
       });
+      router.refresh();
     },
   });
 };

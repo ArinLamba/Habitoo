@@ -29,7 +29,7 @@ export function UnitPicker({ value, onChange }: { value: string, onChange: (val:
         <Button
           variant="outline"
           role="combobox"
-          className="justify-between min-w-[120px]"
+          className="justify-between min-w-[110px]"
         >
           {value ? value : UNIT_GROUPS[0].units[0]}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

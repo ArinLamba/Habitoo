@@ -6,6 +6,7 @@ import { habits } from "@/db/schema";
 import { Habit, HabitFormValues } from "@/lib/types";
 
 import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const createHabit = async (
   userId: string,
@@ -45,6 +46,7 @@ export const updateHabit = async (
       )
     ).returning();
 
+    revalidatePath(`/habits/${id}`);
     return updated;
 };
 

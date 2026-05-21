@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState } from "react";
 
 import {
   ContextMenu,
@@ -14,12 +14,15 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
-import { ArrowRight, Check, X } from "lucide-react";
+import { ArrowRight, Check, Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 import { HABIT_STATUS, HabitStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { useCompletionSound } from "@/hooks/use-completion-sound";
 
 type Progress = {
   current: number;
@@ -75,6 +78,7 @@ export const DayCell = memo(({
   addValue,
   toggle,
 }: Props) => {
+  const [logValue, setLogValue] = useState(0);
   const isLegacyDone =
     status === HABIT_STATUS.COMPLETED &&
     progress.current === 0;
@@ -82,6 +86,7 @@ export const DayCell = memo(({
   const hasProgress = progress.current > 0 && !isDone;
   const isSkipped = status === HABIT_STATUS.SKIPPED;
   const isFailed = status === HABIT_STATUS.FAILED;
+  const { audio: doneAudio, play: playDoneSound } = useCompletionSound();
 
   const selectCell = () => {
     setSelectedCell({
@@ -96,7 +101,7 @@ export const DayCell = memo(({
     selectCell();
 
     if (isDone) return;
-
+    playDoneSound();
     fillRemaining();
   };
 
@@ -119,6 +124,7 @@ export const DayCell = memo(({
         }
       }}
     >
+      {doneAudio}
       <ContextMenuTrigger asChild>
         <Button
           size="mark"
@@ -188,33 +194,6 @@ export const DayCell = memo(({
           </ContextMenuShortcut>
         </ContextMenuItem>
 
-        {addValue && (
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>
-              Add Logs
-            </ContextMenuSubTrigger>
-            <ContextMenuSubContent className="w-40">
-              {[1, Math.max(1, Math.round(progress.target / 2)), progress.target].map(
-                (value, index) => (
-                  <ContextMenuItem
-                    key={`${value}-${index}`}
-                    onClick={() => {
-                      selectCell();
-                      addValue(value);
-                    }}
-                  >
-                    +{value} {unit}
-                  </ContextMenuItem>
-                )
-              )}
-              <ContextMenuSeparator />
-              <ContextMenuItem onClick={handleFillRemaining}>
-                Fill Remaining
-              </ContextMenuItem>
-            </ContextMenuSubContent>
-          </ContextMenuSub>
-        )}
-
         <ContextMenuItem
           onClick={() =>
             handleStatus(HABIT_STATUS.SKIPPED)
@@ -236,7 +215,58 @@ export const DayCell = memo(({
             Alt + F
           </ContextMenuShortcut>
         </ContextMenuItem>
+        
+        {addValue && (
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>
+              Add Logs
+            </ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-50">
 
+              {/* Add log deropdow */}
+
+              <div className="flex">
+                <InputGroup>
+                  <InputGroupInput 
+                    placeholder="log.."
+                    value={logValue}
+                    onChange={(e) => setLogValue(Math.max(0,Number(e.target.value)))}
+                  />
+                  <InputGroupAddon align="inline-end" className="flex">
+                    <p>{unit} </p> 
+                    <Button 
+                      variant={"secondary"} 
+                      size={"icon"} 
+                      onClick={() => addValue(logValue)}
+                    >
+                      <Plus size={12}/>
+                    </Button>
+                  </InputGroupAddon>
+                </InputGroup>
+
+              {/* Suggested Values */}
+              </div>
+              {[1, Math.max(1, Math.round(progress.target / 2)), progress.target].map(
+                (value, index) => (
+                  <ContextMenuItem
+                    key={`${value}-${index}`}
+                    onClick={() => {
+                      selectCell();
+                      addValue(value);
+                    }}
+                  >
+                    +{value} {unit}
+                  </ContextMenuItem>
+                )
+              )}
+              <ContextMenuSeparator />
+              <ContextMenuItem onClick={handleFillRemaining}>
+                Fill Remaining
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+        )}
+        
         <ContextMenuSeparator />
 
         <ContextMenuItem

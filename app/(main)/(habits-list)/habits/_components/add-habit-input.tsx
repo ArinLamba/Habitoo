@@ -210,7 +210,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
           </div>
 
           {/* FOOTER */}
-          <DialogFooter className="border-t px-6 py-4">
+          <DialogFooter className=" px-8  pb-8">
             <Button
               type="button"
               variant="secondary"
@@ -224,6 +224,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
             <Button
               type="submit"
               form="habit-form"
+              style={{ backgroundColor: watchedColor }}
             >
               Create
             </Button>

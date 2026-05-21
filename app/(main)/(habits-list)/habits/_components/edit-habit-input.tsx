@@ -197,7 +197,7 @@ export const EditHabitInput = ({ habit, children }: Props) => {
             <Button
               type="submit"
               form="habit-form"
-              style={{ backgroundColor: habit.color! }}
+              style={{ backgroundColor: watchedColor }}
             >
               Save Changes
             </Button>

@@ -26,7 +26,7 @@ export const HabitHeader = ({ habit, logs }: Props) => {
   
 
   return (
-    <div className="flex items-center justify-between rounded-md border border-black/10 bg-white/95 text-sm shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-950/90">
+    <div className=" flex items-center justify-between rounded-md border border-black/10 bg-white/95 text-sm shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-900/95">
       <div className="flex items-center">
         <MobileLeftSidebar />
         <Separator orientation="vertical" className="xl:hidden block"/>
@@ -50,9 +50,9 @@ export const HabitHeader = ({ habit, logs }: Props) => {
         <Separator orientation="vertical"/>
         <RangeSelect />
         <Separator orientation="vertical"/>
-        <div className="flex items-center">
+        <div className="flex items-center text-muted-foreground">
           <EditHabitInput habit={habit}>
-            <Button variant={"ghost"}>
+            <Button variant={"ghost"} className="">
               <PencilIcon />
             </Button>
           </EditHabitInput>
