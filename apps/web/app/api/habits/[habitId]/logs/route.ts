@@ -1,0 +1,63 @@
+import { NextResponse } from "next/server";
+import * as z from "zod";
+
+import { getHabitLogs } from "@/db/queries";
+import { getUserId } from "@/lib/get-user-id";
+import { createHabitLog } from "@/server/services/habit-logs";
+
+import {
+  badRequest,
+  serverError,
+  unauthorized,
+} from "../../../_lib/responses";
+
+type RouteContext = {
+  params: Promise<{
+    habitId: string;
+  }>;
+};
+
+const createHabitLogSchema = z.object({
+  date: z.string().min(1),
+  value: z.number().positive(),
+  note: z.string().optional(),
+});
+
+export const GET = async (_req: Request, context: RouteContext) => {
+  const { habitId } = await context.params;
+  const logs = await getHabitLogs(habitId);
+
+  return NextResponse.json({ logs });
+};
+
+export const POST = async (req: Request, context: RouteContext) => {
+  const userId = await getUserId();
+
+  if (!userId) {
+    return unauthorized();
+  }
+
+  const parsed = createHabitLogSchema.safeParse(await req.json());
+
+  if (!parsed.success) {
+    return badRequest("Invalid habit log payload");
+  }
+
+  const { habitId } = await context.params;
+
+  try {
+    const log = await createHabitLog({
+      habitId,
+      userId,
+      ...parsed.data,
+    });
+
+    return NextResponse.json({ log }, { status: 201 });
+  } catch (error) {
+    if (error instanceof Error && error.message === "Habit not found") {
+      return badRequest("Habit not found");
+    }
+
+    return serverError();
+  }
+};

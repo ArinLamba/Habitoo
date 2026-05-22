@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/apps/*/node_modules
+/packages/*/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -12,18 +14,41 @@
 
 # testing
 /coverage
+/apps/*/coverage
+/packages/*/coverage
 
 # next.js
 /.next/
+/apps/*/.next/
 /out/
-.vscode
+/apps/*/out/
 
 # production
 /build
+/apps/*/build
+/packages/*/build
+/dist
+/apps/*/dist
+/packages/*/dist
+
+# Expo / React Native
+/apps/*/.expo/
+/apps/*/web-build/
+/apps/*/expo-env.d.ts
+/apps/*/.metro-health-check*
+/apps/*/ios/
+/apps/*/android/
+/apps/*/.kotlin/
 
 # misc
 .DS_Store
 *.pem
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
 
 # debug
 npm-debug.log*
@@ -37,7 +62,23 @@ yarn-error.log*
 
 # vercel
 .vercel
+/apps/*/.vercel
+/packages/*/.vercel
+
+# local tool caches
+.turbo
+/apps/*/.turbo
+/packages/*/.turbo
+.claude
+/apps/*/.claude
+/packages/*/.claude
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+apps/*/next-env.d.ts
+
+# editor local state
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
