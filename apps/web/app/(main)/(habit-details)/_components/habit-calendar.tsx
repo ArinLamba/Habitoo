@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
-  Check,
   ChevronLeft,
   ChevronRight,
   X,
@@ -192,6 +191,22 @@ function MonthGrid({
     });
   };
 
+  const addCustomLog = (date: string) => {
+    selectDate(date);
+
+    const rawValue = window.prompt(`Add log for ${date}`, "1");
+    if (rawValue === null) return;
+
+    const value = Number(rawValue);
+    if (!Number.isFinite(value) || value <= 0) return;
+
+    addLog({
+      habitId: habit.id,
+      date,
+      value,
+    });
+  };
+
   const markStatus = (
     date: string,
     status: HabitStatus | null
@@ -281,8 +296,6 @@ function MonthGrid({
                       <ArrowRight size={14} color={color} />
                     ) : isFailed ? (
                       <X size={14} color="red" />
-                    ) : hasLoggedDate ? (
-                      <Check size={14} className="text-white" />
                     ) : (
                       date.getDate()
                     )}
@@ -295,8 +308,16 @@ function MonthGrid({
                   onClick={() => addOneUnit(key)}
                   disabled={isDisabled}
                 >
-                  Add 1 Unit
+                  Fill Remaining
                   <ContextMenuShortcut>Alt + D</ContextMenuShortcut>
+                </ContextMenuItem>
+
+                <ContextMenuItem
+                  onClick={() => addCustomLog(key)}
+                  disabled={isDisabled}
+                >
+                  Add Log
+                  <ContextMenuShortcut>Alt + L</ContextMenuShortcut>
                 </ContextMenuItem>
 
                 <ContextMenuItem

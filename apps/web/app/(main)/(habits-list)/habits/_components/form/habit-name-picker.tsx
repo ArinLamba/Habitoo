@@ -1,5 +1,5 @@
 import { ICON_MAP } from "@/lib/habit-icons";
-import { SUGGESTED_HABITS } from "@/lib/habit-icons";
+import { SUGGESTED_HABITS } from "@/lib/suggested-habits";
 
 import {
   Command,

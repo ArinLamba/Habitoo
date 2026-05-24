@@ -1,4 +1,6 @@
 export * from "./habits";
+export * from "./habit-icons";
+export * from "./suggested-habits";
 export * from "./date";
 export * from "./calendar";
 export * from "./insights";

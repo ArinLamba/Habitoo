@@ -158,6 +158,8 @@ export const getHabitPeriodStreaks = (
     start: string;
     end: string;
     completed: boolean;
+    skipped: boolean;
+    failed: boolean;
   }[] = [];
 
   let cursor = getPeriodDates(habit.frequency, habit.startDate).start;
@@ -171,6 +173,22 @@ export const getHabitPeriodStreaks = (
       start: range.start,
       end: range.end,
       completed: calculateHabitProgress(habit, completions, cursor).completed,
+      skipped: completions.some(
+        (completion) =>
+          completion.habitId === habit.id &&
+          completion.date >= range.start &&
+          completion.date <= range.end &&
+          completion.value === null &&
+          completion.status === HABIT_STATUS.SKIPPED
+      ),
+      failed: completions.some(
+        (completion) =>
+          completion.habitId === habit.id &&
+          completion.date >= range.start &&
+          completion.date <= range.end &&
+          completion.value === null &&
+          completion.status === HABIT_STATUS.FAILED
+      ),
     });
 
     cursor = getNextPeriodDate(habit.frequency, cursor);
@@ -180,12 +198,32 @@ export const getHabitPeriodStreaks = (
   let currentIndex = periods.length - 1;
 
   if (currentIndex >= 0 && !periods[currentIndex].completed) {
-    currentIndex -= 1;
+    if (!periods[currentIndex].failed) {
+      currentIndex -= 1;
+    }
+
+    while (
+      currentIndex >= 0 &&
+      !periods[currentIndex].completed &&
+      periods[currentIndex].skipped &&
+      !periods[currentIndex].failed
+    ) {
+      currentIndex -= 1;
+    }
   }
 
   while (currentIndex >= 0 && periods[currentIndex].completed) {
     currentStreak++;
     currentIndex--;
+
+    while (
+      currentIndex >= 0 &&
+      !periods[currentIndex].completed &&
+      periods[currentIndex].skipped &&
+      !periods[currentIndex].failed
+    ) {
+      currentIndex--;
+    }
   }
 
   let bestStreak = 0;
@@ -213,6 +251,14 @@ export const getHabitPeriodStreaks = (
       temp++;
       segmentEnd = period.end;
       bestStreak = Math.max(bestStreak, temp);
+      continue;
+    }
+
+    if (period.skipped && !period.failed) {
+      if (temp > 0) {
+        segmentEnd = period.end;
+      }
+
       continue;
     }
 

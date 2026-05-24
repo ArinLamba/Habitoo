@@ -136,7 +136,7 @@ export const HabitCard = ({
                       </div>
                     }
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
+                  <p className="mt-1 text-sm font-semibold text-muted-foreground">
                     {displayCurrent} / {progress.target} {unit}
                   </p>
                 </div>

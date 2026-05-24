@@ -36,10 +36,10 @@ export const HabitRow = memo(({
       {/* LEFT */}
       <div className="w-[250px]">
         <div className="flex w-[250px]">
-          <Link href={`habits/${habit.id}`} className="flex flex-1 items-center gap-x-2 px-3 transition-colors hover:text-emerald-600">
+          <Link href={`habits/${habit.id}`} className="flex flex-1 items-center mt-1 gap-x-2 px-3 transition-colors hover:text-emerald-600">
             <div
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
-              style={{ backgroundColor: `${habit.color}18` }}
+              className="flex h-7 w-7 shrink-0 items-center justify-center  "
+              // style={{ backgroundColor: `${habit.color}11` }}
             >
               <IconComponent
                 size={17}

@@ -24,52 +24,27 @@ export const useSetHabitStatus = () => {
       queryClient.setQueriesData<Completion[]>(
         { queryKey: ["completions"] },
         (old = []) => {
-
-        const index = old.findIndex(
-          (c) =>
-            c.habitId === habitId &&
-            c.date === date
-        );
-
-        // CLEAR
-        if (status === null) {
-
-          return old.filter(
-            (c) =>
-              !(
-                c.habitId === habitId &&
-                c.date === date
-              )
+          const withoutDay = old.filter(
+            (c) => !(c.habitId === habitId && c.date === date)
           );
-        }
 
-        // UPDATE
-        if (index !== -1) {
+          if (status === null) {
+            return withoutDay;
+          }
 
-          const updated = [...old];
-
-          updated[index] = {
-            ...updated[index],
-            status,
-          };
-
-          return updated;
-        }
-
-        // INSERT
-        return [
-          ...old,
-          {
-            id: `optimistic-${habitId}-${date}-${Date.now()}`,
-            habitId,
-            date,
-            status,
-            value: null,
-            note: null,
-            userId: "optimistic",
-          completedAt: new Date(),
-          } as Completion,
-        ];
+          return [
+            ...withoutDay,
+            {
+              id: `optimistic-${habitId}-${date}-${Date.now()}`,
+              habitId,
+              date,
+              status,
+              value: null,
+              note: null,
+              userId: "optimistic",
+              completedAt: new Date(),
+            } as Completion,
+          ];
         }
       );
 
