@@ -140,7 +140,11 @@ function HabitListItemComponent({
             >
               <Text
                 className={`text-[18px] font-extrabold leading-tight ${
-                  canLog ? "text-white" : "text-zinc-500"
+                  isCompletedRow
+                    ? "text-zinc-500"
+                    : canLog
+                      ? "text-white"
+                      : "text-zinc-500"
                 }`}
                 numberOfLines={2}
                 style={
