@@ -7,66 +7,45 @@ import { habitCompletions } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+const dayFilter = (
+  userId: string,
+  habitId: string,
+  date: string
+) =>
+  and(
+    eq(habitCompletions.habitId, habitId),
+    eq(habitCompletions.date, date),
+    eq(habitCompletions.userId, userId)
+  );
+
 export const setHabitStatus = async (
   userId: string,
   habitId: string,
   date: string,
-  status: "completed" | "skipped" | "failed" | null,
+  status: "completed" | "skipped" | "failed" | null
 ) => {
-
-  // Security check
   const habit = await db.query.habits.findFirst({
     where: (h, { and, eq }) =>
-      and(
-        eq(h.id, habitId),
-        eq(h.userId, userId)
-      ),
+      and(eq(h.id, habitId), eq(h.userId, userId)),
   });
 
   if (!habit) {
     throw new Error("Habit not found");
   }
 
-  const existing = await db.query.habitCompletions.findFirst({
-    where: (hc, { and, eq }) =>
-      and(
-        eq(hc.habitId, habitId),
-        eq(hc.date, date),
-        eq(hc.userId, userId)
-      ),
-  });
+  const filter = dayFilter(userId, habitId, date);
 
-  // CLEAR
+  // Clear the whole day (status-only rows and numeric logs).
   if (status === null) {
-
-    if (!existing) return null;
-
-    await db
-      .delete(habitCompletions)
-      .where(
-        and(
-          eq(habitCompletions.habitId, habitId),
-          eq(habitCompletions.date, date),
-          eq(habitCompletions.userId, userId)
-        )
-      );
+    await db.delete(habitCompletions).where(filter);
 
     revalidatePath(`/habits/${habitId}`);
 
     return null;
   }
 
-  if (existing) {
-    const updated = await db
-      .update(habitCompletions)
-      .set({ status })
-      .where(eq(habitCompletions.id, existing.id))
-      .returning();
-
-    revalidatePath(`/habits/${habitId}`);
-
-    return updated[0];
-  }
+  // Skip / fail / binary complete replace the day so value logs cannot linger.
+  await db.delete(habitCompletions).where(filter);
 
   const inserted = await db
     .insert(habitCompletions)
@@ -74,7 +53,7 @@ export const setHabitStatus = async (
       habitId,
       date,
       userId,
-      status
+      status,
     })
     .returning();
 

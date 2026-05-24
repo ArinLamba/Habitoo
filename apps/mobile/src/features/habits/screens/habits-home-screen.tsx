@@ -1,80 +1,257 @@
-import { useClerk } from "@clerk/expo";
-import { getLast14Days, getToday } from "@habitoo/core";
-import { Pressable, Text, View } from "react-native";
+import {
+  formatDate,
+  formatDisplayDate,
+  getToday,
+  type Habit,
+  type HabitLifecycle,
+  type HabitStatus,
+} from "@habitoo/core";
+import {
+  GraduationCap,
+  Layers3,
+  Pencil,
+  SlidersHorizontal,
+} from "lucide-react-native";
+import { router } from "expo-router";
+import { useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Screen } from "../../../shared/ui/screen";
-import { HabitSummaryCard } from "../components/habit-summary-card";
-import { useHabitsOverview } from "../hooks/queries/use-habits-overview";
-import { Loading } from "../../../components/loading";
+import { DateRail } from "../components/date-rail";
+import { HabitFormModal } from "../components/habit-form-modal";
+import { HabitSection } from "../components/habit-section";
+import { ModeRail } from "../components/mode-rail";
+import { useCompleteHabit } from "../hooks/mutations/use-complete-habit";
+import { useSetHabitLifecycle } from "../hooks/mutations/use-set-habit-lifecycle";
+import { useSetHabitStatus } from "../hooks/mutations/use-set-habit-status";
+import { useHabitsListData } from "../hooks/queries/use-habits-list-data";
+import { getHabitModeTitle, groupHabits, type HabitMode } from "../utils/group-habits";
+
+function getTitleForDate(date: string) {
+  const today = getToday();
+
+  if (date === today) return "Today";
+  if (date > today) return "Tomorrow";
+
+  return formatDisplayDate(date);
+}
+
+function HeaderActions() {
+  return (
+    <View className="flex-row gap-4">
+      <Pressable
+        accessibilityRole="button"
+        className="h-[40px] w-[40px] items-center justify-center rounded-full bg-zinc-800"
+      >
+        <GraduationCap color="white" />
+      </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        className="h-[40px] w-[40px] items-center justify-center rounded-full bg-zinc-800"
+      >
+        <SlidersHorizontal color="white" />
+      </Pressable>
+    </View>
+  );
+}
+
+function EmptyState({ onAddHabit }: { onAddHabit: () => void }) {
+  return (
+    <View className="items-center px-8 py-20">
+      <View className="h-16 w-16 items-center justify-center rounded-full bg-zinc-900">
+        <Layers3 color="#71717a" size={30} />
+      </View>
+      <Text className="mt-5 text-center text-xl font-extrabold text-white">
+        No habits yet
+      </Text>
+      <Text className="mt-2 text-center text-base leading-6 text-zinc-500">
+        Start with one small habit you can repeat daily.
+      </Text>
+      <Pressable
+        accessibilityRole="button"
+        className="mt-6 rounded-full bg-emerald-500 px-6 py-3"
+        onPress={onAddHabit}
+      >
+        <Text className="font-extrabold text-white">Create habit</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 export function HabitsHomeScreen() {
-  const { signOut } = useClerk();
-  const { data: habits, isLoading, error } = useHabitsOverview();
-  const recentDays = getLast14Days().slice(-7);
-  const today = getToday();
-  
-  if (isLoading) {
-    return (
-      <Screen>
-        <Loading />
-      </Screen>
+  const [selectedDate, setSelectedDate] = useState(() => formatDate(new Date()));
+  const [mode, setMode] = useState<HabitMode>("active");
+  const [addHabitOpen, setAddHabitOpen] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
+
+  const {
+    habits,
+    completions,
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useHabitsListData(selectedDate);
+
+  const addLog = useCompleteHabit(selectedDate);
+  const setHabitStatus = useSetHabitStatus(selectedDate);
+  const setHabitLifecycle = useSetHabitLifecycle();
+
+  const groups = useMemo(
+    () => groupHabits(habits, selectedDate, completions, mode),
+    [habits, completions, mode, selectedDate]
+  );
+
+  const pendingHabitId =
+    addLog.variables?.habit.id ?? setHabitStatus.variables?.habitId;
+
+  const handleSetStatus = (habit: Habit, status: HabitStatus) => {
+    setHabitStatus.mutate({
+      habitId: habit.id,
+      date: selectedDate,
+      status,
+    });
+  };
+
+  const handleSetLifecycle = (habit: Habit, lifecycle: HabitLifecycle) => {
+    const labels: Record<HabitLifecycle, string> = {
+      active: "Habit restored",
+      completed: "Habit ended",
+      archived: "Habit archived",
+    };
+
+    setHabitLifecycle.mutate(
+      { habitId: habit.id, lifecycle },
+      {
+        onSuccess: () => {
+          Alert.alert("Updated", labels[lifecycle]);
+        },
+        onError: () => {
+          Alert.alert("Error", "Could not update habit.");
+        },
+      }
     );
-  }
-  
-  if (error) {
-    return (
-      <Screen>
-        <Text className="felx-1 text-red-400">Failed to load habits</Text>
-      </Screen>
-    );
-  }
+  };
 
   return (
-    <Screen>
-      <View className="flex-row items-start justify-between gap-4">
-        <View className="gap-2">
-          <Text className="text-xs font-bold uppercase tracking-normal text-orange-400">
-            Habitoo
-          </Text>
-          <Text className="text-[34px] font-extrabold leading-[40px] text-white">
-            Today
-          </Text>
-          <Text className="text-sm text-zinc-400">{today}</Text>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          className="rounded-lg border border-zinc-800 px-3 py-2"
-          onPress={() => signOut()}
+    <SafeAreaView className="flex-1 bg-zinc-950 " edges={["top"]}>
+      <View className="flex-1">
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="pb-8"
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching && !isLoading}
+              tintColor="#fb923c"
+              onRefresh={refetch}
+            />
+          }
+          showsVerticalScrollIndicator={false}
         >
-          <Text className="text-xs font-bold text-zinc-300">Sign out</Text>
-        </Pressable>
-      </View>
+          <View className="px-7 pt-5">
+            <View className="flex-row items-start justify-between gap-5">
+              <View className="min-w-0 flex-1">
+                <Text className="text-[16px] font-extrabold uppercase tracking-normal text-zinc-500">
+                  {getTitleForDate(selectedDate)}
+                </Text>
+                <View className="flex-row items-center gap-3">
+                  <Text
+                    className="max-w-[250px] text-[30px] font-extrabold leading-[44px] text-white"
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                  >
+                    {getHabitModeTitle(mode)}
+                  </Text>
+                  <Pencil fill="white" stroke="black" />
+                </View>
+              </View>
 
-      <View className="mt-7 flex-row gap-2">
-        {recentDays.map((day) => (
-          <View
-            key={day.date}
-            className="h-14 flex-1 items-center justify-center rounded-lg bg-zinc-900"
-          >
-            <Text className="text-xs font-semibold text-zinc-500">
-              {day.shortDay}
-            </Text>
-            <Text className="mt-1 text-sm font-bold text-white">
-              {day.date.slice(-2)}
-            </Text>
+              <HeaderActions />
+            </View>
           </View>
-        ))}
-      </View>
 
-      <View className="mt-7 gap-3">
-        {habits?.length ? habits.map((habit) => (
-          <HabitSummaryCard key={habit.id} habit={habit} />
-        )) : (
-          <Text className="text-sm text-zinc-400">
-            No habits yet. Create your first habit on web for now.
-          </Text>
-        )}
+          <ModeRail value={mode} onChange={setMode} />
+
+          {isLoading ? (
+            <View className="items-center py-20">
+              <ActivityIndicator color="#fb923c" size="large" />
+              <Text className="mt-4 text-base font-semibold text-zinc-500">
+                Loading habits
+              </Text>
+            </View>
+          ) : error ? (
+            <View className="items-center px-8 py-20">
+              <Text className="text-center text-xl font-extrabold text-white">
+                Could not load habits
+              </Text>
+              <Text className="mt-2 text-center text-base leading-6 text-zinc-500">
+                Pull to refresh or check that your web API is deployed.
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                className="mt-6 rounded-full bg-zinc-800 px-6 py-3"
+                onPress={refetch}
+              >
+                <Text className="font-extrabold text-white">Try again</Text>
+              </Pressable>
+            </View>
+          ) : groups.length === 0 ? (
+            <EmptyState onAddHabit={() => setAddHabitOpen(true)} />
+          ) : (
+            <View>
+              {groups.map((group) => (
+                <HabitSection
+                  key={group.key}
+                  kind={group.kind}
+                  title={group.title}
+                  habits={group.habits}
+                  completions={completions}
+                  selectedDate={selectedDate}
+                  pendingHabitId={pendingHabitId}
+                  isLogging={addLog.isPending || setHabitStatus.isPending}
+                  onAddLog={(habit, value) => {
+                    if (value <= 0) return;
+                    addLog.mutate({ habit, date: selectedDate, value });
+                  }}
+                  onEdit={setEditingHabit}
+                  onOpenDetails={(item) => router.push(`/habits/${item.id}`)}
+                  onSetLifecycle={handleSetLifecycle}
+                  onSetStatus={handleSetStatus}
+                />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+
+        <DateRail
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+          onAddHabit={() => setAddHabitOpen(true)}
+        />
+
+        <HabitFormModal
+          open={addHabitOpen}
+          selectedDate={selectedDate}
+          onOpenChange={setAddHabitOpen}
+        />
+
+        <HabitFormModal
+          habit={editingHabit}
+          open={!!editingHabit}
+          selectedDate={selectedDate}
+          onOpenChange={(open) => {
+            if (!open) setEditingHabit(null);
+          }}
+        />
       </View>
-    </Screen>
+    </SafeAreaView>
   );
 }

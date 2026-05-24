@@ -5,39 +5,58 @@ export const getStreaks = (completions: Completion[]) => {
   const doneDates = completions
     .filter((completion) => completion.status === HABIT_STATUS.COMPLETED)
     .map((completion) => completion.date);
+  const skippedDates = completions
+    .filter((completion) => completion.status === HABIT_STATUS.SKIPPED)
+    .map((completion) => completion.date);
+  const failedDates = completions
+    .filter((completion) => completion.status === HABIT_STATUS.FAILED)
+    .map((completion) => completion.date);
 
   if (doneDates.length === 0) {
     return { currentStreak: 0, bestStreak: 0 };
   }
 
   const set = new Set(doneDates);
+  const skipped = new Set(skippedDates);
+  const failed = new Set(failedDates);
 
   let streak = 0;
   let current = getToday();
 
-  if (!set.has(current)) {
+  if (!set.has(current) && !skipped.has(current) && !failed.has(current)) {
     current = getPrevDay(current);
   }
 
-  while (set.has(current)) {
-    streak++;
+  while (set.has(current) || skipped.has(current)) {
+    if (set.has(current)) {
+      streak++;
+    }
+
     current = getPrevDay(current);
   }
 
-  const sorted = Array.from(new Set(doneDates)).sort(
+  const sorted = Array.from(new Set([...doneDates, ...skippedDates, ...failedDates])).sort(
     (a, b) => new Date(a).getTime() - new Date(b).getTime()
   );
 
   let best = 0;
-  let temp = 1;
+  let temp = 0;
+  let previous: string | null = null;
 
-  for (let i = 1; i < sorted.length; i++) {
-    if (sorted[i] === getNextDay(sorted[i - 1])) {
-      temp++;
-    } else {
+  for (const date of sorted) {
+    if (previous && date !== getNextDay(previous)) {
       best = Math.max(best, temp);
-      temp = 1;
+      temp = 0;
     }
+
+    if (set.has(date)) {
+      temp++;
+    } else if (!skipped.has(date)) {
+      best = Math.max(best, temp);
+      temp = 0;
+    }
+
+    previous = date;
   }
 
   best = Math.max(best, temp);

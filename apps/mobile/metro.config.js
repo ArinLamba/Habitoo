@@ -16,11 +16,29 @@ const forcedModulePaths = {
   "react-dom/client": require.resolve("react-dom/client", {
     paths: [__dirname],
   }),
+  "react-native": require.resolve("react-native", { paths: [__dirname] }),
+  "@react-native/virtualized-lists": require.resolve(
+    "@react-native/virtualized-lists",
+    { paths: [__dirname] }
+  ),
+};
+
+const forcedModuleRoots = {
+  "react-native": path.resolve(__dirname, "node_modules/react-native"),
+  "@react-native/virtualized-lists": path.resolve(
+    __dirname,
+    "node_modules/@react-native/virtualized-lists"
+  ),
 };
 
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
   react: path.resolve(__dirname, "node_modules/react"),
+  "react-native": path.resolve(__dirname, "node_modules/react-native"),
+  "@react-native/virtualized-lists": path.resolve(
+    __dirname,
+    "node_modules/@react-native/virtualized-lists"
+  ),
   "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
 };
 
@@ -35,6 +53,17 @@ nativeWindConfig.resolver.resolveRequest = (context, moduleName, platform) => {
       type: "sourceFile",
       filePath: forcedPath,
     };
+  }
+
+  for (const [moduleRoot, modulePath] of Object.entries(forcedModuleRoots)) {
+    const prefix = `${moduleRoot}/`;
+
+    if (moduleName.startsWith(prefix)) {
+      return {
+        type: "sourceFile",
+        filePath: require.resolve(moduleName, { paths: [__dirname] }),
+      };
+    }
   }
 
   return nativeWindResolveRequest(context, moduleName, platform);

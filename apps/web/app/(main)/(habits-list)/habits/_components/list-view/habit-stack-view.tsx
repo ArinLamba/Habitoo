@@ -107,7 +107,7 @@ export const HabitStackView = ({
 
         {doneHabits.length > 0 && (
           <HabitSection
-            title="Success Today"
+            title="Success"
             count={doneHabits.length}
             variant="success"
             
