@@ -8,11 +8,9 @@ type Props = {
 
 const MarketingLayout = ({ children }: Props) => {
   return (
-    <div className="min-h-screen flex flex-col dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-zinc-950">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

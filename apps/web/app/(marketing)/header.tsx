@@ -1,46 +1,55 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  SignInButton,
-  useAuth,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignInButton, useAuth, UserButton } from "@clerk/nextjs";
 import { Loader } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const Header = () => {
   const { isLoaded, isSignedIn } = useAuth();
 
-  const buttonContent = (
-    <Button size="lg" variant="ghost">
-      Login
-    </Button>
-  );
-
-  if (!isLoaded) {
-    return (
-      <Loader className="h-5 w-5 animate-spin" />
-    );
-  }
   return (
-    <header className="h-20 w-full border-b  border-slate-800 px-4">
-      <div className="lg:max-w-screen-lg mx-auto flex items-center justify-between h-full">
-        <div className="pt-8 pl-4 pb-7 flex items-center gap-x-3">
-          <Image src="/logo.png" height={40} width={40} alt="Mascot" />
-          <h1 className="text-lg  whitespace-nowrap">
-            <p className="font-lightt italic ">
-              HABIT  <span className="font-bold not-italic p-1 font">TRACKER</span>
-            </p>
-          </h1>
+    <header className="sticky top-0 z-30 h-20 w-full border-b border-white/10 bg-zinc-950/90 px-5 text-white backdrop-blur">
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-between">
+        <Link className="flex items-center gap-3" href="/">
+          <Image
+            alt="Habitoo logo"
+            className="rounded-md"
+            height={38}
+            src="/logo.png"
+            width={38}
+          />
+          <span className="text-lg font-black tracking-normal">Habitoo</span>
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <Link
+            className="hidden text-sm font-bold text-zinc-400 transition-colors hover:text-white sm:block"
+            href="#features"
+          >
+            Features
+          </Link>
+          {!isLoaded ? (
+            <Loader className="size-5 animate-spin text-blue-400" />
+          ) : isSignedIn ? (
+            <>
+              <Button asChild className="hidden bg-blue-500 text-white hover:bg-blue-400 sm:inline-flex">
+                <Link href="/habits">Open app</Link>
+              </Button>
+              <UserButton />
+            </>
+          ) : (
+            <SignInButton mode="modal">
+              <Button
+                className="border-zinc-700 bg-zinc-900 text-white hover:bg-zinc-800"
+                variant="outline"
+              >
+                Login
+              </Button>
+            </SignInButton>
+          )}
         </div>
-        {isSignedIn ? (
-          <>
-            <UserButton />
-          </>
-        ) : (
-          <SignInButton mode="modal">{buttonContent}</SignInButton>
-        )}
       </div>
     </header>
   );
