@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: "Habitoo | Smart Habit Tracker",
     description:
       "Build better habits with streaks, measurable progress, beautiful analytics, and a modern habit tracking experience.",
-    url: "https://habitoo.vercel.app",
+    url: "https://habitoo-black.vercel.app",
     siteName: "Habitoo",
     images: [
       {
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
 
-  metadataBase: new URL("https://habitoo.vercel.app"),
+  metadataBase: new URL("https://habitoo-black.vercel.app"),
 };
 
 export default function RootLayout({
