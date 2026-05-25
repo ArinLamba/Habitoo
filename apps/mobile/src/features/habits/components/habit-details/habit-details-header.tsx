@@ -1,5 +1,6 @@
 import type { Habit } from "@habitoo/core";
 import {
+  ArrowLeft,
   ChevronLeft,
   Pencil,
   Plus,
@@ -16,6 +17,7 @@ import {
   HabitDetailsPanelTabs,
   type HabitDetailsPanelTab,
 } from "./habit-details-panel-tabs";
+import { colors } from "@/src/shared/theme/colors";
 
 type HabitDetailsHeaderProps = {
   habit: Habit;
@@ -43,23 +45,23 @@ export const HabitDetailsHeader = memo(function HabitDetailsHeader({
 
   return (
     <View className="border-b border-zinc-800 bg-zinc-950/95 mt-2">
-      <View className="flex-row items-center">
+      <View className="flex-row items-center px-4">
         <Pressable
           accessibilityRole="button"
-          className="h-12 w-12 items-center justify-center"
+          className="h-9 w-9 items-center justify-center rounded-full "
           onPress={onBack}
         >
-          <ChevronLeft color="#e4e4e7" size={22} />
+          <ArrowLeft color="#fff" size={20} />
         </Pressable>
 
-        <View className="min-w-0 flex-1 flex-row items-center gap-2 pr-2">
+        <View className="min-w-0 flex-1 flex-row items-center gap-2 pr-2 ml-2">
           <View
             className="h-8 w-8 items-center justify-center rounded-lg"
             style={{ backgroundColor: `${color}18` }}
           >
-            <Icon color={color} size={20} />
+            <Icon color={color} size={24} />
           </View>
-          <Text className="flex-1 text-[18px] font-extrabold text-white" numberOfLines={1}>
+          <Text className="flex-1 text-[20px] font-extrabold text-white" numberOfLines={1}>
             {habit.name}
           </Text>
         </View>
@@ -69,7 +71,7 @@ export const HabitDetailsHeader = memo(function HabitDetailsHeader({
           className="h-12 w-11 items-center justify-center"
           onPress={onEdit}
         >
-          <Pencil color="#a1a1aa" size={18} />
+          <Pencil color={colors.muted} size={18} />
         </Pressable>
 
         <View className="h-8 w-px bg-zinc-800" />
@@ -82,7 +84,7 @@ export const HabitDetailsHeader = memo(function HabitDetailsHeader({
 
         <Pressable
           accessibilityRole="button"
-          className="h-12 w-11 items-center justify-center mr-4"
+          className="h-12 w-11 items-center justify-center"
           onPress={onAddLog}
         >
           <Plus color="#34d399" size={20} strokeWidth={2.5} />

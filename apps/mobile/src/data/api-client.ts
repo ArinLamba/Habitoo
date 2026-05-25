@@ -3,7 +3,8 @@ const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
 export class ApiClientError extends Error {
   constructor(
     message: string,
-    readonly status: number
+    readonly status: number,
+    readonly responseText?: string
   ) {
     super(message);
   }
@@ -29,7 +30,12 @@ export async function apiClient<T>(
   });
 
   if (!response.ok) {
-    throw new ApiClientError("API request failed", response.status);
+    const responseText = await response.text().catch(() => undefined);
+    throw new ApiClientError(
+      responseText || "API request failed",
+      response.status,
+      responseText
+    );
   }
 
   if (response.status === 204) {

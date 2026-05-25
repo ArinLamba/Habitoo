@@ -231,6 +231,13 @@ export const DayCell = memo(({
                     placeholder="log.."
                     value={logValue}
                     onChange={(e) => setLogValue(Math.max(0,Number(e.target.value)))}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter") return;
+                      event.preventDefault();
+                      if (!addValue || logValue <= 0) return;
+                      selectCell();
+                      addValue(logValue);
+                    }}
                   />
                   <InputGroupAddon align="inline-end" className="flex">
                     <p>{unit} </p> 

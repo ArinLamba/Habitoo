@@ -20,12 +20,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { HabitIconName } from "../../../lib/habits-icon";
+import { APP_ACCENT_COLOR } from "../../../shared/constants";
 import { DatePickerField } from "../components/date-picker-field";
 import { HabitNameField } from "../components/habit-name-field";
 import { HabitUnitField } from "../components/habit-unit-field";
 import { useCreateHabit } from "../hooks/mutations/use-create-habit";
 import { useUpdateHabit } from "../hooks/mutations/use-update-habit";
 import { useHabitDetailsData } from "../hooks/queries/use-habit-details-data";
+import { colors } from "@/src/shared/theme/colors";
 
 type HabitFormScreenProps = {
   habitId?: string;
@@ -74,7 +76,7 @@ export function HabitFormScreen({
             unit: "times",
             frequency: "day",
             icon: "QuestionMark",
-            color: "#34d399",
+            color: colors.accent,
           },
     [habit, selectedDate]
   );
@@ -82,6 +84,7 @@ export function HabitFormScreen({
   const [values, setValues] = useState<HabitFormValues>(defaultValues);
   const [namePanelOpen, setNamePanelOpen] = useState(false);
   const [unitPanelOpen, setUnitPanelOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const pickerOpen = namePanelOpen || unitPanelOpen;
 
   useEffect(() => {
@@ -119,20 +122,28 @@ export function HabitFormScreen({
     };
 
     if (isEdit && habitId) {
-      updateHabit.mutate(
-        { habitId, values: payload },
-        { onSuccess: () => router.back() }
-      );
+      updateHabit.mutate({ habitId, values: payload });
+      router.back();
       return;
     }
 
-    createHabit.mutate(payload, { onSuccess: () => router.back() });
+    createHabit.mutate(payload);
+    router.back();
+  };
+
+  const refreshIntentionally = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (isEdit && isLoading) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-zinc-950 px-6">
-        <ActivityIndicator color="#fb923c" size="large" />
+        <ActivityIndicator color={APP_ACCENT_COLOR} size="large" />
         <Text className="mt-4 text-base font-semibold text-zinc-500">
           Loading habit
         </Text>
@@ -201,9 +212,9 @@ export function HabitFormScreen({
         refreshControl={
           isEdit ? (
             <RefreshControl
-              refreshing={isFetching && !isLoading}
-              tintColor="#fb923c"
-              onRefresh={refetch}
+              refreshing={refreshing}
+              tintColor={APP_ACCENT_COLOR}
+              onRefresh={refreshIntentionally}
             />
           ) : undefined
         }
@@ -229,7 +240,7 @@ export function HabitFormScreen({
             <TextInput
               className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-base font-bold text-white"
               keyboardType="numeric"
-              onChangeText={(text) => setValue("targetValue", Number(text) || 1)}
+              onChangeText={(text) => setValue("targetValue", Number(text) || 0)}
               value={String(values.targetValue)}
             />
           </View>
@@ -254,18 +265,18 @@ export function HabitFormScreen({
               return (
                 <Pressable
                   accessibilityRole="button"
-                  className={`rounded-full border px-4 py-2 ${
+                  className={`rounded-lg border px-4 py-2 ${
                     selected
                       ? "border-emerald-400 bg-emerald-500/10"
                       : "border-zinc-800 bg-zinc-900"
                   }`}
+                  style={ selected && {borderColor: values.color}}
                   key={frequency.value}
                   onPress={() => setValue("frequency", frequency.value)}
                 >
                   <Text
-                    className={`font-extrabold ${
-                      selected ? "text-emerald-300" : "text-zinc-500"
-                    }`}
+                    className={`font-extrabold`} 
+                    style={ selected ? { color: values.color } : { color: colors.muted } }
                   >
                     {frequency.label}
                   </Text>
@@ -305,13 +316,15 @@ export function HabitFormScreen({
           onPress={submit}
           style={{
             backgroundColor:
-              isPending || values.name.trim().length < 2 ? "#3f3f46" : values.color,
+              isPending || values.name.trim().length < 2 ? `${values.color}33` : values.color,
           }}
         >
           {isPending ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="font-extrabold text-white">
+            <Text className="font-extrabold text-white"
+              style={ isPending || values.name.trim().length < 2 ? { color: colors.muted } : { color: colors.text } }
+            >
               {isEdit ? "Save" : "Create"}
             </Text>
           )}

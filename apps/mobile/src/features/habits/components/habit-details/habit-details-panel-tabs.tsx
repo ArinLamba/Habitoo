@@ -10,9 +10,9 @@ type HabitDetailsPanelTabsProps = {
 
 const tabs: { key: HabitDetailsPanelTab; label: string }[] = [
   { key: "Progress", label: "Progress" },
+  { key: "LogHistory", label: "Log History" },
   { key: "Notes", label: "Notes" },
   { key: "About", label: "About" },
-  { key: "LogHistory", label: "Log History" },
 ];
 
 export const HabitDetailsPanelTabs = memo(function HabitDetailsPanelTabs({

@@ -66,7 +66,7 @@ export const HabitNamePicker = ({
               value={value} 
               onChange={(e) => onChange(e.target.value)}
               placeholder="Enter Habit Name"
-              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-full w-full bg-transparent p-0 shadow-none text-base text-sm dark:bg-transparent" 
+              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-full w-full bg-transparent p-0 shadow-none text-sm dark:bg-transparent" 
               onClick={() => setOpen(true)}
             />
             <Search className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />

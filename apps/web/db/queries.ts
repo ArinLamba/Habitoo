@@ -151,12 +151,17 @@ export const getCompletionsByHabitId = cache(async(habitId: string, range: numbe
 });
 
 export const getHabitLogs = async (
-  habitId: string
+  habitId: string,
+  userId?: string
 ) => {
+  const resolvedUserId = userId ?? await getUserId();
+  if (!resolvedUserId) throw new Error("Unauthorized");
+
   return await db.query.habitCompletions.findMany({
     where: (hc, { and, eq, isNotNull }) =>
       and(
         eq(hc.habitId, habitId),
+        eq(hc.userId, resolvedUserId),
         isNotNull(hc.value)
       ),
 

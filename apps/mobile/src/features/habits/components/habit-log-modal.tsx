@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import { DatePickerField } from "./date-picker-field";
+import { colors } from "@/src/shared/theme/colors";
 
 type HabitLogModalProps = {
   habit: Habit | null;
@@ -106,9 +107,10 @@ export const HabitLogModal = memo(function HabitLogModal({
             </Pressable>
             <Pressable
               accessibilityRole="button"
-              className="h-11 flex-1 flex-row items-center justify-center gap-2 rounded-xl bg-emerald-600"
+              className="h-11 flex-1 flex-row items-center justify-center gap-2 rounded-xl "
               disabled={isSaving || numericValue <= 0 || !date}
               onPress={() => onSubmit(numericValue, date)}
+              style={{ backgroundColor: colors.accent }}
             >
               {isSaving ? (
                 <ActivityIndicator color="#fff" />

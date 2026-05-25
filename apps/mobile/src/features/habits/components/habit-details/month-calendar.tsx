@@ -110,6 +110,7 @@ function MonthGrid({
     return map;
   }, [completions, days, habit]);
   const monthLabel = anchor.toLocaleDateString("default", { month: "short" });
+  const isDailyHabit = habit.frequency === "day";
 
   const openDayActions = (date: string, disabled: boolean) => {
     if (disabled) return;
@@ -163,14 +164,22 @@ function MonthGrid({
           <View className="flex-row " key={`${monthLabel}-${weekIndex}`}>
             {week.map((date, index) => {
           const key = date ? formatDate(date) : "";
-          const completed = analytics.calendar.sets.completed.has(key);
+          const calendarCompleted = analytics.calendar.sets.completed.has(key);
           const skipped = analytics.calendar.sets.skipped.has(key);
           const failed = analytics.calendar.sets.failed.has(key);
           const disabled = !date || key < habit.startDate || getIsFuture(key);
           const meta = date ? dayMeta.get(key) : null;
           const hasLoggedDate = !!meta && meta.value > 0;
           const periodProgress = meta?.progress ?? null;
+          const completed = isDailyHabit ? calendarCompleted : hasLoggedDate;
+          const showPeriodGlow =
+            !isDailyHabit &&
+            !!periodProgress?.completed &&
+            !hasLoggedDate &&
+            !skipped &&
+            !failed;
           const isPartial =
+            isDailyHabit &&
             !!periodProgress &&
             periodProgress.current > 0 &&
             !completed &&
@@ -185,12 +194,14 @@ function MonthGrid({
                 disabled={disabled}
                 delayLongPress={250}
                 onLongPress={() => openDayActions(key, disabled)}
-                onPress={() => fillRemaining(key, disabled)}
+                onPress={() => {
+                  if (isDailyHabit) fillRemaining(key, disabled);
+                }}
                 style={{
                   backgroundColor: completed
                     ? color
-                    : periodProgress?.completed
-                      ? `${color}33`
+                    : showPeriodGlow
+                      ? `${color}4d`
                       : "#18181b",
                   opacity: disabled ? 0.22 : 1,
                 }}

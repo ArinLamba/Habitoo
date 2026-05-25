@@ -13,14 +13,18 @@ type HabitDetailsPanelProps = {
   habit: Habit;
   logs: Completion[];
   isDeleting?: boolean;
+  isDeletingLogs?: boolean;
   onDelete: () => void;
+  onDeleteLogs?: (logIds: string[]) => void;
 };
 
 export const HabitDetailsPanel = memo(function HabitDetailsPanel({
   habit,
   logs,
   isDeleting,
+  isDeletingLogs,
   onDelete,
+  onDeleteLogs,
 }: HabitDetailsPanelProps) {
   const [selectedTab, setSelectedTab] = useState<HabitDetailsPanelTab>("LogHistory");
   const unit = habit.unit || "times";
@@ -38,7 +42,12 @@ export const HabitDetailsPanel = memo(function HabitDetailsPanel({
 
       <View className="min-h-0 flex-1 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70">
         {selectedTab === "LogHistory" ? (
-          <LogHistoryList logs={logs} unit={unit} />
+          <LogHistoryList
+            isDeleting={isDeletingLogs}
+            logs={logs}
+            unit={unit}
+            onDeleteLogs={onDeleteLogs}
+          />
         ) : null}
 
         {selectedTab === "Notes" ? (

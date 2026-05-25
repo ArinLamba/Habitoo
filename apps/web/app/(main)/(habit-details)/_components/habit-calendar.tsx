@@ -18,9 +18,13 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Button } from "@/components/ui/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
 
 import { useHabitActions } from "@/hooks/use-habit-actions";
@@ -108,6 +112,46 @@ const getDateValue = (
   }, 0);
 };
 
+function DailyProgressRing({
+  color,
+  percentage,
+}: {
+  color: string;
+  percentage: number;
+}) {
+  const radius = 12;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - Math.min(100, percentage) / 100);
+
+  return (
+    <svg
+      aria-hidden
+      className="absolute inset-0 m-auto h-7 w-7 -rotate-90"
+      viewBox="0 0 32 32"
+    >
+      <circle
+        cx="16"
+        cy="16"
+        fill="none"
+        r={radius}
+        stroke={`${color}24`}
+        strokeWidth="3"
+      />
+      <circle
+        cx="16"
+        cy="16"
+        fill="none"
+        r={radius}
+        stroke={color}
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        strokeWidth="3"
+      />
+    </svg>
+  );
+}
+
 function MonthGrid({
   habit,
   year,
@@ -146,6 +190,8 @@ function MonthGrid({
   }, [completed, failed, habit.id, skipped]);
 
   const { toggle } = useHabitActions({ statusMap });
+  const isDailyHabit = habit.frequency === "day";
+  const [logValue, setLogValue] = useState(1);
 
   const start = new Date(year, month, 1);
   const end = new Date(year, month + 1, 0);
@@ -172,7 +218,7 @@ function MonthGrid({
     });
   };
 
-  const addOneUnit = (date: string) => {
+  const fillRemaining = (date: string) => {
     const periodProgress = calculateHabitProgress(
       habit,
       completions,
@@ -187,17 +233,12 @@ function MonthGrid({
     addLog({
       habitId: habit.id,
       date,
-      value: Math.min(1, remaining),
+      value: remaining,
     });
   };
 
-  const addCustomLog = (date: string) => {
+  const addValue = (date: string, value: number) => {
     selectDate(date);
-
-    const rawValue = window.prompt(`Add log for ${date}`, "1");
-    if (rawValue === null) return;
-
-    const value = Number(rawValue);
     if (!Number.isFinite(value) || value <= 0) return;
 
     addLog({
@@ -247,11 +288,20 @@ function MonthGrid({
             key
           );
           const hasLoggedDate = getDateValue(habit, completions, key) > 0;
-          const isCompleted = hasLoggedDate;
+          const isCompleted = isDailyHabit
+            ? dateProgress.completed
+            : hasLoggedDate;
           const isPeriodComplete = periodProgress.completed;
           const isSkipped = skipped.has(key);
           const isFailed = failed.has(key);
           const isPartial =
+            isDailyHabit &&
+            dateProgress.current > 0 &&
+            !isCompleted &&
+            !isSkipped &&
+            !isFailed;
+          const showDailyRing =
+            isDailyHabit &&
             dateProgress.current > 0 &&
             !isCompleted &&
             !isSkipped &&
@@ -266,7 +316,9 @@ function MonthGrid({
               <ContextMenuTrigger asChild>
                 <button
                   disabled={isDisabled}
-                  onClick={() => addOneUnit(key)}
+                  onClick={() => {
+                    if (isDailyHabit) fillRemaining(key);
+                  }}
                   className={cn(
                     "relative h-8 w-full my-px overflow-hidden flex items-center justify-center lg:text-[10px] text-[10px] transition",
                     "border border-transparent hover:border-black/10 dark:hover:border-white/10",
@@ -274,14 +326,16 @@ function MonthGrid({
                     isToday && "rounded-r-lg"
                   )}
                   style={
-                    isCompleted
+                    isDailyHabit && isCompleted
                       ? { backgroundColor: color }
-                      : isPeriodComplete
-                      ? { backgroundColor: `${color}33` }
+                      : !isDailyHabit && isCompleted
+                      ? { backgroundColor: color }
+                      : !isDailyHabit && isPeriodComplete
+                      ? { backgroundColor: `${color}4d` }
                       : undefined
                   }
                 >
-                  {isPartial && (
+                  {isPartial && !showDailyRing && (
                     <div
                       className="absolute inset-y-0 left-0 opacity-70"
                       style={{
@@ -290,6 +344,12 @@ function MonthGrid({
                       }}
                     />
                   )}
+                  {showDailyRing ? (
+                    <DailyProgressRing
+                      color={color}
+                      percentage={dateProgress.percentage}
+                    />
+                  ) : null}
 
                   <span className="relative z-10 flex items-center justify-center">
                      {isSkipped ? (
@@ -305,20 +365,75 @@ function MonthGrid({
 
               <ContextMenuContent className="w-56">
                 <ContextMenuItem
-                  onClick={() => addOneUnit(key)}
+                  onClick={() => fillRemaining(key)}
                   disabled={isDisabled}
                 >
                   Fill Remaining
                   <ContextMenuShortcut>Alt + D</ContextMenuShortcut>
                 </ContextMenuItem>
 
-                <ContextMenuItem
-                  onClick={() => addCustomLog(key)}
-                  disabled={isDisabled}
-                >
-                  Add Log
-                  <ContextMenuShortcut>Alt + L</ContextMenuShortcut>
-                </ContextMenuItem>
+                <ContextMenuSub>
+                  <ContextMenuSubTrigger disabled={isDisabled}>
+                    Add Logs
+                  </ContextMenuSubTrigger>
+                  <ContextMenuSubContent className="w-50">
+                    <div className="flex">
+                      <InputGroup>
+                        <InputGroupInput
+                          placeholder="log.."
+                          value={logValue}
+                          onChange={(event) =>
+                            setLogValue(
+                              Math.max(0, Number(event.target.value))
+                            )
+                          }
+                          onKeyDown={(event) => {
+                            if (event.key !== "Enter") return;
+                            event.preventDefault();
+                            addValue(key, logValue);
+                          }}
+                        />
+                        <InputGroupAddon align="inline-end" className="flex">
+                          <p>{habit.unit ?? "times"}</p>
+                          <Button
+                            variant="secondary"
+                            size="icon"
+                            onClick={() => addValue(key, logValue)}
+                          >
+                            +
+                          </Button>
+                        </InputGroupAddon>
+                      </InputGroup>
+                    </div>
+                    {[1, Math.max(1, Math.round(periodProgress.target / 2)), periodProgress.target].map(
+                      (value, valueIndex) => (
+                        <ContextMenuItem
+                          key={`${value}-${valueIndex}`}
+                          onClick={() => addValue(key, value)}
+                        >
+                          +{value} {habit.unit ?? "times"}
+                        </ContextMenuItem>
+                      )
+                    )}
+                    <ContextMenuSeparator />
+                    <ContextMenuItem
+                      disabled={
+                        Math.max(
+                          0,
+                          periodProgress.target - periodProgress.current
+                        ) <= 0
+                      }
+                      onClick={() => fillRemaining(key)}
+                    >
+                      Fill Remaining (
+                      {Math.max(
+                        0,
+                        periodProgress.target - periodProgress.current
+                      )}{" "}
+                      {habit.unit ?? "times"})
+                    </ContextMenuItem>
+                  </ContextMenuSubContent>
+                </ContextMenuSub>
 
                 <ContextMenuItem
                   onClick={() => markStatus(key, HABIT_STATUS.SKIPPED)}

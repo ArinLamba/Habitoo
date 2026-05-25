@@ -1,4 +1,5 @@
 import type { Habit } from "@habitoo/core";
+
 import {
   Archive,
   ArrowRight,
@@ -6,9 +7,14 @@ import {
   Pencil,
   Plus,
   X,
+  RotateCcw,
+  Undo
 } from "lucide-react-native";
 import { memo, useMemo, type ReactNode } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
+
+import type { HabitSectionKind } from "../utils/group-habits";
+
 
 export type HabitContextMenuAction =
   | "log-progress"
@@ -32,8 +38,16 @@ type HabitContextMenuProps = {
   open: boolean;
   isDoneForDate: boolean;
   canLog: boolean;
+  sectionKind: HabitSectionKind;
   onClose: () => void;
   onSelect: (action: HabitContextMenuAction, habit: Habit) => void;
+};
+
+const frequencyLabels: Record<Habit["frequency"], string> = {
+  day: "Daily",
+  week: "Weekly",
+  month: "Monthly",
+  year: "Yearly",
 };
 
 function MenuRow({
@@ -69,6 +83,7 @@ export const HabitContextMenu = memo(function HabitContextMenu({
   open,
   isDoneForDate,
   canLog,
+  sectionKind,
   onClose,
   onSelect,
 }: HabitContextMenuProps) {
@@ -107,11 +122,20 @@ export const HabitContextMenu = memo(function HabitContextMenu({
       );
     }
 
-    if (canLog && isDoneForDate) {
+    const canReturnToFrequency =
+      canLog &&
+      (isDoneForDate || sectionKind === "skipped" || sectionKind === "failed");
+
+    if (canReturnToFrequency) {
+      const restoreLabel =
+        sectionKind === "skipped" || sectionKind === "failed"
+          ? `Move back to ${frequencyLabels[habit.frequency]}`
+          : "Remove progress";
+
       list.push({
         key: "remove-progress",
-        label: "Remove progress",
-        icon: <ArrowRight color="#fbbf24" size={18} />,
+        label: restoreLabel,
+        icon: <Undo color="#60a5fa" size={18} />,
       });
     }
 
@@ -133,12 +157,12 @@ export const HabitContextMenu = memo(function HabitContextMenu({
       list.push({
         key: "restore-habit",
         label: "Restore habit",
-        icon: <ArrowRight color="#38bdf8" size={18} />,
+        icon: <RotateCcw color="#eab308" size={18} />,
       });
     }
 
     return list;
-  }, [canLog, habit, isDoneForDate]);
+  }, [canLog, habit, isDoneForDate, sectionKind]);
 
   if (!habit) return null;
 

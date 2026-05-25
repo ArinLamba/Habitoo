@@ -1,3 +1,4 @@
+import { colors } from "@/src/shared/theme/colors";
 import { formatDate, parseLocalDate } from "@habitoo/core";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react-native";
 import { memo, useMemo, useState } from "react";
@@ -112,9 +113,8 @@ export const DatePickerField = memo(function DatePickerField({
                     {date ? (
                       <Pressable
                         accessibilityRole="button"
-                        className={`h-10 items-center justify-center rounded-full ${
-                          selected ? "bg-emerald-500" : "bg-zinc-900"
-                        }`}
+                        className={`h-10 items-center justify-center rounded-full`}
+                        style={ selected ? { backgroundColor: colors.accent } : { backgroundColor: colors.surface } }
                         onPress={() => {
                           onChange(dateValue);
                           setOpen(false);
@@ -146,7 +146,8 @@ export const DatePickerField = memo(function DatePickerField({
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                className="h-11 flex-1 items-center justify-center rounded-xl bg-emerald-500"
+                className="h-11 flex-1 items-center justify-center rounded-xl"
+                style={{ backgroundColor: colors.accent }}
                 onPress={() => {
                   onChange(formatDate(new Date()));
                   setOpen(false);

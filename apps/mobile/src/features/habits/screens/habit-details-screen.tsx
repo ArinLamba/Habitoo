@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -12,6 +13,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ApiClientError } from "../../../data/api-client";
+import { APP_ACCENT_COLOR } from "../../../shared/constants";
 import { HabitLogModal } from "../components/habit-log-modal";
 import { DeleteHabitConfirmModal } from "../components/habit-details/delete-habit-confirm-modal";
 import { HabitDetailsHeader } from "../components/habit-details/habit-details-header";
@@ -26,6 +29,7 @@ import { StreakCard } from "../components/habit-details/streak-card";
 import { StreakTimeline } from "../components/habit-details/streak-timeline";
 import { useCompleteHabit } from "../hooks/mutations/use-complete-habit";
 import { useDeleteHabit } from "../hooks/mutations/use-delete-habit";
+import { useDeleteHabitLogs } from "../hooks/mutations/use-delete-habit-logs";
 import { useSetHabitStatus } from "../hooks/mutations/use-set-habit-status";
 import { useHabitDetailsData } from "../hooks/queries/use-habit-details-data";
 
@@ -40,6 +44,7 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
   const [logDate, setLogDate] = useState(today);
   const [selectedTab, setSelectedTab] = useState<HabitDetailsPanelTab>("Progress");
   const [heatmapRange, setHeatmapRange] = useState<HeatmapRange>("90");
+  const [refreshing, setRefreshing] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -56,6 +61,7 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
   } = useHabitDetailsData(habitId);
 
   const deleteHabit = useDeleteHabit();
+  const deleteLogs = useDeleteHabitLogs();
   const addLog = useCompleteHabit(today);
   const setStatus = useSetHabitStatus(today);
 
@@ -73,8 +79,9 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
   const deleteConfirmed = () => {
     if (!habit) return;
 
+    setDeleteOpen(false);
+    router.replace("/habits");
     deleteHabit.mutate(habit.id, {
-      onSuccess: () => router.replace("/habits"),
       onError: () => setDeleteOpen(false),
     });
   };
@@ -82,7 +89,7 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-zinc-950 px-6">
-        <ActivityIndicator color="#fb923c" size="large" />
+        <ActivityIndicator color={APP_ACCENT_COLOR} size="large" />
         <Text className="mt-4 text-base font-semibold text-zinc-500">
           Loading habit stats
         </Text>
@@ -120,6 +127,15 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
 
   const color = habit.color || "#34d399";
 
+  const refreshIntentionally = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-zinc-950" edges={["top"]}>
       <HabitDetailsHeader
@@ -141,9 +157,9 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
         contentContainerClassName="gap-4 px-4 pb-10 pt-4"
         refreshControl={
           <RefreshControl
-            refreshing={isFetching && !isLoading}
-            tintColor="#fb923c"
-            onRefresh={refetch}
+            refreshing={refreshing}
+            tintColor={APP_ACCENT_COLOR}
+            onRefresh={refreshIntentionally}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -197,7 +213,25 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
 
         {selectedTab === "LogHistory" ? (
           <View className="min-h-[420px] overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/70">
-            <LogHistoryList logs={logs} unit={habit.unit || "times"} />
+            <LogHistoryList
+              isDeleting={deleteLogs.isPending}
+              logs={logs}
+              unit={habit.unit || "times"}
+              onDeleteLogs={(logIds) => {
+                deleteLogs.mutate(
+                  { habitId: habit.id, logIds },
+                  {
+                    onError: (error) => {
+                      const detail =
+                        error instanceof ApiClientError
+                          ? `API returned ${error.status}.`
+                          : "Please try again.";
+                      Alert.alert("Could not delete logs", detail);
+                    },
+                  }
+                );
+              }}
+            />
           </View>
         ) : null}
         
