@@ -12,7 +12,7 @@ export const Header = () => {
       {/* CENTER */}
       <Link href="/habits">
         <div className="flex items-center gap-x-2">
-          <Image src="/logo.svg" height={24} width={24} alt="logo" />
+          <Image src="/logo.png" height={24} width={24} alt="logo" />
           <p className="text-sm font-semibold tracking-tight">
             Habitoo
           </p>

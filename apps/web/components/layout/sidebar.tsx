@@ -26,7 +26,7 @@ export const Sidebar = ({ className }: Props) => {
         <div className="mb-4 rounded-md border border-black/10 bg-zinc-50 p-3 transition-colors group-hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-900/80 dark:group-hover:bg-zinc-900">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-md border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-950">
-              <Image src="/logo.svg" height={24} width={24} alt="logo" />
+              <Image src="/logo.png" height={24} width={24} alt="logo" />
             </div>
             <div className="min-w-0">
               <p className="text-sm font-semibold tracking-tight">
