@@ -4,9 +4,12 @@ import {
   UNIT_GROUPS,
   type HabitIconName,
 } from "@habitoo/core";
-import type { ElementType } from "react";
+import type { ComponentType, CSSProperties, ElementType, SVGProps } from "react";
 import {
+  IconAlarm,
   IconApple,
+  IconAward,
+  IconBallFootball,
   IconBarbell,
   IconBath,
   IconBed,
@@ -20,26 +23,36 @@ import {
   IconCamera,
   IconCar,
   IconChartBar,
+  IconChartLine,
   IconChecklist,
   IconChefHat,
   IconClockHour4,
+  IconClipboardCheck,
   IconCloud,
   IconCode,
   IconCoffee,
+  IconConfetti,
   IconCurrencyDollar,
   IconDental,
   IconDeviceGamepad2,
   IconDeviceLaptop,
   IconDeviceMobile,
   IconDroplet,
+  IconEye,
   IconFlame,
   IconFlower,
+  IconFriends,
+  IconGuitarPick,
   IconHeart,
   IconHeartbeat,
   IconHome,
+  IconHourglass,
   IconLanguage,
   IconLeaf,
   IconMail,
+  IconMapPin,
+  IconMassage,
+  IconMedicineSyrup,
   IconMedal,
   IconMessage,
   IconMicrophone,
@@ -47,7 +60,9 @@ import {
   IconMoodSmile,
   IconMoon,
   IconMusic,
+  IconNews,
   IconNotebook,
+  IconPaint,
   IconPalette,
   IconPencil,
   IconPhone,
@@ -55,33 +70,53 @@ import {
   IconPill,
   IconPlane,
   IconPlant,
+  IconPlant2,
   IconPlus,
   IconPray,
   IconQuestionMark,
   IconReceipt,
   IconRun,
+  IconScale,
   IconSchool,
+  IconShirt,
   IconShoppingCart,
+  IconSoup,
   IconSparkles,
   IconStar,
   IconStethoscope,
   IconStretching,
   IconSunrise,
+  IconSwimming,
   IconTargetArrow,
+  IconTools,
   IconToolsKitchen2,
   IconTrash,
   IconTrees,
   IconTrophy,
+  IconUserHeart,
   IconUsers,
   IconWalk,
+  IconWash,
   IconWallet,
   IconWind,
+  IconWriting,
   IconYoga,
+  IconZzz,
+  IconBrandYoutube,
 } from "@tabler/icons-react";
 
 export { HABIT_COLORS, UNIT_GROUPS, type HabitIconName };
 
-export const ICON_MAP = {
+type HabitIconComponent = ComponentType<
+  SVGProps<SVGSVGElement> & {
+    color?: string;
+    size?: number | string;
+    strokeWidth?: number | string;
+    style?: CSSProperties;
+  }
+>;
+
+const RAW_ICON_MAP = {
   QuestionMark: IconQuestionMark,
   Plus: IconPlus,
   Run: IconRun,
@@ -153,11 +188,45 @@ export const ICON_MAP = {
   Pray: IconPray,
   Stretching: IconStretching,
   MoodCheck: IconMoodCheck,
-} satisfies Record<HabitIconName, ElementType>;
+  Alarm: IconAlarm,
+  Award: IconAward,
+  Football: IconBallFootball,
+  Youtube: IconBrandYoutube,
+  ChartLine: IconChartLine,
+  ClipboardCheck: IconClipboardCheck,
+  Confetti: IconConfetti,
+  Eye: IconEye,
+  Friends: IconFriends,
+  Guitar: IconGuitarPick,
+  Hourglass: IconHourglass,
+  MapPin: IconMapPin,
+  Massage: IconMassage,
+  MedicineSyrup: IconMedicineSyrup,
+  News: IconNews,
+  Paint: IconPaint,
+  Plant2: IconPlant2,
+  Scale: IconScale,
+  Shirt: IconShirt,
+  Soup: IconSoup,
+  Swimming: IconSwimming,
+  Tools: IconTools,
+  UserHeart: IconUserHeart,
+  Wash: IconWash,
+  Writing: IconWriting,
+  Zzz: IconZzz,
+} satisfies Record<HabitIconName, HabitIconComponent>;
+
+export const ICON_MAP = RAW_ICON_MAP as Record<HabitIconName, HabitIconComponent>;
 
 export interface HabitIcon {
   name: HabitIconName;
-  icon: ElementType;
+  icon: ElementType<
+    SVGProps<SVGSVGElement> & {
+      color?: string;
+      size?: number | string;
+      strokeWidth?: number | string;
+    }
+  >;
 }
 
 export interface HabitIconCategory {

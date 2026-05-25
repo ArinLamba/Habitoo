@@ -16,7 +16,9 @@ function LoadingScreen() {
 }
 
 export default function IndexRoute() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth({
+    treatPendingAsSignedOut: false,
+  });
 
   if (!isLoaded) {
     return <LoadingScreen />;

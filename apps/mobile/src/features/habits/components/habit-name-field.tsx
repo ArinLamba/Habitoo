@@ -1,8 +1,14 @@
 import type { SuggestedHabit } from "@habitoo/core";
 import { SUGGESTED_HABITS } from "@habitoo/core";
 import { Search, SlidersHorizontal } from "lucide-react-native";
-import { memo, useRef, useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { memo, useEffect, useRef, useState } from "react";
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import {
   HABIT_COLORS,
@@ -17,6 +23,7 @@ type HabitNameFieldProps = {
   onColorChange: (color: string) => void;
   onIconChange: (icon: HabitIconName) => void;
   onNameChange: (name: string) => void;
+  onPanelOpenChange?: (open: boolean) => void;
   onSuggestionSelect?: (habit: SuggestedHabit) => void;
   value: string;
 };
@@ -27,6 +34,7 @@ export const HabitNameField = memo(function HabitNameField({
   onColorChange,
   onIconChange,
   onNameChange,
+  onPanelOpenChange,
   onSuggestionSelect,
   value,
 }: HabitNameFieldProps) {
@@ -40,6 +48,10 @@ export const HabitNameField = memo(function HabitNameField({
     setSuggestionsOpen(false);
   };
 
+  useEffect(() => {
+    onPanelOpenChange?.(suggestionsOpen || appearanceOpen);
+  }, [appearanceOpen, onPanelOpenChange, suggestionsOpen]);
+
   return (
     <View>
       <Text className="mb-2 text-xs font-extrabold uppercase text-zinc-500">
@@ -49,11 +61,12 @@ export const HabitNameField = memo(function HabitNameField({
         <View className="h-14 flex-row items-center px-2">
           <Pressable
             accessibilityRole="button"
+            hitSlop={8}
             className="h-11 w-11 items-center justify-center rounded-xl"
-            onPress={() => {
+            onPressIn={() => {
               setSuggestionsOpen(false);
-              setAppearanceOpen((current) => !current)}
-            }
+              setAppearanceOpen((current) => !current);
+            }}
             style={{ backgroundColor: `${color}22` }}
           >
             <SelectedIcon color={color} size={22} />
@@ -61,14 +74,7 @@ export const HabitNameField = memo(function HabitNameField({
 
           <View className="mx-3 h-7 w-px bg-zinc-800" />
 
-          <Pressable
-            className="min-w-0 flex-1"
-            onPress={() => {
-              inputRef.current?.focus();
-              setAppearanceOpen(false);
-              setSuggestionsOpen(true);
-            }}
-          >
+          <View className="min-w-0 flex-1">
             <TextInput
               ref={inputRef}
               className="h-12 text-base font-bold text-white"
@@ -81,13 +87,14 @@ export const HabitNameField = memo(function HabitNameField({
               placeholderTextColor="#71717a"
               value={value}
             />
-          </Pressable>
+          </View>
 
           {onSuggestionSelect ? (
             <Pressable
               accessibilityRole="button"
+              hitSlop={8}
               className="h-10 w-10 items-center justify-center rounded-xl"
-              onPress={() => {
+              onPressIn={() => {
                 setAppearanceOpen(false);
                 setSuggestionsOpen((current) => !current);
               }}
@@ -98,11 +105,12 @@ export const HabitNameField = memo(function HabitNameField({
 
           <Pressable
             accessibilityRole="button"
+            hitSlop={8}
             className="h-10 w-10 items-center justify-center rounded-xl"
-            onPress={() => {
+            onPressIn={() => {
               setSuggestionsOpen(false);
-              setAppearanceOpen((current) => !current)}
-            }
+              setAppearanceOpen((current) => !current);
+            }}
           >
             <SlidersHorizontal color={appearanceOpen ? color : "#a1a1aa"} size={18} />
           </Pressable>
@@ -110,10 +118,12 @@ export const HabitNameField = memo(function HabitNameField({
       </View>
 
       {onSuggestionSelect && suggestionsOpen ? (
-        <View className="mt-3 max-h-72 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
+        <View className="mt-3 max-h-[460px] overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
           <ScrollView
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps="always"
             nestedScrollEnabled
+            overScrollMode="always"
+            scrollEventThrottle={16}
             showsVerticalScrollIndicator
             contentContainerClassName="p-3"
           >
@@ -164,8 +174,15 @@ export const HabitNameField = memo(function HabitNameField({
       ) : null}
 
       {appearanceOpen ? (
-        <View className="mt-3 max-h-80 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
-          <ScrollView nestedScrollEnabled showsVerticalScrollIndicator contentContainerClassName="p-3">
+        <View className="mt-3 max-h-[520px] overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            nestedScrollEnabled
+            overScrollMode="always"
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator
+            contentContainerClassName="p-3"
+          >
             <Text className="mb-2 text-xs font-extrabold uppercase text-zinc-500">
               Color
             </Text>
@@ -204,7 +221,7 @@ export const HabitNameField = memo(function HabitNameField({
                           : undefined}
                         onPress={() => onIconChange(item.name)}
                       >
-                        <Icon color={selected ? color : "#a1a1aa"} size={19} />
+                        <Icon color={color} size={19} />
                       </Pressable>
                     );
                   })}

@@ -1,5 +1,6 @@
 import { ICON_MAP } from "@/lib/habit-icons";
 import { SUGGESTED_HABITS } from "@/lib/suggested-habits";
+import type { SuggestedHabit } from "@habitoo/core";
 
 import {
   Command,
@@ -27,7 +28,8 @@ type Props = {
   icon: string,
   color: string,
   onIconChange: (icon: string) => void,
-  onColorChange: (color: string) => void
+  onColorChange: (color: string) => void,
+  onSuggestionSelect?: (habit: SuggestedHabit) => void
 };
 
 export const HabitNamePicker = ({ 
@@ -36,7 +38,8 @@ export const HabitNamePicker = ({
   icon, 
   color, 
   onIconChange, 
-  onColorChange 
+  onColorChange,
+  onSuggestionSelect,
 }: Props) => {
   const [open, setOpen] = React.useState(false)
 
@@ -86,19 +89,28 @@ export const HabitNamePicker = ({
                 <React.Fragment key={group.label}>
                   <CommandGroup heading={group.label}>
                     {group.habits.map((habit) => {
-                      const SuggestionIcon = (ICON_MAP[habit.icon]) || ICON_MAP.Plus;
+                      const SuggestionIcon = ICON_MAP[habit.icon] || ICON_MAP.Plus;
+                      const habitColor = habit.color ?? color;
                       return (
                         <CommandItem
                           key={habit.name}
                           value={habit.name}
-                          onSelect={(currentValue) => {
-                            onChange(currentValue);;
+                          onSelect={() => {
+                            onSuggestionSelect?.(habit);
+                            onChange(habit.name);
                             onIconChange(habit.icon);
+                            onColorChange(habit.color ?? color);
                             setOpen(false);
                           }}
+                          className="gap-x-4"
                         >
-                          <SuggestionIcon className="h-4 w-4" color={color} />
-                          {habit.name}
+                          <div className="">
+                            <SuggestionIcon className="size-5" color={habitColor} />
+                          </div>
+                          <div>
+                            <p>{habit.name}</p>
+                            <p className="text-muted-foreground text-xs">{habit.targetValue ?? 1} {habit.unit ?? "times"} </p>
+                          </div>
                         </CommandItem>
                       );
                     })}

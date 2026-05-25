@@ -1,5 +1,4 @@
 import {
-  formatDate,
   formatDisplayDate,
   getToday,
   type Habit,
@@ -26,7 +25,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DateRail } from "../components/date-rail";
-import { HabitFormModal } from "../components/habit-form-modal";
 import { HabitSection } from "../components/habit-section";
 import { ModeRail } from "../components/mode-rail";
 import { useCompleteHabit } from "../hooks/mutations/use-complete-habit";
@@ -87,10 +85,9 @@ function EmptyState({ onAddHabit }: { onAddHabit: () => void }) {
 }
 
 export function HabitsHomeScreen() {
-  const [selectedDate, setSelectedDate] = useState(() => formatDate(new Date()));
+  const today = getToday();
+  const [selectedDate, setSelectedDate] = useState(() => today);
   const [mode, setMode] = useState<HabitMode>("active");
-  const [addHabitOpen, setAddHabitOpen] = useState(false);
-  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
 
   const {
     habits,
@@ -141,6 +138,13 @@ export function HabitsHomeScreen() {
     );
   };
 
+  const openAddHabit = () => {
+    router.push({
+      pathname: "/habits/new",
+      params: { selectedDate },
+    });
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-zinc-950 " edges={["top"]}>
       <View className="flex-1">
@@ -160,7 +164,7 @@ export function HabitsHomeScreen() {
             <View className="flex-row items-start justify-between gap-5">
               <View className="min-w-0 flex-1">
                 <Text className="text-[16px] font-extrabold uppercase tracking-normal text-zinc-500">
-                  {getTitleForDate(selectedDate)}
+                  {getTitleForDate(selectedDate)} 
                 </Text>
                 <View className="flex-row items-center gap-3">
                   <Text
@@ -204,7 +208,7 @@ export function HabitsHomeScreen() {
               </Pressable>
             </View>
           ) : groups.length === 0 ? (
-            <EmptyState onAddHabit={() => setAddHabitOpen(true)} />
+            <EmptyState onAddHabit={openAddHabit} />
           ) : (
             <View>
               {groups.map((group) => (
@@ -215,13 +219,14 @@ export function HabitsHomeScreen() {
                   habits={group.habits}
                   completions={completions}
                   selectedDate={selectedDate}
+                  streakDate={today}
                   pendingHabitId={pendingHabitId}
                   isLogging={addLog.isPending || setHabitStatus.isPending}
                   onAddLog={(habit, value) => {
                     if (value <= 0) return;
                     addLog.mutate({ habit, date: selectedDate, value });
                   }}
-                  onEdit={setEditingHabit}
+                  onEdit={(item) => router.push(`/habits/${item.id}/edit`)}
                   onOpenDetails={(item) => router.push(`/habits/${item.id}`)}
                   onSetLifecycle={handleSetLifecycle}
                   onSetStatus={handleSetStatus}
@@ -234,22 +239,7 @@ export function HabitsHomeScreen() {
         <DateRail
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
-          onAddHabit={() => setAddHabitOpen(true)}
-        />
-
-        <HabitFormModal
-          open={addHabitOpen}
-          selectedDate={selectedDate}
-          onOpenChange={setAddHabitOpen}
-        />
-
-        <HabitFormModal
-          habit={editingHabit}
-          open={!!editingHabit}
-          selectedDate={selectedDate}
-          onOpenChange={(open) => {
-            if (!open) setEditingHabit(null);
-          }}
+          onAddHabit={openAddHabit}
         />
       </View>
     </SafeAreaView>

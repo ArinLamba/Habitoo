@@ -70,6 +70,32 @@ export const HABIT_ICON_NAMES = [
   "Pray",
   "Stretching",
   "MoodCheck",
+  "Alarm",
+  "Award",
+  "Football",
+  "Youtube",
+  "ChartLine",
+  "ClipboardCheck",
+  "Confetti",
+  "Eye",
+  "Friends",
+  "Guitar",
+  "Hourglass",
+  "MapPin",
+  "Massage",
+  "MedicineSyrup",
+  "News",
+  "Paint",
+  "Plant2",
+  "Scale",
+  "Shirt",
+  "Soup",
+  "Swimming",
+  "Tools",
+  "UserHeart",
+  "Wash",
+  "Writing",
+  "Zzz",
 ] as const;
 
 export type HabitIconName = (typeof HABIT_ICON_NAMES)[number];
@@ -92,6 +118,8 @@ export const HABIT_ICON_CATEGORIES: HabitIconCategory[] = [
       "Flame",
       "Energy",
       "Stretching",
+      "Football",
+      "Swimming",
     ],
   },
   {
@@ -106,6 +134,9 @@ export const HABIT_ICON_CATEGORIES: HabitIconCategory[] = [
       "Sparkles",
       "Language",
       "Pencil",
+      "Writing",
+      "News",
+      "Youtube",
     ],
   },
   {
@@ -121,6 +152,11 @@ export const HABIT_ICON_CATEGORIES: HabitIconCategory[] = [
       "Brush",
       "Stethoscope",
       "MoodSmile",
+      "Scale",
+      "MedicineSyrup",
+      "UserHeart",
+      "Eye",
+      "Zzz",
     ],
   },
   {
@@ -134,11 +170,15 @@ export const HABIT_ICON_CATEGORIES: HabitIconCategory[] = [
       "Laptop",
       "Phone",
       "Coding",
+      "ClipboardCheck",
+      "ChartLine",
+      "Hourglass",
+      "Alarm",
     ],
   },
   {
     label: "Finance",
-    iconNames: ["Money", "Savings", "Wallet", "Analytics"],
+    iconNames: ["Money", "Savings", "Wallet", "Analytics", "Award"],
   },
   {
     label: "Lifestyle",
@@ -155,23 +195,29 @@ export const HABIT_ICON_CATEGORIES: HabitIconCategory[] = [
       "Shopping",
       "Car",
       "ChefHat",
+      "Soup",
+      "Wash",
+      "Shirt",
+      "Tools",
+      "MapPin",
+      "Massage",
     ],
   },
   {
     label: "Social",
-    iconNames: ["Social", "Chat", "Call"],
+    iconNames: ["Social", "Chat", "Call", "Friends", "UserHeart"],
   },
   {
     label: "Nature",
-    iconNames: ["Wind", "Cloud", "Leaf", "Flower", "Plant"],
+    iconNames: ["Wind", "Cloud", "Leaf", "Flower", "Plant", "Plant2"],
   },
   {
     label: "Creative",
-    iconNames: ["Camera", "Palette", "Microphone"],
+    iconNames: ["Camera", "Palette", "Microphone", "Paint", "Guitar"],
   },
   {
     label: "Achievements",
-    iconNames: ["Star", "Trophy", "Medal", "Gamepad", "Pray", "MoodCheck"],
+    iconNames: ["Star", "Trophy", "Medal", "Gamepad", "Pray", "MoodCheck", "Confetti"],
   },
 ];
 
@@ -213,13 +259,49 @@ export const HABIT_COLORS = [
 export type HabitColorValue = (typeof HABIT_COLORS)[number]["value"];
 
 export const UNIT_GROUPS = [
-  { label: "Scalar", units: ["times", "steps", "reps", "sets", "pages"] },
+  {
+    label: "Scalar",
+    units: [
+      "times",
+      "steps",
+      "reps",
+      "sets",
+      "pages",
+      "chapters",
+      "items",
+      "words",
+      "articles",
+    ],
+  },
   { label: "Mass", units: ["kilograms", "grams", "pounds", "milligrams"] },
-  { label: "Volume", units: ["liters", "milliliters", "cups", "gallons"] },
-  { label: "Duration", units: ["seconds", "minutes", "hours", "days"] },
+  {
+    label: "Volume",
+    units: ["liters", "milliliters", "cups", "gallons", "ounces"],
+  },
+  {
+    label: "Duration",
+    units: ["seconds", "minutes", "hours", "days", "weeks"],
+  },
   { label: "Energy", units: ["calories", "kilocalories", "kilojoules"] },
-  { label: "Length", units: ["kilometers", "meters", "miles", "feet", "inches"] },
-  { label: "Hydration", units: ["glasses", "bottles"] },
-  { label: "Finance", units: ["rupees", "dollars", "savings entries"] },
-  { label: "Focus", units: ["pomodoros", "sessions", "blocks"] },
+  {
+    label: "Length",
+    units: ["kilometers", "meters", "miles", "feet", "inches", "yards"],
+  },
+  { label: "Hydration", units: ["glasses", "bottles", "cups"] },
+  {
+    label: "Finance",
+    units: ["rupees", "dollars", "savings entries", "transactions"],
+  },
+  {
+    label: "Focus",
+    units: ["pomodoros", "sessions", "blocks", "tasks", "lessons"],
+  },
+  {
+    label: "Wellness",
+    units: ["servings", "meals", "medications", "breaths", "moods"],
+  },
+  {
+    label: "Creative",
+    units: ["photos", "sketches", "songs", "drafts", "ideas"],
+  },
 ] as const;

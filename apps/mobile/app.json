@@ -22,7 +22,8 @@
         "backgroundColor": "#111111"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.honeylamba.habitoomobile"
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +34,15 @@
       "expo-secure-store",
       "expo-web-browser",
       "expo-router"
-    ]
+    ],
+    "experiments": {
+      "autolinkingModuleResolution": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a60f018f-d1a6-4ca3-ae51-3f2e79f10fb1"
+      }
+    }
   }
 }

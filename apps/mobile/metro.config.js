@@ -45,8 +45,33 @@ config.resolver.extraNodeModules = {
 const nativeWindConfig = withNativeWind(config, { input: "./global.css" });
 const nativeWindResolveRequest = nativeWindConfig.resolver.resolveRequest;
 
+const clerkNativeSpecPaths = {
+  "../specs/NativeClerkAuthView": path.resolve(
+    __dirname,
+    "../../node_modules/@clerk/expo/src/specs/NativeClerkAuthView.ts"
+  ),
+  "../specs/NativeClerkUserProfileView": path.resolve(
+    __dirname,
+    "../../node_modules/@clerk/expo/src/specs/NativeClerkUserProfileView.ts"
+  ),
+};
+
 nativeWindConfig.resolver.resolveRequest = (context, moduleName, platform) => {
   const forcedPath = forcedModulePaths[moduleName];
+
+  const clerkNativeSpecPath = clerkNativeSpecPaths[moduleName];
+
+  if (
+    clerkNativeSpecPath &&
+    context.originModulePath.includes(
+      `${path.sep}@clerk${path.sep}expo${path.sep}dist${path.sep}native${path.sep}`
+    )
+  ) {
+    return {
+      type: "sourceFile",
+      filePath: clerkNativeSpecPath,
+    };
+  }
 
   if (forcedPath) {
     return {

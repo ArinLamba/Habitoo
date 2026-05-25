@@ -29,11 +29,13 @@ declare module "lucide-react-native" {
   export const Flame: LucideIcon;
   export const GraduationCap: LucideIcon;
   export const Layers3: LucideIcon;
+  export const Keyboard: LucideIcon;
   export const Lock: LucideIcon;
   export const Menu: LucideIcon;
   export const Pencil: LucideIcon;
   export const PenLine: LucideIcon;
   export const Plus: LucideIcon;
+  export const Ruler: LucideIcon;
   export const Search: LucideIcon;
   export const Settings: LucideIcon;
   export const SlidersHorizontal: LucideIcon;

@@ -23,6 +23,7 @@ type HabitSectionProps = {
   habits: Habit[];
   completions: Completion[];
   selectedDate: string;
+  streakDate: string;
   pendingHabitId?: string;
   isLogging?: boolean;
   onAddLog: (habit: Habit, value: number) => void;
@@ -61,6 +62,7 @@ export const HabitSection = memo(function HabitSection({
   habits,
   completions,
   selectedDate,
+  streakDate,
   pendingHabitId,
   isLogging,
   onAddLog,
@@ -114,6 +116,7 @@ export const HabitSection = memo(function HabitSection({
                 completions={completions}
                 sectionKind={kind}
                 selectedDate={selectedDate}
+                streakDate={streakDate}
                 isLogging={isLogging && pendingHabitId === habit.id}
                 onAddLog={onAddLog}
                 onEdit={onEdit}

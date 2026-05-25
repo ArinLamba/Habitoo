@@ -8,7 +8,7 @@ import {
   type HabitLifecycle,
   type HabitStatus,
 } from "@habitoo/core";
-import { ArrowRight, Check, Plus, X, Keyboard } from "lucide-react-native";
+import { ArrowRight, Check, Keyboard, X } from "lucide-react-native";
 import { memo, useMemo, useState } from "react";
 import {
   Pressable,
@@ -29,6 +29,7 @@ type HabitListItemProps = {
   habit: Habit;
   completions: Completion[];
   selectedDate: string;
+  streakDate: string;
   sectionKind: HabitSectionKind;
   isLogging?: boolean;
   onAddLog: (habit: Habit, value: number) => void;
@@ -47,6 +48,7 @@ function HabitListItemComponent({
   habit,
   completions,
   selectedDate,
+  streakDate,
   sectionKind,
   isLogging,
   onAddLog,
@@ -64,8 +66,8 @@ function HabitListItemComponent({
   );
 
   const streak = useMemo(
-    () => getHabitPeriodStreaks(habit, completions, selectedDate),
-    [habit, completions, selectedDate]
+    () => getHabitPeriodStreaks(habit, completions, streakDate),
+    [habit, completions, streakDate]
   );
 
   const color = habit.color || "#38bdf8";

@@ -1,6 +1,6 @@
-import { buildHabitStats, formatDate, getToday } from "@habitoo/core";
+import { buildHabitStats, getToday } from "@habitoo/core";
 import { router } from "expo-router";
-import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react-native";
+import { ArrowLeft } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { HabitFormModal } from "../components/habit-form-modal";
 import { HabitLogModal } from "../components/habit-log-modal";
 import { DeleteHabitConfirmModal } from "../components/habit-details/delete-habit-confirm-modal";
 import { HabitDetailsHeader } from "../components/habit-details/habit-details-header";
@@ -37,7 +36,6 @@ type HabitDetailsScreenProps = {
 export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
   const today = getToday();
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [logDate, setLogDate] = useState(today);
   const [selectedTab, setSelectedTab] = useState<HabitDetailsPanelTab>("Progress");
@@ -132,7 +130,7 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
           setLogOpen(true);
         }}
         onBack={() => router.back()}
-        onEdit={() => setEditOpen(true)}
+        onEdit={() => router.push(`/habits/${habit.id}/edit`)}
         onRangeChange={setHeatmapRange}
         onSelectTab={setSelectedTab}
         selectedTab={selectedTab}
@@ -152,42 +150,6 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
       >
         {selectedTab === "Progress" ? (
           <>
-            <View className="mb-1 flex-row items-center justify-between px-1">
-              <Pressable
-                accessibilityRole="button"
-                className="h-10 w-10 items-center justify-center rounded-full"
-                onPress={() =>
-                  setCalendarMonth(
-                    (current) =>
-                      new Date(current.getFullYear(), current.getMonth() - 1, 1)
-                  )
-                }
-              >
-                <ChevronLeft color="#3f3f46" size={24} strokeWidth={3} />
-              </Pressable>
-              <View className="flex-row items-center gap-1">
-                <Text className="text-2xl font-extrabold text-white">
-                  {calendarMonth.toLocaleDateString("en-US", {
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </Text>
-                <ChevronDown color="#fff" size={20} strokeWidth={3} />
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                className="h-10 w-10 items-center justify-center rounded-full"
-                onPress={() =>
-                  setCalendarMonth(
-                    (current) =>
-                      new Date(current.getFullYear(), current.getMonth() + 1, 1)
-                  )
-                }
-              >
-                <ChevronRight color="#3f3f46" size={24} strokeWidth={3} />
-              </Pressable>
-            </View>
-
             <View className="overflow-hidden rounded-2xl border border-zinc-800 bg-[#141414]">
               <StreakCard analytics={analytics} habit={habit} />
             </View>
@@ -198,7 +160,7 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
                 completions={completions}
                 habit={habit}
                 isSaving={addLog.isPending || setStatus.isPending}
-                showHeader={false}
+                showHeader
                 onMoveMonth={(amount) =>
                   setCalendarMonth(
                     (current) =>
@@ -228,6 +190,7 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
               analytics={analytics}
               color={color}
               frequency={habit.frequency}
+              range={heatmapRange}
             />
           </>
         ) : null}
@@ -257,13 +220,6 @@ export function HabitDetailsScreen({ habitId }: HabitDetailsScreenProps) {
         ) : null}
 
       </ScrollView>
-
-      <HabitFormModal
-        habit={habit}
-        open={editOpen}
-        selectedDate={formatDate(new Date())}
-        onOpenChange={setEditOpen}
-      />
 
       <HabitLogModal
         habit={habit}

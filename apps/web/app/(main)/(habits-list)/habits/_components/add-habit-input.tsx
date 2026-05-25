@@ -36,6 +36,7 @@ import {
   formSchema,
   HabitFormValues,
 } from "@/lib/types";
+import type { SuggestedHabit } from "@habitoo/core";
 
 import { useCreateHabit } from "@/hooks/mutations/use-create-habit";
 
@@ -82,6 +83,27 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
     control,
     name: "color",
   });
+
+  const applySuggestion = (suggested: SuggestedHabit) => {
+    setValue("name", suggested.name, { shouldDirty: true, shouldValidate: true });
+    setValue("icon", suggested.icon, { shouldDirty: true, shouldValidate: true });
+    setValue("color", suggested.color ?? watchedColor, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setValue("targetValue", suggested.targetValue ?? 1, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setValue("unit", suggested.unit ?? "times", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setValue("frequency", suggested.frequency ?? "day", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
 
   const onSubmit = (data: HabitFormValues) => {
     createMutate(data, {
@@ -173,6 +195,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
                           color
                         )
                       }
+                      onSuggestionSelect={applySuggestion}
                     />
 
                     {fieldState.invalid && (

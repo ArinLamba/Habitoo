@@ -55,7 +55,7 @@ export function HabitIconPicker({
             borderColor: !isNested ? selectedColor : "transparent" 
           }}
         >
-          <IconComponent className="h-5 w-5 stroke-[2.5px]" />
+          <IconComponent className="size-6" size={24} />
           <span className="sr-only">Pick icon and color</span>
         </Button>
       </PopoverTrigger>
@@ -135,6 +135,7 @@ export function HabitIconPicker({
                             onClick={() => onIconChange(item.name)}
                           >
                             <ItemIcon
+                              className="size-6"
                               size={22}
                               style={{ color: selectedColor }}
                             />
