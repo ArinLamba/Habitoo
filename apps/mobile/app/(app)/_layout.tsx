@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/expo";
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs, useSegments } from "expo-router";
 import { BarChart3, BookOpenText, ClipboardList, Settings } from "lucide-react-native";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,10 +16,16 @@ function LoadingScreen() {
 }
 
 export default function AppTabsLayout() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth({
+    treatPendingAsSignedOut: false,
+  });
+  const segments = useSegments() as string[];
   const insets = useSafeAreaInsets();
   const tabBarBottomPadding = Math.max(insets.bottom, 12);
   const tabBarHeight = 58 + tabBarBottomPadding;
+  const isHabitFormRoute =
+    segments.includes("habits") &&
+    (segments.includes("new") || segments.includes("edit"));
 
   if (!isLoaded) {
     return <LoadingScreen />;
@@ -42,6 +48,7 @@ export default function AppTabsLayout() {
         tabBarStyle: {
           backgroundColor: "#18181b",
           borderTopColor: "#27272a",
+          display: isHabitFormRoute ? "none" : "flex",
           height: tabBarHeight,
           paddingBottom: tabBarBottomPadding,
           paddingTop: 10,

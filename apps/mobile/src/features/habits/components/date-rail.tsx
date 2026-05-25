@@ -1,6 +1,6 @@
 import { addDays, formatDate, parseLocalDate } from "@habitoo/core";
 import { Plus } from "lucide-react-native";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 type DateRailProps = {
@@ -14,6 +14,7 @@ export const DateRail = memo(function DateRail({
   onSelectDate,
   onAddHabit,
 }: DateRailProps) {
+  const scrollRef = useRef<ScrollView>(null);
   const days = useMemo(() => {
     const today = formatDate(new Date());
 
@@ -31,13 +32,23 @@ export const DateRail = memo(function DateRail({
     });
   }, []);
 
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollToEnd({ animated: false });
+    });
+  }, []);
+
   return (
     <View className="border-t border-zinc-800 bg-zinc-900/95 py-2">
       <View className="flex-row items-center gap-x-4 px-4">
         <ScrollView
+          ref={scrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerClassName="gap-3"
+          onContentSizeChange={() =>
+            scrollRef.current?.scrollToEnd({ animated: false })
+          }
         >
           {days.map((day,index) => {
             const selected = day.date === selectedDate;

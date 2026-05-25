@@ -29,13 +29,13 @@ export const HabitDetailsRangeSelect = memo(function HabitDetailsRangeSelect({
     <>
       <Pressable
         accessibilityRole="button"
-        className="h-10 max-w-[120px] flex-row items-center gap-1 rounded-lg px-2"
+        className="h-10 min-w-[132px] flex-row items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-3"
         onPress={() => setOpen(true)}
       >
-        <Text className="flex-1 text-xs font-bold text-zinc-400" numberOfLines={1}>
-          {current.replace("Last ", "").replace(" days", "d").replace(" time", "")}
+        <Text className="flex-1 text-xs font-extrabold text-zinc-300" numberOfLines={1}>
+          {current}
         </Text>
-        <ChevronDown color="#71717a" size={14} />
+        <ChevronDown color="#a1a1aa" size={15} strokeWidth={3} />
       </Pressable>
 
       <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>

@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "dd54c5c7-5caf-40f5-bc22-cd995bb72cdc"
+      }
+    },
+    "android": {
+      "package": "com.honeylamba.habitoo"
+    }
+  }
+}

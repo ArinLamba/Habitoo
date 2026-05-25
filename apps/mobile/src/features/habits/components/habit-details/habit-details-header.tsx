@@ -74,6 +74,12 @@ export const HabitDetailsHeader = memo(function HabitDetailsHeader({
 
         <View className="h-8 w-px bg-zinc-800" />
 
+        <View className="px-2">
+          <HabitDetailsRangeSelect value={range} onChange={onRangeChange} />
+        </View>
+
+        <View className="h-8 w-px bg-zinc-800" />
+
         <Pressable
           accessibilityRole="button"
           className="h-12 w-11 items-center justify-center mr-4"
@@ -87,12 +93,6 @@ export const HabitDetailsHeader = memo(function HabitDetailsHeader({
         selectedTab={selectedTab}
         onSelectTab={onSelectTab}
       />
-
-      {selectedTab === "Progress" ? (
-        <View className="items-center border-b border-zinc-900 py-2">
-          <HabitDetailsRangeSelect value={range} onChange={onRangeChange} />
-        </View>
-      ) : null}
     </View>
   );
 });
