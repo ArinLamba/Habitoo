@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { APP_ACCENT_COLOR } from "../../../shared/constants";
 import { DateRail } from "../components/date-rail";
 import { HabitSection } from "../components/habit-section";
 import { ModeRail } from "../components/mode-rail";
@@ -32,6 +33,7 @@ import { useSetHabitLifecycle } from "../hooks/mutations/use-set-habit-lifecycle
 import { useSetHabitStatus } from "../hooks/mutations/use-set-habit-status";
 import { useHabitsListData } from "../hooks/queries/use-habits-list-data";
 import { getHabitModeTitle, groupHabits, type HabitMode } from "../utils/group-habits";
+import { colors } from "@/src/shared/theme/colors";
 
 function getTitleForDate(date: string) {
   const today = getToday();
@@ -75,10 +77,11 @@ function EmptyState({ onAddHabit }: { onAddHabit: () => void }) {
       </Text>
       <Pressable
         accessibilityRole="button"
-        className="mt-6 rounded-full bg-emerald-500 px-6 py-3"
+        className="mt-6 rounded-md  px-6 py-3"
+        style={{ backgroundColor: `${colors.accent}33` }}
         onPress={onAddHabit}
       >
-        <Text className="font-extrabold text-white">Create habit</Text>
+        <Text className="font-extrabold text-blue-600">Create habit</Text>
       </Pressable>
     </View>
   );
@@ -88,6 +91,7 @@ export function HabitsHomeScreen() {
   const today = getToday();
   const [selectedDate, setSelectedDate] = useState(() => today);
   const [mode, setMode] = useState<HabitMode>("active");
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     habits,
@@ -145,6 +149,15 @@ export function HabitsHomeScreen() {
     });
   };
 
+  const refreshIntentionally = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-zinc-950 " edges={["top"]}>
       <View className="flex-1">
@@ -153,9 +166,9 @@ export function HabitsHomeScreen() {
           contentContainerClassName="pb-8"
           refreshControl={
             <RefreshControl
-              refreshing={isFetching && !isLoading}
-              tintColor="#fb923c"
-              onRefresh={refetch}
+              refreshing={refreshing}
+              tintColor={APP_ACCENT_COLOR}
+              onRefresh={refreshIntentionally}
             />
           }
           showsVerticalScrollIndicator={false}
@@ -186,7 +199,7 @@ export function HabitsHomeScreen() {
 
           {isLoading ? (
             <View className="items-center py-20">
-              <ActivityIndicator color="#fb923c" size="large" />
+              <ActivityIndicator color={APP_ACCENT_COLOR} size="large" />
               <Text className="mt-4 text-base font-semibold text-zinc-500">
                 Loading habits
               </Text>

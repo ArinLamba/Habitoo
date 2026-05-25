@@ -32,6 +32,10 @@ type LogResponse = {
   log: Completion;
 };
 
+type DeleteLogsResponse = {
+  deletedLogIds: string[];
+};
+
 const withQuery = (
   path: string,
   params: Record<string, string | number | undefined>
@@ -161,5 +165,25 @@ export const habitsApi = {
     );
 
     return response.log;
+  },
+
+  deleteHabitLogs: async (
+    habitId: string,
+    logIds: string[],
+    token?: string | null
+  ) => {
+    const query = new URLSearchParams();
+    logIds.forEach((id) => query.append("logIds", id));
+
+    const response = await apiClient<DeleteLogsResponse>(
+      `/api/habits/${habitId}/logs?${query.toString()}`,
+      {
+        token,
+        method: "DELETE",
+        body: JSON.stringify({ logIds }),
+      }
+    );
+
+    return response.deletedLogIds;
   },
 };

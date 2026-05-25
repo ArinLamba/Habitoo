@@ -8,7 +8,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 
+import { APP_ACCENT_COLOR } from "../../../shared/constants";
 import { HabitPerformance } from "../components/habit-performance";
 import { HabitSignals } from "../components/habit-signals";
 import { MonthlyTrend } from "../components/monthly-trend";
@@ -17,8 +19,18 @@ import { StatsOverview } from "../components/stats-overview";
 import { useAnalyticsData } from "../hooks/use-analytics-data";
 
 export function AnalyticsScreen() {
+  const [refreshing, setRefreshing] = useState(false);
   const { habits, completions, isLoading, isFetching, error, refetch } =
     useAnalyticsData();
+
+  const refreshIntentionally = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-zinc-950" edges={["top"]}>
@@ -27,9 +39,9 @@ export function AnalyticsScreen() {
         contentContainerClassName="px-5 pb-8 pt-5"
         refreshControl={
           <RefreshControl
-            refreshing={isFetching && !isLoading}
-            tintColor="#fb923c"
-            onRefresh={refetch}
+            refreshing={refreshing}
+            tintColor={APP_ACCENT_COLOR}
+            onRefresh={refreshIntentionally}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -51,7 +63,7 @@ export function AnalyticsScreen() {
 
         {isLoading ? (
           <View className="items-center py-20">
-            <ActivityIndicator color="#fb923c" size="large" />
+            <ActivityIndicator color={APP_ACCENT_COLOR} size="large" />
             <Text className="mt-4 text-base font-semibold text-zinc-500">
               Loading analytics
             </Text>

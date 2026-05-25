@@ -18,9 +18,15 @@ export function useSetHabitLifecycle() {
     mutationFn: async ({ habitId, lifecycle }: SetHabitLifecycleInput) =>
       habitsApi.updateHabit(habitId, { lifecycle }, await getToken()),
     onMutate: async ({ habitId, lifecycle }) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.habits });
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: queryKeys.habits }),
+        queryClient.cancelQueries({ queryKey: queryKeys.habit(habitId) }),
+      ]);
 
       const previous = queryClient.getQueryData<Habit[]>(queryKeys.habits) ?? [];
+      const previousHabit = queryClient.getQueryData<Habit>(
+        queryKeys.habit(habitId)
+      );
 
       queryClient.setQueryData<Habit[]>(
         queryKeys.habits,
@@ -28,13 +34,31 @@ export function useSetHabitLifecycle() {
           habit.id === habitId ? { ...habit, lifecycle } : habit
         )
       );
+      queryClient.setQueryData<Habit>(
+        queryKeys.habit(habitId),
+        (current) => current ? { ...current, lifecycle } : current
+      );
 
-      return { previous };
+      return { previous, previousHabit };
     },
     onError: (_error, _variables, context) => {
       if (context?.previous) {
         queryClient.setQueryData(queryKeys.habits, context.previous);
       }
+      if (context?.previousHabit) {
+        queryClient.setQueryData(
+          queryKeys.habit(context.previousHabit.id),
+          context.previousHabit
+        );
+      }
+    },
+    onSuccess: (updatedHabit) => {
+      queryClient.setQueryData<Habit[]>(queryKeys.habits, (current = []) =>
+        current.map((habit) =>
+          habit.id === updatedHabit.id ? updatedHabit : habit
+        )
+      );
+      queryClient.setQueryData(queryKeys.habit(updatedHabit.id), updatedHabit);
     },
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.habits });

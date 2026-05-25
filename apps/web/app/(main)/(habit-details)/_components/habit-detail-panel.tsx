@@ -28,7 +28,7 @@ export const HabitDetailsPanel = ({
       />
       <div className="overflow-hidden rounded-md border border-black/10 bg-zinc-50/80 dark:border-white/10 dark:bg-zinc-900/70">
         {selectedTab === "LogHistory" && (
-          <LogHistory logs={logs} unit={habit.unit}/>
+          <LogHistory habitId={habit.id} logs={logs} unit={habit.unit}/>
         )}
 
         {selectedTab === "Notes" && (

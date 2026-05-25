@@ -5,6 +5,7 @@ import { memo, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { ICON_MAP } from "../../../lib/habits-icon";
+import { APP_ACCENT_COLOR } from "../../../shared/constants";
 
 type SuggestedHabitPickerProps = {
   onSelect: (habit: SuggestedHabit) => void;
@@ -49,7 +50,7 @@ export const SuggestedHabitPicker = memo(function SuggestedHabitPicker({
                   {group.habits.map((habit) => {
                     const Icon = ICON_MAP[habit.icon] || ICON_MAP.QuestionMark;
                     const selected = selectedName.trim() === habit.name;
-                    const color = habit.color ?? "#3b82f6";
+                    const color = habit.color ?? APP_ACCENT_COLOR;
 
                     return (
                       <Pressable

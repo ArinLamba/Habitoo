@@ -81,8 +81,12 @@ export const HabitNameField = memo(function HabitNameField({
               onChangeText={onNameChange}
               onFocus={() => {
                 setAppearanceOpen(false);
-                setSuggestionsOpen(true)}
-              }
+                setSuggestionsOpen((current) => !current)
+              }}
+              onPress={() => {
+                setAppearanceOpen(false);
+                setSuggestionsOpen((current) => !current)
+              }}
               placeholder="Enter habit name"
               placeholderTextColor="#71717a"
               value={value}

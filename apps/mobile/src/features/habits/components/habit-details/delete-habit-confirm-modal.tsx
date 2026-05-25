@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react-native";
 import { X } from "lucide-react-native";
 import { memo } from "react";
 import { ActivityIndicator, Modal, Pressable, Text, View } from "react-native";
@@ -59,7 +60,7 @@ export const DeleteHabitConfirmModal = memo(function DeleteHabitConfirmModal({
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                className="h-11 flex-1 flex-row items-center justify-center gap-2 rounded-xl bg-red-600"
+                className="h-11 flex-1 flex-row items-center justify-center gap-2 rounded-xl bg-rose-600/30"
                 disabled={isDeleting}
                 onPress={onConfirm}
               >
@@ -67,8 +68,8 @@ export const DeleteHabitConfirmModal = memo(function DeleteHabitConfirmModal({
                   <ActivityIndicator color="#fff" size="small" />
                 ) : (
                   <>
-                    <X color="#fff" size={16} strokeWidth={3} />
-                    <Text className="font-extrabold text-white">Delete</Text>
+                    <Trash2 className="" color="#fb7185"  size={16} strokeWidth={3} />
+                    <Text className="font-extrabold text-rose-400">Delete</Text>
                   </>
                 )}
               </Pressable>

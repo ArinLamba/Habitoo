@@ -222,9 +222,9 @@ export const HABIT_ICON_CATEGORIES: HabitIconCategory[] = [
 ];
 
 export const HABIT_COLORS = [
+  { name: "Blue", value: "#3b82f6" },
   { name: "Green", value: "#34d399" },
   { name: "Classic Green", value: "#10b981" },
-  { name: "Blue", value: "#3b82f6" },
   { name: "Rose", value: "#f43f5e" },
   { name: "Amber", value: "#f59e0b" },
   { name: "Violet", value: "#8b5cf6" },

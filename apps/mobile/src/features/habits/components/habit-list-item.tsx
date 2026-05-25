@@ -23,6 +23,7 @@ import {
 } from "./habit-context-menu";
 import { HabitLogModal } from "./habit-log-modal";
 import { HabitProgressIcon } from "./habit-progress-icon";
+import { colors } from "@/src/shared/theme/colors";
 
 
 type HabitListItemProps = {
@@ -72,7 +73,7 @@ function HabitListItemComponent({
 
   const color = habit.color || "#38bdf8";
   const unit = habit.unit || "times";
-  const displayCurrent = Math.min(progress.current, progress.target);
+  const displayCurrent = progress.current;
   const remaining = Math.max(0, progress.target - progress.current);
   const beforeStartDate = selectedDate < habit.startDate;
   const canLog = !beforeStartDate;
@@ -177,31 +178,32 @@ function HabitListItemComponent({
               <View className="flex-row items-center gap-2">
                 <Pressable
                   accessibilityRole="button"
-                  className="h-10 flex-row gap-x-2 px-2 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900"
+                  className="h-10 flex-row gap-x-2 px-3 items-center justify-center rounded-full  bg-zinc-900"
+                  style={{ backgroundColor: `${colors.accent}22` }}
                   onPress={() => setLogModalOpen(true)}
                 >
-                  <Keyboard color="#34d399" size={16} strokeWidth={3} />
-                  <Text className="text-emerald-300 text-sm font-extrabold">Log</Text>
+                  <Keyboard color={colors.accent} size={16} strokeWidth={3} />
+                  <Text 
+                    style={{ color: colors.accent }}
+                    className="text-sm font-extrabold">
+                      Log
+                  </Text>
                 </Pressable>
                 <Pressable
                   accessibilityRole="button"
-                  className={`h-10 flex-row items-center gap-1 rounded-full border px-3 ${
-                    progress.completed
-                      ? "border-emerald-500/40 bg-emerald-500/10"
-                      : "border-zinc-700 bg-zinc-900"
-                  }`}
+                  className={`h-10 flex-row items-center gap-1 rounded-full border px-3`}
+                  style={{ backgroundColor: `${colors.accent}22` }}
                   disabled={remaining <= 0}
                   onPress={fillRemaining}
                 >
                   <Check
-                    color={"#34d399"}
+                    color={colors.accent}
                     size={16}
                     strokeWidth={3}
                   />
                   <Text
-                    className={`text-sm font-extrabold ${
-                      "text-emerald-300" 
-                    }`}
+                    className={`text-sm font-extrabold`}
+                    style={{ color: colors.accent }}
                   >
                     Done
                   </Text>
@@ -244,6 +246,7 @@ function HabitListItemComponent({
         habit={habit}
         isDoneForDate={progress.completed}
         open={menuOpen}
+        sectionKind={sectionKind}
         onClose={() => setMenuOpen(false)}
         onSelect={handleMenuAction}
       />

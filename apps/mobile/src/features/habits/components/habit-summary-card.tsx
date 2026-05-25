@@ -1,6 +1,8 @@
 import type { Habit } from "@habitoo/core";
 import { Text, View } from "react-native";
 
+import { APP_ACCENT_COLOR } from "../../../shared/constants";
+
 type HabitSummaryCardProps = {
   habit: Pick<Habit, "name" | "frequency" | "targetValue" | "unit" | "color">;
 };
@@ -14,7 +16,7 @@ export function HabitSummaryCard({ habit }: HabitSummaryCardProps) {
         </Text>
         <View
           className="h-3 w-3 rounded-full"
-          style={{ backgroundColor: habit.color ?? "#fb923c" }}
+          style={{ backgroundColor: habit.color ?? APP_ACCENT_COLOR }}
         />
       </View>
 

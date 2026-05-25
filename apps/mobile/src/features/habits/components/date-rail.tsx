@@ -1,3 +1,4 @@
+import { colors } from "@/src/shared/theme/colors";
 import { addDays, formatDate, parseLocalDate } from "@habitoo/core";
 import { Plus } from "lucide-react-native";
 import { memo, useEffect, useMemo, useRef } from "react";
@@ -56,9 +57,8 @@ export const DateRail = memo(function DateRail({
             return (
               <Pressable
                 accessibilityRole="button"
-                className={`h-[50px] w-[42px] items-center justify-center rounded-lg ${
-                  selected ? "bg-zinc-700" : "bg-transparent"
-                }`}
+                className={`h-[50px] w-[42px] items-center justify-center rounded-lg`}
+                style={ selected ? { backgroundColor: `${colors.accent}25` } : ""}
                 key={`${day.date}-${index}`}
                 onPress={() => onSelectDate(day.date)}
               >
@@ -85,7 +85,8 @@ export const DateRail = memo(function DateRail({
 
         <Pressable
           accessibilityRole="button"
-          className="h-[44px] w-[44px] items-center justify-center rounded-full bg-[#1c6f51] shadow-lg"
+          className="h-[44px] w-[44px] items-center justify-center rounded-full shadow-lg backdrop-blur-2xl"
+          style={{ backgroundColor: colors.accent }}
           onPress={onAddHabit}
         >
           <Plus color="white" size={22} strokeWidth={3} />
