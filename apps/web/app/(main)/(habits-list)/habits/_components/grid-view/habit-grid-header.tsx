@@ -72,14 +72,14 @@ export const HabitGridHeader = () => {
                   className={cn(
                     "flex h-full w-full cursor-default flex-col items-center justify-center rounded-sm transition-colors hover:bg-black/5 dark:hover:bg-white/5",
                     isSelected &&
-                      "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                      "bg-blue-500/10 text-blue-700 dark:text-blue-300"
                   )}
                 >
                   <p
                     className={cn(
                       "text-[10px] font-medium text-muted-foreground",
                       isToday &&
-                        "text-emerald-500"
+                        "text-blue-500"
                     )}
                   >
                     {day.shortDay}
@@ -89,7 +89,7 @@ export const HabitGridHeader = () => {
                     className={cn(
                       "text-xs mt-1",
                       isToday &&
-                        "text-emerald-500 font-semibold"
+                        "text-blue-500 font-semibold"
                     )}
                   >
                     {date.getDate()}

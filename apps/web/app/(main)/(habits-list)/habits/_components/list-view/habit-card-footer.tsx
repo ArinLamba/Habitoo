@@ -3,7 +3,7 @@ export const HabitCardFooter = () => {
   return (
     <div className="flex gap-4 ml-1 mt-6">
       <div className="flex gap-2  items-center justify-center">
-        <div className="h-3 w-3 rounded-full bg-emerald-500" />
+        <div className="h-3 w-3 rounded-full bg-blue-500" />
         <p className="text-xs text-muted-foreground mt-0.5">Completed</p>
       </div>
       <div className="flex gap-2  items-center justify-center">

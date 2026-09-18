@@ -132,8 +132,8 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
           <button
             className={
               variant === "icon"
-                ? "flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                : "flex items-center gap-2 font-semibold text-blue-700 dark:text-indigo-400"
+                ? "flex h-12 w-12 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg shadow-blue-500/25 transition-colors hover:bg-blue-400"
+                : "flex items-center gap-2 font-semibold text-blue-700 transition-colors hover:text-blue-600 dark:text-blue-300 dark:hover:text-blue-200"
             }
             aria-label="Add habit"
           >
@@ -151,7 +151,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
             </DialogTitle>
 
             <DialogDescription>
-              Build habits to improve your Pathetic life
+              Build a small routine, then let the logs carry the momentum.
             </DialogDescription>
           </DialogHeader>
 

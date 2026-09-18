@@ -96,7 +96,7 @@ export const HabitCalendarCell = ({
           "flex  items-center justify-center rounded-full text-xs",
 
           isToday &&
-            "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300"
+            "bg-blue-500/20 text-blue-800 dark:text-blue-300"
         )}
         onClick={() => onSelectDate(dateObj)}
       >

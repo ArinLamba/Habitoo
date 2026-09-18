@@ -77,7 +77,7 @@ const Card = ({
   icon,
 }: CardProps) => {
   return (
-    <div className="rounded-md border border-black/10 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-zinc-900/80">
+    <div className="rounded-md border border-black/10 bg-white p-4 shadow-sm transition-colors hover:bg-zinc-50/80 dark:border-white/10 dark:bg-zinc-900/80 dark:hover:bg-white/[0.03]">
       <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         <span>{label}</span>
         <span className="text-emerald-500">{icon}</span>

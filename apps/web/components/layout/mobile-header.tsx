@@ -1,5 +1,4 @@
 
-
 import { MobileLeftSidebar } from "@/components/layout/mobile-left-sidebar";
 import { MobileRightSidebar } from "@/components/layout/mobile-right-sidebar";
 

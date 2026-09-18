@@ -25,7 +25,7 @@ export const Sidebar = ({ className }: Props) => {
       <Link href="/habits" className="group">
         <div className="mb-4 rounded-md border border-black/10 bg-zinc-50 p-3 transition-colors group-hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-900/80 dark:group-hover:bg-zinc-900">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-950">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-blue-500/20 bg-white shadow-sm shadow-blue-500/10 dark:border-blue-400/20 dark:bg-zinc-950">
               <Image src="/logo.png" height={24} width={24} alt="logo" />
             </div>
             <div className="min-w-0">
@@ -60,7 +60,7 @@ export const Sidebar = ({ className }: Props) => {
 
       <div className="mb-3 rounded-md border border-black/10 bg-zinc-50/80 p-3 dark:border-white/10 dark:bg-zinc-900/70">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          <CalendarCheck2 className="h-3.5 w-3.5 text-emerald-500" />
+          <CalendarCheck2 className="h-3.5 w-3.5 text-blue-500" />
           Today
         </div>
         <p className="mt-2 text-sm font-semibold">
@@ -70,7 +70,7 @@ export const Sidebar = ({ className }: Props) => {
           Log the small wins and let the totals do the talking.
         </p>
         <div className="mt-3 flex items-center gap-2 rounded-md bg-white px-2 py-1.5 text-xs text-muted-foreground dark:bg-zinc-950/70">
-          <BarChart3 className="h-3.5 w-3.5" />
+          <BarChart3 className="h-3.5 w-3.5 text-blue-500" />
           Analytics updates live
         </div>
       </div>

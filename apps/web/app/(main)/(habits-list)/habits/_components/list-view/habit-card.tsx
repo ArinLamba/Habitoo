@@ -104,7 +104,7 @@ export const HabitCard = ({
     <>
       {doneAudio}
       <Collapsible open={open} onOpenChange={setOpen}>
-          <div className="border-b border-black/10 bg-white px-4 py-3 dark:border-white/10 dark:bg-zinc-950">
+          <div className="border-b border-black/10 bg-white px-4 py-3 transition-colors hover:bg-zinc-50/80 dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-white/[0.03]">
             <CollapsibleTrigger asChild>
               <div className="grid grid-cols-[58px_1fr_auto]  items-center gap-3">
                 <HabitProgressIcon

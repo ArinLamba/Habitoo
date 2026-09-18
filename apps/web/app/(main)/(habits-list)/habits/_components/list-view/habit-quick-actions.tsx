@@ -52,7 +52,7 @@ export const HabitQuickActions = ({
         }}
         className={cn(
           "h-8 rounded-full px-3 text-xs",
-          completed && "border-emerald-500/30 text-emerald-600"
+          completed && "border-blue-500/30 text-blue-600 dark:text-blue-300"
         )}
       >
         <Check className="h-3.5 w-3.5" />

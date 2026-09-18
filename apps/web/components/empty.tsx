@@ -9,19 +9,18 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { AddHabitInput } from "@/app/(main)/(habits-list)/habits/_components/add-habit-input"
-import { IconFolderCode } from "@tabler/icons-react"
+import { Target } from "lucide-react"
 
 export function EmptyState() {
   return (
     <Empty >
       <EmptyHeader>
-        <EmptyMedia variant="icon" >
-          <IconFolderCode />
+        <EmptyMedia variant="icon" className="text-blue-500">
+          <Target />
         </EmptyMedia>
-        <EmptyTitle>No Habits Yet</EmptyTitle>
+        <EmptyTitle>No habits yet</EmptyTitle>
         <EmptyDescription>
-          You haven&apos;t created any habits yet. <br/> Track Your Progress by creating
-          your first habit.
+          Start with one small habit and Habitoo will keep the progress readable.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent >

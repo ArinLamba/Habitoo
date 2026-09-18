@@ -10,9 +10,9 @@ const HabitListLayout = ({ children }: Props) => {
   return (
     <>
       <MobileHeader />
-      <Sidebar className="hidden lg:flex h-[calc(100vh-40px)] top-[40px]"/>
-      <main className=" h-full pt-[40px] lg:pl-[250px] lg:pr-[275px] lg:px-4 px-1">
-        <div className="max-w-full   mx-auto b300 h-full">
+      <Sidebar className="top-[40px] hidden h-[calc(100vh-40px)] lg:flex"/>
+      <main className="h-full bg-zinc-100 px-1 pt-[40px] dark:bg-zinc-950 lg:px-4 lg:pl-[250px] lg:pr-[275px]">
+        <div className="mx-auto h-full max-w-full">
           {children}
         </div>
       </main>
