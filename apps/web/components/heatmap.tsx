@@ -147,15 +147,11 @@ export const Heatmap = ({
                   : count / totalHabits;
 
                 const color =
-                  percentage === 0
-                    ? "bg-gray-700"
-                    : percentage < 0.25
-                    ? "bg-blue-950"
-                    : percentage < 0.5
-                    ? "bg-blue-800"
-                    : percentage < 0.75
-                    ? "bg-blue-600"
-                    : "bg-blue-300";
+                  progressColors[
+                    percentage === 0
+                      ? 0
+                      : Math.floor(percentage * 10)
+                  ];
                   
                 const displayDate = indianFormat(parseDate);
 
@@ -198,3 +194,17 @@ export const Heatmap = ({
     </div>
   );
 };
+
+const progressColors = [
+  "bg-gray-700",
+  "bg-blue-950", // 0–10%
+  "bg-blue-900", // 10–20%
+  "bg-blue-800", // 20–30%
+  "bg-blue-700", // 30–40%
+  "bg-blue-700", // 40–50%
+  "bg-blue-600", // 50–60%
+  "bg-blue-500", // 60–70%
+  "bg-blue-400", // 70–80%
+  "bg-blue-300", // 80–90%
+  "bg-blue-300", // 90–100%
+];
