@@ -9,10 +9,11 @@ export const Header = () => {
       {/* LEFT */}
       <MobileLeftSidebar />
 
-      {/* CENTER */}
       <Link href="/habits">
         <div className="flex items-center gap-x-2">
-          <Image src="/logo.png" height={24} width={24} alt="logo" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-md border border-blue-500/20 bg-white shadow-sm shadow-blue-500/10 dark:border-blue-400/20 dark:bg-zinc-950">
+            <Image src="/logo.png" height={20} width={20} alt="logo" />
+          </div>
           <p className="text-sm font-semibold tracking-tight">
             Habitoo
           </p>

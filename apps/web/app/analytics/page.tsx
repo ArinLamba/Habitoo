@@ -1,7 +1,7 @@
 import { FeedWrapper } from "@/components/layout/feed-wrapper";
 import { StatsClient } from "./stats-client";
-import { StickyWrapperClient } from "@/components/layout/sticky-wrapper-client";
 import { DetailPanelWrapper } from "@/components/layout/detail-panel-wrapper";
+import { AnalyticsRail } from "./analytics-rail";
 
 const AnalyticsPage = () => {
 
@@ -11,7 +11,7 @@ const AnalyticsPage = () => {
         <StatsClient />
       </FeedWrapper>
       <DetailPanelWrapper>
-        <StickyWrapperClient />
+        <AnalyticsRail />
       </DetailPanelWrapper>
     </div>
   );

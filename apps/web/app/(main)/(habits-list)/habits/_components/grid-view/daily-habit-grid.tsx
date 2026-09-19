@@ -125,7 +125,7 @@ export const DailyHabitGrid = ({
                 variant={variant}
                 isBeforeStart={isBeforeStart}
                 progress={progress}
-                textColor="dark:text-emerald-950"
+                textColor="dark:text-blue-950"
                 unit={habit.unit!}
                 setSelectedCell={
                   setSelectedCell

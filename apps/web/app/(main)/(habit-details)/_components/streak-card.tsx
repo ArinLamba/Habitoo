@@ -40,23 +40,23 @@ export const StreakCard = ({
   const endLabel = railItems[railItems.length - 1]?.label ?? "";
 
   return (
-    <div className="relative flex  h-full flex-col overflow-hidden rounded-md border border-white/10 dark:bg-zinc-900 px-4 py-5 bg-white">
+    <div className="relative flex  h-full flex-col overflow-hidden rounded-md bg-card  px-4 py-5 ">
       <SubtleGrid />
       <div
-        className="absolute left-1/2 top-8 h-44 w-44 -translate-x-1/2 rounded-full blur-3xl bg-amber-500/10"
+        className="absolute left-1/2 top-8 h-44 w-44 -translate-x-1/2 rounded-full blur-3xl bg-amber-500/20"
         // style={{ backgroundColor: `${color}20` }}
       />
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">
         <div className="relative mb-2 h-36 w-36">
           <Flame
-            className="absolute inset-0 h-full w-full fill-orange-300 text-orange-300 drop-shadow"
+            className="absolute inset-0 h-full w-full fill-orange-500 text-orange-500 drop-shadow"
             strokeWidth={1.5}
           />
           <div
-            className="absolute inset-x-0 bottom-1 text-center  text-7xl font-black leading-none tracking-normal text-zinc-950"
+            className="absolute inset-x-0 bottom-1 text-center  text-7xl font-black leadig-none tracking-normal text-zinc-900 "
             style={{
-              textShadow: "0 2px 0 rgba(255,255,255,0.30)",
+              textShadow: "0 2px 0 rgba(255,123,12)",
             }}
           >
             {currentStreak}

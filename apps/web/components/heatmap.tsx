@@ -150,12 +150,12 @@ export const Heatmap = ({
                   percentage === 0
                     ? "bg-gray-700"
                     : percentage < 0.25
-                    ? "bg-green-900"
+                    ? "bg-blue-950"
                     : percentage < 0.5
-                    ? "bg-green-700"
+                    ? "bg-blue-800"
                     : percentage < 0.75
-                    ? "bg-green-500"
-                    : "bg-green-300";
+                    ? "bg-blue-600"
+                    : "bg-blue-300";
                   
                 const displayDate = indianFormat(parseDate);
 
@@ -189,10 +189,10 @@ export const Heatmap = ({
       <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
         <span>Less</span>
         <div className="w-3 h-3 bg-gray-700 rounded-sm" />
-        <div className="w-3 h-3 bg-green-900 rounded-sm" />
-        <div className="w-3 h-3 bg-green-700 rounded-sm" />
-        <div className="w-3 h-3 bg-green-500 rounded-sm" />
-        <div className="w-3 h-3 bg-green-300 rounded-sm" />
+        <div className="w-3 h-3 bg-blue-950 rounded-sm" />
+        <div className="w-3 h-3 bg-blue-800 rounded-sm" />
+        <div className="w-3 h-3 bg-blue-600 rounded-sm" />
+        <div className="w-3 h-3 bg-blue-300 rounded-sm" />
         <span>More</span>
       </div>
     </div>

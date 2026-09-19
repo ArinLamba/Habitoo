@@ -140,6 +140,40 @@ export const buildHabitStats = (habit: Habit, completions: Completion[]) => {
     ? Math.round((donePeriods.size / elapsedPeriodCount) * 100)
     : 0;
 
+  const totalValue = habitCompletions.reduce((total, completion) => {
+    if (completion.date < startStr || completion.date > todayStr) return total;
+
+    if (
+      calendar.skipped.has(completion.date) ||
+      calendar.failed.has(completion.date)
+    ) {
+      return total;
+    }
+
+    if (completion.value !== null) {
+      return total + Number(completion.value);
+    }
+
+    if (completion.status === HABIT_STATUS.COMPLETED) {
+      return total + 1;
+    }
+
+    return total;
+  }, 0);
+
+  const loggedDayCount = new Set(
+    habitCompletions
+      .filter(
+        (completion) =>
+          completion.date >= startStr &&
+          completion.date <= todayStr &&
+          completion.value !== null &&
+          !calendar.skipped.has(completion.date) &&
+          !calendar.failed.has(completion.date)
+      )
+      .map((completion) => completion.date)
+  ).size;
+
   const lastDone = [...calendar.completed]
     .filter((date) => date >= startStr && date <= todayStr)
     .sort()
@@ -150,6 +184,10 @@ export const buildHabitStats = (habit: Habit, completions: Completion[]) => {
     currentStreak,
     bestStreak,
     completedCount: donePeriods.size,
+    failedCount: calendar.failed.size,
+    skippedCount: calendar.skipped.size,
+    loggedDayCount,
+    totalValue,
     weekDone: donePeriods.size,
     lastDoneText: lastDone ? formatDisplayDate(lastDone) : "Never",
     insight:

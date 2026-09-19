@@ -137,7 +137,7 @@ export const HabitStackView = ({
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 px-3 py-2 backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 px-3 py-2 backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
         <div className="flex items-center gap-3">
           <div className="flex flex-row-reverse flex-1 gap-2 overflow-x-auto scrollbar-none">
             {[...days].reverse().map((day) => {
@@ -150,7 +150,7 @@ export const HabitStackView = ({
                   onClick={() => setCurrentDate(day)}
                   className={cn(
                     "flex min-w-12 flex-col items-center rounded-md px-2 py-1 text-xs text-muted-foreground",
-                    selected && "bg-muted text-foreground shadow-sm"
+                    selected && "bg-blue-500/10 text-blue-700 shadow-sm dark:text-blue-300"
                   )}
                 >
                   <span className="font-medium">

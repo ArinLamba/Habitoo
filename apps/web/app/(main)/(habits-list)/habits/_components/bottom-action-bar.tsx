@@ -25,7 +25,7 @@ export const BottomActionBar = ({ statusMap }: Props) => {
   };
 
   return (
-    <div className="flex overflow-hidden rounded-md border border-black/10 bg-white/95 shadow-sm dark:border-white/10 dark:bg-zinc-950/90">
+    <div className="flex overflow-hidden rounded-md border border-black/10 bg-white/95 shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-950/90">
       <AddHabitInput />
 
       <div className="flex text-xs">
@@ -33,7 +33,7 @@ export const BottomActionBar = ({ statusMap }: Props) => {
           disabled={isDisabled}
           onClick={() => handleClick(HABIT_STATUS.COMPLETED)}
           className={`flex h-9 items-center gap-2 border-l border-black/10 px-4 transition-colors dark:border-white/10 ${
-            isDisabled ? "cursor-not-allowed text-muted-foreground/50" : "font-semibold text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300"
+            isDisabled ? "cursor-not-allowed text-muted-foreground/50" : "font-semibold text-blue-700 hover:bg-blue-500/10 dark:text-blue-300"
           }`}
         >
           <Check size={18} />

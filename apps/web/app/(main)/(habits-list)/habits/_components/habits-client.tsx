@@ -34,7 +34,7 @@ export const HabitsClient = () => {
   return (
     <div className="flex h-[calc(100vh-45px)] flex-col gap-2">
       <div className={cn(
-          "flex flex-1 flex-col overflow-x-hidden rounded-md bg-white/95 shadow-sm backdrop-blur scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-300 dark:bg-zinc-950/80 dark:scrollbar-thumb-zinc-700",
+          "flex flex-1 flex-col overflow-x-hidden rounded-md bg-white/95 shadow-sm backdrop-blur scrollbar scrollbar-w-1.5 scrollbar-thumb-rounded scrollbar-thumb-zinc-300 dark:border-white/10 dark:bg-zinc-950/80 dark:scrollbar-thumb-zinc-700",
           habitViewLayout === "grid" && "border border-black/10 dark:border-white/10"
         )}>
           {habitViewLayout === "grid" ? ( 

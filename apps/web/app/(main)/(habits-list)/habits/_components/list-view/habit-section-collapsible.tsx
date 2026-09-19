@@ -36,7 +36,7 @@ export const HabitSection = ({
         className={cn(
           "mb-3 overflow-hidden rounded-md border shadow-sm",
           isSuccess
-            ? "border-emerald-500/20 bg-emerald-500/[0.04]"
+            ? "border-blue-500/20 bg-blue-500/[0.04]"
             : "border-black/10 bg-white dark:border-white/10 dark:bg-zinc-900"
         )}
       >
@@ -45,7 +45,7 @@ export const HabitSection = ({
             className={cn(
               "flex w-full items-center gap-x-1 border-b px-3 py-2 text-xs font-semibold uppercase tracking-wide",
               isSuccess
-                ? "border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                ? "border-blue-500/20 text-blue-600 dark:text-blue-300"
                 : "border-black/10 text-muted-foreground dark:border-white/10"
             )}
           >

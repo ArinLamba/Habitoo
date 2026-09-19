@@ -230,7 +230,7 @@ export const WeeklyHabitGrid = ({
                         transparentFill
                         textColor={
                           isInsideFilledArea
-                            ? "text-emerald-950"
+                            ? "text-blue-950"
                             : "text-white/80"
                         }
                         unit={habit.unit!}

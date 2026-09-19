@@ -12,21 +12,29 @@ export const GridListTogle = () => {
   const { habitViewLayout, setHabitViewLayout } = usehabitViewLayoutStore();
 
   return (
-    <div className="flex  p-0.5">
+    <div className="flex rounded-md border border-black/10 bg-zinc-100 shadow-sm dark:border-white/10 dark:bg-zinc-900">
       <ButtonGroup>
         <Button 
-          variant={habitViewLayout === "grid" ? "toggle" : "outline"}
+          variant="ghost"
           size={"sm"} 
-          className="gap-2"
+          className={`h-7 gap-1.5 rounded-[5px] border-0 px-2.5 text-xs shadow-none ${
+            habitViewLayout === "grid"
+              ? "bg-blue-600 text-white hover:bg-blue-500 hover:text-white"
+              : "text-muted-foreground hover:bg-white hover:text-foreground dark:hover:bg-white/5"
+          }`}
           onClick={() => setHabitViewLayout("grid")}>
-          <Grid/> <p>Grid</p>
+          <Grid className="h-3.5 w-3.5" /> <p>Grid</p>
         </Button>
         <Button
-          variant={habitViewLayout === "list" ? "toggle" : "outline"}
+          variant="ghost"
           size={"sm"} 
-          className="gap-2" 
+          className={`h-7 gap-1.5 rounded-[5px] border-0 px-2.5 text-xs shadow-none ${
+            habitViewLayout === "list"
+              ? "bg-blue-600 text-white hover:bg-blue-500 hover:text-white"
+              : "text-muted-foreground hover:bg-white hover:text-foreground dark:hover:bg-white/5"
+          }`}
           onClick={() => setHabitViewLayout("list")}>
-          <List /> <p>List</p>
+          <List className="h-3.5 w-3.5" /> <p>List</p>
         </Button>
       </ButtonGroup>
     </div>

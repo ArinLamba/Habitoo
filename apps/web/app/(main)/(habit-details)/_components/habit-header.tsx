@@ -34,10 +34,10 @@ export const HabitHeader = ({ habit, logs }: Props) => {
           <ChevronLeft />
         </Button>
         <Separator orientation="vertical"/>
-        <div className="ml-3 flex items-center gap-2 pr-3">
+        <div className="ml-1 flex items-center pr-3">
           <div
-            className="flex h-7 w-7 items-center justify-center rounded-md"
-            style={{ backgroundColor: `${habit.color}18` }}
+            className="flex h-7 w-9 items-center justify-center rounded-md"
+            // style={{ backgroundColor: `${habit.color}10` }}
           >
             <IconComponent size={17} color={habit.color}/>
           </div>

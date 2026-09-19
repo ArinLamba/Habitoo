@@ -4,6 +4,7 @@ import { memo } from "react";
 import {
   ArrowUp,
   ArrowRight,
+  CalendarDays,
   Check,
   X,
 } from "lucide-react";
@@ -18,21 +19,19 @@ type Props = {
 export const StatsCards = memo(({ habit, analytics }: Props) => {
   if(!analytics) return null;
 
-  const completed = analytics.calendar.sets.completed.size;
-  const failed = analytics.calendar.sets.failed.size;
-  const skipped = analytics.calendar.sets.skipped.size;
+  const completed = analytics.stats.completedCount;
+  const failed = analytics.stats.failedCount;
+  const skipped = analytics.stats.skippedCount;
+  const loggedDays = analytics.stats.loggedDayCount;
+  const total = formatStatNumber(analytics.stats.totalValue);
 
-  const total = analytics.charts.day.reduce(
-    (sum, item) => sum + item.value,
-    0
-  );
   return (
-    <div className="grid grid-cols-4 overflow-hidden rounded-md border border-white/10 bg-zinc-900">
+    <div className="grid grid-cols-2 overflow-hidden rounded-md border border-white/10 bg-zinc-900 md:grid-cols-5">
       <StatCard
         icon={<Check size={14} />}
         label="COMPLETED"
         value={`${completed}d`}
-        color="text-emerald-400"
+        color="text-blue-400"
       />
 
       <StatCard
@@ -50,16 +49,26 @@ export const StatsCards = memo(({ habit, analytics }: Props) => {
       />
 
       <StatCard
+        icon={<CalendarDays size={14} />}
+        label="LOGGED"
+        value={`${loggedDays}d`}
+        color="text-blue-400"
+      />
+
+      <StatCard
         icon={<ArrowUp size={14} />}
         label="TOTAL"
         value={`${total} ${habit.unit}`}
-        color="text-emerald-400"
+        color="text-blue-400"
       />
     </div>
   );
 });
 
 StatsCards.displayName = "StatsCards";
+
+const formatStatNumber = (value: number) =>
+  Number.isInteger(value) ? value.toString() : value.toFixed(2);
 
 type CardProps = {
   icon: React.ReactNode;

@@ -1,15 +1,13 @@
 import { FeedWrapper } from "@/components/layout/feed-wrapper";
+import { DetailPanelWrapper } from "@/components/layout/detail-panel-wrapper";
 
 import { getCompletionsByHabitId, getHabitById, getHabitLogs } from "@/db/queries";
 
 import { HabitOverview } from "../../_components/habit-overview";
 import { buildHabitStats } from "@/lib/build-habit-stats";
-
-
 import { HabitDetailsPanel } from "../../_components/habit-detail-panel";
-
-import { DetailPanelWrapper } from "@/components/layout/detail-panel-wrapper";
 import { HabitHeader } from "../../_components/habit-header";
+
 
 type Props = {
   params: Promise<{
