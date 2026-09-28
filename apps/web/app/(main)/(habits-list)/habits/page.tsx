@@ -10,7 +10,8 @@ import { StickyWrapperClient } from "@/components/layout/sticky-wrapper-client";
 export default function HabitsPage() {
 
   console.log("🚨 PAGE RENDER", new Date().toISOString());
-
+  
+  
   return (
     <div>
       <FeedWrapper>
