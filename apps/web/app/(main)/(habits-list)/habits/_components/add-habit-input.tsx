@@ -133,7 +133,7 @@ export const AddHabitInput = ({ variant = "row" }: Props) => {
             className={
               variant === "icon"
                 ? "flex h-12 w-12 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg shadow-blue-500/25 transition-colors hover:bg-blue-400"
-                : "flex items-center gap-2 font-semibold text-blue-700 transition-colors hover:text-blue-600 dark:text-blue-300 dark:hover:text-blue-200"
+                : "flex items-center gap-2 font-semibold text-blue-700 transition-colors hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-400"
             }
             aria-label="Add habit"
           >
