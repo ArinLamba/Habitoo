@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 
 import { usehabitViewLayoutStore } from "@/store/use-habit-layout-store";
@@ -14,12 +13,11 @@ import { HabitGridView } from "./grid-view/habit-grid-view";
 import { BottomActionBar } from "./bottom-action-bar";
 
 import { EmptyState } from "@/components/empty";
-import { LoginPrompt } from "@/components/login-prompt";
+
 import { Loading } from "@/components/loading";
 
 export const HabitsClient = () => {
   const { habitViewLayout } = usehabitViewLayoutStore();
-  const { isSignedIn } = useAuth();
 
   useTodayRollover();
 
@@ -40,29 +38,7 @@ export const HabitsClient = () => {
   const isLoading = isHabitsLoading || isCompletionsLoading;
   const hasHabits = habits.length > 0;
 
-  // ─────────────────────────────────────────────
-  // Auth
-  // ─────────────────────────────────────────────
 
-  if (!isSignedIn) {
-    return (
-      <div className="flex h-[calc(100vh-45px)] flex-1">
-        <LoginPrompt />
-      </div>
-    );
-  }
-
-  // ─────────────────────────────────────────────
-  // Loading
-  // ─────────────────────────────────────────────
-
-  if (isLoading) {
-    return (
-      <div className="flex h-[calc(100vh-45px)] flex-1">
-        <Loading />
-      </div>
-    );
-  }
 
   // ─────────────────────────────────────────────
   // Content
@@ -80,7 +56,9 @@ export const HabitsClient = () => {
             "border border-black/10 dark:border-white/10"
         )}
       >
-        {!hasHabits ? (
+        {isLoading ? (
+          <Loading />
+        ) : !hasHabits ? (
           <EmptyState />
         ) : habitViewLayout === "grid" ? (
           <HabitGridView
