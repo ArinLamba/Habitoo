@@ -8,13 +8,13 @@ import { useCompletions } from "@/hooks/queries/use-completions";
 import { useStats } from "@/hooks/use-stats";
 import { useTodayRollover } from "@/hooks/use-today-rollover";
 
-import { HabitStackView } from "./list-view/habit-stack-view";
 import { HabitGridView } from "./grid-view/habit-grid-view";
 import { BottomActionBar } from "./bottom-action-bar";
 
 import { EmptyState } from "@/components/empty";
 
 import { Loading } from "@/components/loading";
+import { HabitListView } from "./list-view/habit-list-view";
 
 export const HabitsClient = () => {
   const { habitViewLayout } = usehabitViewLayoutStore();
@@ -68,7 +68,7 @@ export const HabitsClient = () => {
             habitStatsMap={habitStatsMap}
           />
         ) : (
-          <HabitStackView
+          <HabitListView
             habits={habits}
             completions={completions}
           />

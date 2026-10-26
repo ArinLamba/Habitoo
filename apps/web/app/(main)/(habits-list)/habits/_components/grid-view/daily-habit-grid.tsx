@@ -17,6 +17,7 @@ import { DayCell } from "./day-cell";
 import { useHabitActions } from "@/hooks/use-habit-actions";
 import { useAddLog } from "@/hooks/mutations/use-add-log";
 import { useVisibleDays } from "@/hooks/use-visible-days";
+import { getLast14Days } from "@/lib/helper";
 
 import { useSelectedCellStore } from "@/store/use-selected-cell-store";
 
@@ -32,7 +33,7 @@ export const DailyHabitGrid = ({
   statusMap,
 }: Props) => {
 
-  const days = useVisibleDays();
+  const days = getLast14Days();
 
   const { toggle } =
     useHabitActions({
@@ -48,7 +49,7 @@ export const DailyHabitGrid = ({
 
   return (
     <div className="flex flex-1 min-w-0 overflow-hidden">
-      <div className="flex flex-1 justify-end overflow-hidden">
+      <div className="flex flex-row-reverse flex-1 overflow-x-auto scrollbar-none">
         <div
           className="grid w-full"
           style={{

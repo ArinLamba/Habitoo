@@ -42,7 +42,7 @@ export const HabitGridHeader = () => {
       <div className="flex flex-1 min-w-0">
 
         {/* GRID */}
-        <div className="flex flex-1 justify-end overflow-hidden ">
+        <div className="flex flex-row-reverse flex-1 overflow-x-auto scrollbar-none">
           <div
           className="grid w-full"
             style={{

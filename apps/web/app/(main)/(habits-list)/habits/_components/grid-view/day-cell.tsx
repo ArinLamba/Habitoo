@@ -133,7 +133,7 @@ export const DayCell = memo(({
           onClick={handleFillRemaining}
           className={cn(
             variant,
-            "relative transition-all duration-200 rounded-none h-9 w-full overflow-hidden ease-out"
+            "relative transition-all duration-200 rounded-none h-9 w-full overflow-x-auto ease-out"
           )}
           style={
             !transparentFill && isDone

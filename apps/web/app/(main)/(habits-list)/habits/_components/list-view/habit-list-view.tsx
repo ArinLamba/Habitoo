@@ -32,7 +32,7 @@ const getFrequencyTitle = (frequency: Habit["frequency"]) => {
   }
 };
 
-export const HabitStackView = ({
+export const HabitListView = ({
   habits,
   completions,
 }: Props) => {
