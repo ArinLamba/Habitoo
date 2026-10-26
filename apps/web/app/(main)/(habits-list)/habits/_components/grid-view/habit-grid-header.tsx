@@ -1,6 +1,7 @@
 "use client";
 
-import { getLast14Days } from "@/lib/helper";
+import { getLast30Days } from "@/lib/helper";
+import { syncHabitGridScroll } from "./grid-scroll";
 import { getToday } from "@/lib/date";
 
 import { cn } from "@/lib/utils";
@@ -11,7 +12,7 @@ import { Flame, TextAlignEnd } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const HabitGridHeader = () => {
-  const days = getLast14Days();
+  const days = getLast30Days();
 
   const { currentDate, setCurrentDate } =
     useDateStore();
@@ -20,7 +21,7 @@ export const HabitGridHeader = () => {
     <div className="sticky top-0 z-20 flex h-12 items-stretch border-b border-black/10 bg-zinc-50/95 backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
 
       {/* LEFT */}
-      <div className="flex min-w-[250px] items-center justify-between pl-3 pr-1">
+      <div className="flex min-w-[220px] items-center justify-between pl-3 pr-1">
         <div className="flex flex-col">
           <h2 className="text-sm font-semibold tracking-tight">
             All Habits
@@ -42,7 +43,11 @@ export const HabitGridHeader = () => {
       <div className="flex flex-1 min-w-0">
 
         {/* GRID */}
-        <div className="flex flex-row-reverse flex-1 overflow-x-auto scrollbar-none">
+        <div 
+          data-habit-grid-scroll
+          onScroll={syncHabitGridScroll}
+          className="flex flex-row-reverse flex-1 overflow-x-auto scrollbar-none"
+        >
           <div
           className="grid w-full"
             style={{

@@ -1,7 +1,8 @@
 "use client";
 
 import { Check } from "lucide-react";
-
+import { getLast30Days } from "@/lib/helper";
+import { syncHabitGridScroll } from "./grid-scroll";
 import { Completion, Habit, HabitStatus } from "@/lib/types";
 import { calculateHabitProgress, getPeriodDates } from "@/lib/habits/progress";
 import { getIsFuture } from "@/lib/date";
@@ -9,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useAddLog } from "@/hooks/mutations/use-add-log";
 import { useHabitActions } from "@/hooks/use-habit-actions";
 import { useSelectedCellStore } from "@/store/use-selected-cell-store";
-import { useVisibleDays } from "@/hooks/use-visible-days";
+
 
 import { DayCell } from "./day-cell";
 
@@ -103,7 +104,7 @@ export const WeeklyHabitGrid = ({
   completions,
   statusMap,
 }: Props) => {
-  const days = useVisibleDays();
+  const days = getLast30Days();
   const { mutate: addLog } = useAddLog();
   const { toggle } = useHabitActions({ statusMap });
   const setSelectedCell = useSelectedCellStore(
@@ -134,131 +135,140 @@ export const WeeklyHabitGrid = ({
   });
 
   return (
+    
     <div
-      className="grid w-full min-w-0"
-      style={{
-        gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))`,
-      }}
+      data-habit-grid-scroll
+      onScroll={syncHabitGridScroll}
+      className="flex flex-row-reverse flex-1 overflow-x-auto scrollbar-none"
     >
-      {weeks.map((week) => {
-        const progress = calculateHabitProgress(
-          habit,
-          completions,
-          week.startDate
-        );
 
-        const displayCurrent = Math.min(
-          progress.current,
-          progress.target
-        );
+      <div
+          className="grid"
+          style={{
+            minWidth: `${days.length * 48}px`,
+            gridTemplateColumns: `repeat(${days.length}, minmax(48px, 1fr))`,
+          }}
+        >
+        {weeks.map((week) => {
+          const progress = calculateHabitProgress(
+            habit,
+            completions,
+            week.startDate
+          );
 
-        const isCompleted =
-          displayCurrent >= progress.target;
+          const displayCurrent = Math.min(
+            progress.current,
+            progress.target
+          );
+          
+          const isCompleted =
+            displayCurrent >= progress.target;
 
-        const percentage =
-          progress.target === 0
-            ? 0
-            : (displayCurrent / progress.target) * 100;
+          const percentage =
+            progress.target === 0
+              ? 0
+              : (displayCurrent / progress.target) * 100;
 
-        return (
-          <div
-            key={week.key}
-            className="relative h-9 overflow-hidden border-r border-black/10 dark:border-white/10 bg-cyan-950/30 text-cyan-400"
-            style={{
-              gridColumn: `${week.colStart} / span ${week.colSpan}`,
-            }}
-          >
+              return (
             <div
-              className="absolute inset-y-0 left-0 transition-all duration-300"
+              key={week.key}
+              className="relative h-9 overflow-hidden border-r border-black/10 dark:border-white/10 bg-cyan-950/30 text-cyan-400"
               style={{
-                width: `${percentage}%`,
-                backgroundColor: habit.color!,
-                // opacity: isCompleted ? 1 : 0.40,
-                opacity: isCompleted ? 0.95 : 0.60,
-                filter: isCompleted ? "none" : "saturate(0.7)",
+                gridColumn: `${week.colStart} / span ${week.colSpan}`,
               }}
-            />
-
-            <div className="relative z-10 h-full">
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 pr-2 z-20 flex items-center justify-between text-[11px] text-white font-semibold leading-none">
-                <span>{week.label}</span>
-                <span className="flex items-center gap-1">
-                  {displayCurrent} / {progress.target}
-                  {isCompleted && <Check className="h-3 w-3 " />}
-                </span>
-              </div>
-
+            >
               <div
-                className="grid h-full pt-0"
+                className="absolute inset-y-0 left-0 transition-all duration-300"
                 style={{
-                  gridTemplateColumns: `repeat(${week.dates.length}, minmax(0, 1fr))`,
+                  width: `${percentage}%`,
+                  backgroundColor: habit.color!,
+                  // opacity: isCompleted ? 1 : 0.40,
+                  opacity: isCompleted ? 0.95 : 0.60,
+                  filter: isCompleted ? "none" : "saturate(0.7)",
                 }}
-              >
-                {week.dates.map((date, index) => {
-                  const key = `${habit.id}-${date}`;
-                  const isBeforeStart = habit.startDate > date;
-                  const isFuture = getIsFuture(date);
-                  const isDisabled = isBeforeStart || isFuture;
-                  const filledUntilIndex =
-                    (percentage / 100) * week.dates.length;
+              />
 
-                  const isInsideFilledArea =
-                    index < filledUntilIndex;
+              <div className="relative z-10 h-full">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 pr-2 z-20 flex items-center justify-between text-[11px] text-white font-semibold leading-none">
+                  <span>{week.label}</span>
+                  <span className="flex items-center gap-1">
+                    {displayCurrent} / {progress.target}
+                    {isCompleted && <Check className="h-3 w-3 " />}
+                  </span>
+                </div>
 
-                  return (
-                    <div
-                      key={date}
-                      className={cn(
-                        "border-l border-black/10 first:border-l-0 dark:border-white/10",
-                        (isCompleted || isInsideFilledArea) && "text-white"
-                      )}
-                    >
-                      <DayCell
-                        habitId={habit.id}
-                        date={date}
-                        status={statusMap.get(key) ?? null}
-                        color={habit.color!}
-                        isDisabled={isDisabled}
-                        isFuture={isFuture}
-                        variant="bg-transparent hover:bg-white/10"
-                        isBeforeStart={isBeforeStart}
-                        progress={getDayProgress(
-                          habit,
-                          completions,
-                          date
+                <div
+                  className="grid h-full pt-0"
+                  style={{
+                    gridTemplateColumns: `repeat(${week.dates.length}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {week.dates.map((date, index) => {
+                    const key = `${habit.id}-${date}`;
+                    const isBeforeStart = habit.startDate > date;
+                    const isFuture = getIsFuture(date);
+                    const isDisabled = isBeforeStart || isFuture;
+                    const filledUntilIndex =
+                      (percentage / 100) * week.dates.length;
+
+                      const isInsideFilledArea =
+                      index < filledUntilIndex;
+                      
+                    return (
+                      <div
+                        key={date}
+                        className={cn(
+                          "border-l border-black/10 first:border-l-0 dark:border-white/10",
+                          (isCompleted || isInsideFilledArea) && "text-white"
                         )}
-                        transparentFill
-                        textColor={
-                          isInsideFilledArea
-                            ? "text-blue-950"
-                            : "text-white/80"
-                        }
-                        unit={habit.unit!}
-                        setSelectedCell={setSelectedCell}
-                        fillRemaining={() => {
-                          addLog({
-                            habitId: habit.id,
-                            date,
-                            value: 1,
-                          });
-                        }}
-                        addValue={(value) => {
-                          addLog({
-                            habitId: habit.id,
-                            date,
-                            value,
-                          });
-                        }}
-                        toggle={toggle}
-                      />
-                    </div>
-                  );
-                })}
+                      >
+                        <DayCell
+                          habitId={habit.id}
+                          date={date}
+                          status={statusMap.get(key) ?? null}
+                          color={habit.color!}
+                          isDisabled={isDisabled}
+                          isFuture={isFuture}
+                          variant="bg-transparent hover:bg-white/10"
+                          isBeforeStart={isBeforeStart}
+                          progress={getDayProgress(
+                            habit,
+                            completions,
+                            date
+                          )}
+                          transparentFill
+                          textColor={
+                            isInsideFilledArea
+                              ? "text-blue-950"
+                              : "text-white/80"
+                          }
+                          unit={habit.unit!}
+                          setSelectedCell={setSelectedCell}
+                          fillRemaining={() => {
+                            addLog({
+                              habitId: habit.id,
+                              date,
+                              value: 1,
+                            });
+                          }}
+                          addValue={(value) => {
+                            addLog({
+                              habitId: habit.id,
+                              date,
+                              value,
+                            });
+                          }}
+                          toggle={toggle}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

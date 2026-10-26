@@ -5,6 +5,6 @@ export {
   getActiveHabits,
   getDaysInMonth,
   getHeatmapData,
-  getLast14Days,
+  getLast30Days,
   last7Days,
 } from "@habitoo/core";

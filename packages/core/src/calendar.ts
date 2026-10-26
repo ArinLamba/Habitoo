@@ -91,7 +91,7 @@ export const last7Days = [...Array(7)].map((_, i) => {
   return d;
 });
 
-export const getLast14Days = () => {
+export const getLast30Days = () => {
   const days = [];
 
   for (let i = 29; i >= 0; i--) {
