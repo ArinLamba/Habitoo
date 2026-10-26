@@ -34,12 +34,12 @@ export const HabitRow = memo(({
     <div className="flex items-stretch border-b border-black/10 transition-colors hover:bg-zinc-50/70 dark:border-white/10 dark:hover:bg-white/[0.03]">
 
       {/* LEFT */}
-      <div className="w-[220px]">
-        <div className="flex w-[220px]">
+      <div className="md:w-[250px] w-[200px]">
+        <div className="flex md:w-[250px] w-[200px]">
           <Link href={`habits/${habit.id}`} className="mt-1 flex flex-1 items-center gap-x-2 px-3 transition-colors hover:text-blue-600 dark:hover:text-blue-300">
             <div
               className="flex h-7 w-7 shrink-0 items-center justify-center  "
-              // style={{ backgroundColor: `${habit.color}11` }}
+              // style={{ backgroundColor: `${habit.color}22` }}
             >
               <IconComponent
                 size={17}
@@ -47,7 +47,7 @@ export const HabitRow = memo(({
                 />
             </div>
 
-            <div className="w-full truncate text-sm font-medium">
+            <div className="w-[110px] md:w-[158px] truncate text-sm font-medium ">
               {habit.name}
             </div>
             {/* Progress Area */}

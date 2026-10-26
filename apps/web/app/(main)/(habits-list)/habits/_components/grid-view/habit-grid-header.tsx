@@ -21,7 +21,7 @@ export const HabitGridHeader = () => {
     <div className="sticky top-0 z-20 flex h-12 items-stretch border-b border-black/10 bg-zinc-50/95 backdrop-blur dark:border-white/10 dark:bg-zinc-950/95">
 
       {/* LEFT */}
-      <div className="flex min-w-[220px] items-center justify-between pl-3 pr-1">
+      <div className="flex md:min-w-[250px] min-w-[200px] items-center justify-between pl-3 pr-1">
         <div className="flex flex-col">
           <h2 className="text-sm font-semibold tracking-tight">
             All Habits
